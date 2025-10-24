@@ -44,8 +44,8 @@ export function Footer() {
           {/* Brand Section */}
           <div className="lg:col-span-2">
             <Link href="/" className="flex items-center space-x-3 mb-6">
-              <Image src="/images/capsule-codes-logo.png" alt="Capsule Codes" width={40} height={40} />
-              <span className="text-xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
+              <Image src="/logo.svg" alt="Capsule Codes" width={40} height={40} />
+              <span className="text-xl font-bold bg-linear-to-r from-primary to-secondary bg-clip-text text-transparent">
                 Capsule Codes
               </span>
             </Link>

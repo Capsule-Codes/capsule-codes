@@ -12,6 +12,9 @@ export const metadata: Metadata = {
   title: "Capsule Codes - Web & App Development",
   description: "Transforming ideas into digital reality with cutting-edge technology",
   generator: "v0.app",
+  icons: {
+    icon: "/logo.svg",
+  }
 }
 
 export default function RootLayout({
