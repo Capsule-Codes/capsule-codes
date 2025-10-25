@@ -239,11 +239,11 @@ export default function AdminPage() {
             <div className="flex items-center space-x-4">
               <Settings className="w-8 h-8 text-primary" />
               <div>
-                <h1 className="text-2xl font-bold">Panel de Administración</h1>
+                <h1 className="md:text-2xl text-xl font-bold">Panel de Administración</h1>
                 <p className="text-muted-foreground">Gestiona proyectos y tecnologías</p>
               </div>
             </div>
-            <div className="flex gap-2">
+            <div className="flex gap-2 md:flex-row flex-col">
               <Button variant="outline" onClick={() => (window.location.href = "/")}>
                 Ver Sitio Web
               </Button>
