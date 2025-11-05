@@ -1,176 +1,177 @@
-export type Language = "en" | "es" | "it"
+export type Language = "en" | "es" | "it";
 
 export interface Translations {
   // Navigation
   nav: {
-    home: string
-    about: string
-    services: string
-    technologies: string
-    projects: string
-    contact: string
-  }
+    home: string;
+    about: string;
+    services: string;
+    technologies: string;
+    projects: string;
+    reviews: string;
+    contact: string;
+  };
   // Hero Section
   hero: {
-    badge: string
+    badge: string;
     title: {
-      transform: string
-      ideas: string
-      into: string
-      reality: string
-    }
-    subtitle: string
+      transform: string;
+      ideas: string;
+      into: string;
+      reality: string;
+    };
+    subtitle: string;
     stats: {
-      projects: string
-      satisfaction: string
-      support: string
-    }
+      projects: string;
+      satisfaction: string;
+      support: string;
+    };
     cta: {
-      viewProjects: string
-      learnMore: string
-    }
-  }
+      viewProjects: string;
+      learnMore: string;
+    };
+  };
   // About Section
   about: {
-    title: string
-    subtitle: string
+    title: string;
+    subtitle: string;
     mission: {
-      title: string
-      paragraph1: string
-      paragraph2: string
-    }
+      title: string;
+      paragraph1: string;
+      paragraph2: string;
+    };
     values: {
       precision: {
-        title: string
-        description: string
-      }
+        title: string;
+        description: string;
+      };
       innovation: {
-        title: string
-        description: string
-      }
+        title: string;
+        description: string;
+      };
       speed: {
-        title: string
-        description: string
-      }
+        title: string;
+        description: string;
+      };
       collaboration: {
-        title: string
-        description: string
-      }
-    }
-  }
+        title: string;
+        description: string;
+      };
+    };
+  };
   // Technologies Section
   technologies: {
-    title: string
-    subtitle: string
-    powerLevel: string
+    title: string;
+    subtitle: string;
+    powerLevel: string;
     categories: {
-      frontend: string
-      mobile: string
-      backend: string
-      database: string
-      deployment: string
-    }
-  }
+      frontend: string;
+      mobile: string;
+      backend: string;
+      database: string;
+      deployment: string;
+    };
+  };
   // Projects Section
   projects: {
-    title: string
-    subtitle: string
-    viewAll: string
-    viewDemo: string
-    viewLive: string
-    backToHome: string
+    title: string;
+    subtitle: string;
+    viewAll: string;
+    viewDemo: string;
+    viewLive: string;
+    backToHome: string;
     projectTitles: {
-      ecommerce: string
-      fitness: string
-      dashboard: string
-      education: string
-      delivery: string
-      crm: string
-    }
+      ecommerce: string;
+      fitness: string;
+      dashboard: string;
+      education: string;
+      delivery: string;
+      crm: string;
+    };
     projectDescriptions: {
-      ecommerce: string
-      fitness: string
-      dashboard: string
-      education: string
-      delivery: string
-      crm: string
-    }
+      ecommerce: string;
+      fitness: string;
+      dashboard: string;
+      education: string;
+      delivery: string;
+      crm: string;
+    };
     categories: {
-      webApp: string
-      mobileApp: string
-      webPlatform: string
-      enterprise: string
-    }
-  }
+      webApp: string;
+      mobileApp: string;
+      webPlatform: string;
+      enterprise: string;
+    };
+  };
   // Contact Section
   contact: {
-    title: string
-    subtitle: string
+    title: string;
+    subtitle: string;
     form: {
-      title: string
-      name: string
-      email: string
-      company: string
-      message: string
-      messagePlaceholder: string
-      send: string
-    }
+      title: string;
+      name: string;
+      email: string;
+      company: string;
+      message: string;
+      messagePlaceholder: string;
+      send: string;
+    };
     info: {
-      title: string
-      description: string
-      email: string
-      phone: string
-      location: string
-    }
+      title: string;
+      description: string;
+      email: string;
+      phone: string;
+      location: string;
+    };
     dragon: {
-      title: string
-      description: string
-    }
-  }
+      title: string;
+      description: string;
+    };
+  };
   // Services Section
   services: {
-    title: string
-    subtitle: string
+    title: string;
+    subtitle: string;
     web: {
-      title: string
-      description: string
-    }
+      title: string;
+      description: string;
+    };
     mobile: {
-      title: string
-      description: string
-    }
+      title: string;
+      description: string;
+    };
     backend: {
-      title: string
-      description: string
-    }
+      title: string;
+      description: string;
+    };
     cloud: {
-      title: string
-      description: string
-    }
+      title: string;
+      description: string;
+    };
     design: {
-      title: string
-      description: string
-    }
+      title: string;
+      description: string;
+    };
     consulting: {
-      title: string
-      description: string
-    }
+      title: string;
+      description: string;
+    };
     maintenance: {
-      title: string
-      description: string
-    }
-    startProject: string
-    learnMore: string
-  }
+      title: string;
+      description: string;
+    };
+    startProject: string;
+    learnMore: string;
+  };
   // Footer
   footer: {
-    description: string
-    quickLinks: string
-    services: string
-    contact: string
-    followUs: string
-    rights: string
-  }
+    description: string;
+    quickLinks: string;
+    services: string;
+    contact: string;
+    followUs: string;
+    rights: string;
+  };
 }
 
 export const translations: Record<Language, Translations> = {
@@ -181,6 +182,7 @@ export const translations: Record<Language, Translations> = {
       services: "Services",
       technologies: "Technologies",
       projects: "Projects",
+      reviews: "Reviews",
       contact: "Contact",
     },
     hero: {
@@ -217,19 +219,23 @@ export const translations: Record<Language, Translations> = {
       values: {
         precision: {
           title: "Precision",
-          description: "Like Capsule Corporation capsules, each project is designed with millimetric precision.",
+          description:
+            "Like Capsule Corporation capsules, each project is designed with millimetric precision.",
         },
         innovation: {
           title: "Innovation",
-          description: "We use the most advanced technologies to create solutions that exceed expectations.",
+          description:
+            "We use the most advanced technologies to create solutions that exceed expectations.",
         },
         speed: {
           title: "Speed",
-          description: "Agile development and fast deliveries without compromising the quality of the final product.",
+          description:
+            "Agile development and fast deliveries without compromising the quality of the final product.",
         },
         collaboration: {
           title: "Collaboration",
-          description: "We work as a united team, combining our skills to achieve extraordinary results.",
+          description:
+            "We work as a united team, combining our skills to achieve extraordinary results.",
         },
       },
     },
@@ -263,11 +269,16 @@ export const translations: Record<Language, Translations> = {
         crm: "Intelligent CRM",
       },
       projectDescriptions: {
-        ecommerce: "E-commerce platform with integrated AI for personalized recommendations.",
-        fitness: "Mobile app for exercise tracking with social features and gamification.",
-        dashboard: "Advanced control panel for business management with real-time analytics.",
-        education: "Learning management system with video conferencing and automatic evaluations.",
-        delivery: "Delivery app with real-time tracking and integrated payments.",
+        ecommerce:
+          "E-commerce platform with integrated AI for personalized recommendations.",
+        fitness:
+          "Mobile app for exercise tracking with social features and gamification.",
+        dashboard:
+          "Advanced control panel for business management with real-time analytics.",
+        education:
+          "Learning management system with video conferencing and automatic evaluations.",
+        delivery:
+          "Delivery app with real-time tracking and integrated payments.",
         crm: "CRM system with process automation and predictive analysis.",
       },
       categories: {
@@ -310,37 +321,45 @@ export const translations: Record<Language, Translations> = {
         "We offer comprehensive solutions for all your technological needs, from conception to deployment and maintenance.",
       web: {
         title: "Web Development",
-        description: "Modern and responsive web applications with the latest technologies.",
+        description:
+          "Modern and responsive web applications with the latest technologies.",
       },
       mobile: {
         title: "Mobile Development",
-        description: "Native and cross-platform mobile apps for iOS and Android.",
+        description:
+          "Native and cross-platform mobile apps for iOS and Android.",
       },
       backend: {
         title: "Backend & APIs",
-        description: "Robust backend services and scalable APIs with Node.js and Express.",
+        description:
+          "Robust backend services and scalable APIs with Node.js and Express.",
       },
       cloud: {
         title: "Cloud & DevOps",
-        description: "Cloud infrastructure and automated deployment for maximum performance.",
+        description:
+          "Cloud infrastructure and automated deployment for maximum performance.",
       },
       design: {
         title: "UI/UX Design",
-        description: "Intuitive and attractive designs that enhance user experience.",
+        description:
+          "Intuitive and attractive designs that enhance user experience.",
       },
       consulting: {
         title: "Technical Consulting",
-        description: "Strategic advice to optimize your technological infrastructure.",
+        description:
+          "Strategic advice to optimize your technological infrastructure.",
       },
       maintenance: {
         title: "Maintenance & Support",
-        description: "Continuous support to keep your applications running optimally.",
+        description:
+          "Continuous support to keep your applications running optimally.",
       },
       startProject: "Start Project",
       learnMore: "Learn More",
     },
     footer: {
-      description: "Transforming ideas into digital reality with cutting-edge technology.",
+      description:
+        "Transforming ideas into digital reality with cutting-edge technology.",
       quickLinks: "Quick Links",
       services: "Services",
       contact: "Contact",
@@ -355,6 +374,7 @@ export const translations: Record<Language, Translations> = {
       services: "Servicios",
       technologies: "Tecnologías",
       projects: "Proyectos",
+      reviews: "Reseñas",
       contact: "Contacto",
     },
     hero: {
@@ -396,11 +416,13 @@ export const translations: Record<Language, Translations> = {
         },
         innovation: {
           title: "Innovación",
-          description: "Utilizamos las tecnologías más avanzadas para crear soluciones que superan las expectativas.",
+          description:
+            "Utilizamos las tecnologías más avanzadas para crear soluciones que superan las expectativas.",
         },
         speed: {
           title: "Velocidad",
-          description: "Desarrollo ágil y entregas rápidas sin comprometer la calidad del producto final.",
+          description:
+            "Desarrollo ágil y entregas rápidas sin comprometer la calidad del producto final.",
         },
         collaboration: {
           title: "Colaboración",
@@ -439,11 +461,16 @@ export const translations: Record<Language, Translations> = {
         crm: "CRM Inteligente",
       },
       projectDescriptions: {
-        ecommerce: "Plataforma de comercio electrónico con IA integrada para recomendaciones personalizadas.",
-        fitness: "Aplicación móvil para tracking de ejercicios con funciones sociales y gamificación.",
-        dashboard: "Panel de control avanzado para gestión empresarial con analytics en tiempo real.",
-        education: "Sistema de gestión de aprendizaje con videoconferencias y evaluaciones automáticas.",
-        delivery: "Aplicación de delivery con tracking en tiempo real y pagos integrados.",
+        ecommerce:
+          "Plataforma de comercio electrónico con IA integrada para recomendaciones personalizadas.",
+        fitness:
+          "Aplicación móvil para tracking de ejercicios con funciones sociales y gamificación.",
+        dashboard:
+          "Panel de control avanzado para gestión empresarial con analytics en tiempo real.",
+        education:
+          "Sistema de gestión de aprendizaje con videoconferencias y evaluaciones automáticas.",
+        delivery:
+          "Aplicación de delivery con tracking en tiempo real y pagos integrados.",
         crm: "Sistema CRM con automatización de procesos y análisis predictivo.",
       },
       categories: {
@@ -476,7 +503,8 @@ export const translations: Record<Language, Translations> = {
       },
       dragon: {
         title: "¡Invoca al Dragón de la Innovación!",
-        description: "Cada proyecto es una oportunidad de crear algo extraordinario. ¿Cuál será tu deseo tecnológico?",
+        description:
+          "Cada proyecto es una oportunidad de crear algo extraordinario. ¿Cuál será tu deseo tecnológico?",
       },
     },
     services: {
@@ -485,37 +513,45 @@ export const translations: Record<Language, Translations> = {
         "Ofrecemos soluciones integrales para todas tus necesidades tecnológicas, desde la concepción hasta el despliegue y mantenimiento.",
       web: {
         title: "Desarrollo Web",
-        description: "Aplicaciones web modernas y responsivas con las últimas tecnologías.",
+        description:
+          "Aplicaciones web modernas y responsivas con las últimas tecnologías.",
       },
       mobile: {
         title: "Desarrollo Móvil",
-        description: "Apps móviles nativas y multiplataforma para iOS y Android.",
+        description:
+          "Apps móviles nativas y multiplataforma para iOS y Android.",
       },
       backend: {
         title: "Backend y APIs",
-        description: "Servicios backend robustos y APIs escalables con Node.js y Express.",
+        description:
+          "Servicios backend robustos y APIs escalables con Node.js y Express.",
       },
       cloud: {
         title: "Cloud y DevOps",
-        description: "Infraestructura en la nube y despliegue automatizado para máximo rendimiento.",
+        description:
+          "Infraestructura en la nube y despliegue automatizado para máximo rendimiento.",
       },
       design: {
         title: "Diseño UI/UX",
-        description: "Diseños intuitivos y atractivos que mejoran la experiencia del usuario.",
+        description:
+          "Diseños intuitivos y atractivos que mejoran la experiencia del usuario.",
       },
       consulting: {
         title: "Consultoría Técnica",
-        description: "Asesoramiento estratégico para optimizar tu infraestructura tecnológica.",
+        description:
+          "Asesoramiento estratégico para optimizar tu infraestructura tecnológica.",
       },
       maintenance: {
         title: "Mantenimiento y Soporte",
-        description: "Soporte continuo para mantener tus aplicaciones funcionando de manera óptima.",
+        description:
+          "Soporte continuo para mantener tus aplicaciones funcionando de manera óptima.",
       },
       startProject: "Comenzar Proyecto",
       learnMore: "Saber Más",
     },
     footer: {
-      description: "Transformando ideas en realidad digital con tecnología de vanguardia.",
+      description:
+        "Transformando ideas en realidad digital con tecnología de vanguardia.",
       quickLinks: "Enlaces Rápidos",
       services: "Servicios",
       contact: "Contacto",
@@ -530,6 +566,7 @@ export const translations: Record<Language, Translations> = {
       services: "Servizi",
       technologies: "Tecnologie",
       projects: "Progetti",
+      reviews: "Recensioni",
       contact: "Contatti",
     },
     hero: {
@@ -571,11 +608,13 @@ export const translations: Record<Language, Translations> = {
         },
         innovation: {
           title: "Innovazione",
-          description: "Utilizziamo le tecnologie più avanzate per creare soluzioni che superano le aspettative.",
+          description:
+            "Utilizziamo le tecnologie più avanzate per creare soluzioni che superano le aspettative.",
         },
         speed: {
           title: "Velocità",
-          description: "Sviluppo agile e consegne rapide senza compromettere la qualità del prodotto finale.",
+          description:
+            "Sviluppo agile e consegne rapide senza compromettere la qualità del prodotto finale.",
         },
         collaboration: {
           title: "Collaborazione",
@@ -614,11 +653,16 @@ export const translations: Record<Language, Translations> = {
         crm: "CRM Intelligente",
       },
       projectDescriptions: {
-        ecommerce: "Piattaforma e-commerce con IA integrata per raccomandazioni personalizzate.",
-        fitness: "App mobile per il tracking degli esercizi con funzioni sociali e gamification.",
-        dashboard: "Pannello di controllo avanzato per la gestione aziendale con analytics in tempo reale.",
-        education: "Sistema di gestione dell'apprendimento con videoconferenze e valutazioni automatiche.",
-        delivery: "App di consegna con tracking in tempo reale e pagamenti integrati.",
+        ecommerce:
+          "Piattaforma e-commerce con IA integrata per raccomandazioni personalizzate.",
+        fitness:
+          "App mobile per il tracking degli esercizi con funzioni sociali e gamification.",
+        dashboard:
+          "Pannello di controllo avanzato per la gestione aziendale con analytics in tempo reale.",
+        education:
+          "Sistema di gestione dell'apprendimento con videoconferenze e valutazioni automatiche.",
+        delivery:
+          "App di consegna con tracking in tempo reale e pagamenti integrati.",
         crm: "Sistema CRM con automazione dei processi e analisi predittiva.",
       },
       categories: {
@@ -661,7 +705,8 @@ export const translations: Record<Language, Translations> = {
         "Offriamo soluzioni complete per tutte le tue esigenze tecnologiche, dalla concezione al deployment e manutenzione.",
       web: {
         title: "Sviluppo Web",
-        description: "Applicazioni web moderne e responsive con le ultime tecnologie.",
+        description:
+          "Applicazioni web moderne e responsive con le ultime tecnologie.",
       },
       mobile: {
         title: "Sviluppo Mobile",
@@ -669,29 +714,35 @@ export const translations: Record<Language, Translations> = {
       },
       backend: {
         title: "Backend e API",
-        description: "Servizi backend robusti e API scalabili con Node.js ed Express.",
+        description:
+          "Servizi backend robusti e API scalabili con Node.js ed Express.",
       },
       cloud: {
         title: "Cloud e DevOps",
-        description: "Infrastruttura cloud e deployment automatizzato per massime prestazioni.",
+        description:
+          "Infrastruttura cloud e deployment automatizzato per massime prestazioni.",
       },
       design: {
         title: "Design UI/UX",
-        description: "Design intuitivi e attraenti che migliorano l'esperienza utente.",
+        description:
+          "Design intuitivi e attraenti che migliorano l'esperienza utente.",
       },
       consulting: {
         title: "Consulenza Tecnica",
-        description: "Consulenza strategica per ottimizzare la tua infrastruttura tecnologica.",
+        description:
+          "Consulenza strategica per ottimizzare la tua infrastruttura tecnologica.",
       },
       maintenance: {
         title: "Manutenzione e Supporto",
-        description: "Supporto continuo per mantenere le tue applicazioni funzionanti in modo ottimale.",
+        description:
+          "Supporto continuo per mantenere le tue applicazioni funzionanti in modo ottimale.",
       },
       startProject: "Inizia Progetto",
       learnMore: "Scopri di Più",
     },
     footer: {
-      description: "Trasformiamo idee in realtà digitale con tecnologia all'avanguardia.",
+      description:
+        "Trasformiamo idee in realtà digitale con tecnologia all'avanguardia.",
       quickLinks: "Link Rapidi",
       services: "Servizi",
       contact: "Contatti",
@@ -699,8 +750,8 @@ export const translations: Record<Language, Translations> = {
       rights: "Tutti i diritti riservati.",
     },
   },
-}
+};
 
 export const getTranslations = (lang: Language): Translations => {
-  return translations[lang] || translations.en
-}
+  return translations[lang] || translations.en;
+};

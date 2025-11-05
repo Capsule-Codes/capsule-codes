@@ -1,54 +1,43 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import Image from "next/image"
-import Link from "next/link"
-import { Button } from "@/components/ui/button"
-import { Menu, X } from "lucide-react"
-import { LanguageSwitcher } from "@/components/language-switcher"
-import { useLanguage } from "@/hooks/use-language"
+import { useState } from "react";
+import Image from "next/image";
+import Link from "next/link";
+import { Button } from "@/components/ui/button";
+import { Menu, X } from "lucide-react";
+import { DebugLanguageSwitcher } from "@/components/debug-language-switcher";
+import { useLanguage } from "@/hooks/use-language";
 
 export function Header() {
-  const [isMenuOpen, setIsMenuOpen] = useState(false)
-  const { t } = useLanguage()
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const { t } = useLanguage();
 
   const navItems = [
     { href: "#about", label: t.nav.about },
     { href: "#services", label: t.nav.services },
     { href: "#technologies", label: t.nav.technologies },
     { href: "#projects", label: t.nav.projects },
+    { href: "#reviews", label: t.nav.reviews },
     { href: "#contact", label: t.nav.contact },
-  ]
+  ];
 
   const handleNavClick = (href: string) => {
     if (window.location.pathname !== "/") {
-      window.location.href = `/${href}`
-      return
+      window.location.href = `/${href}`;
+      return;
     }
 
-    const element = document.querySelector(href)
+    const element = document.querySelector(href);
     if (element) {
-      element.scrollIntoView({ behavior: "smooth" })
+      element.scrollIntoView({ behavior: "smooth" });
     }
-    setIsMenuOpen(false)
-  }
-
-  const handleStartProject = () => {
-    if (window.location.pathname !== "/") {
-      window.location.href = "/#contact"
-      return
-    }
-
-    const contactElement = document.querySelector("#contact")
-    if (contactElement) {
-      contactElement.scrollIntoView({ behavior: "smooth" })
-    }
-  }
+    setIsMenuOpen(false);
+  };
 
   return (
-    <header className="fixed top-0 w-full bg-background/80 backdrop-blur-md border-b border-border z-50">
+    <header className="fixed top-0 w-full bg-background/80 backdrop-blur-md border-b border-border z-40">
       <div className="container mx-auto px-4 py-4">
-        <div className="flex items-center justify-between">
+        <div className="flex items-center justify-between gap-8">
           {/* Logo */}
           <Link href="/" className="flex items-center space-x-2">
             <Image
@@ -64,7 +53,7 @@ export function Header() {
           </Link>
 
           {/* Desktop Navigation */}
-          <nav className="hidden md:flex items-center space-x-8">
+          <nav className="hidden md:flex items-center space-x-10">
             {navItems.map((item) => (
               <button
                 key={item.href}
@@ -74,34 +63,25 @@ export function Header() {
                 {item.label}
               </button>
             ))}
-            <Link
-              href="/projects"
-              className="text-foreground hover:text-primary transition-colors duration-200 font-medium"
-            >
-              {t.projects.viewAll}
-            </Link>
-            <Link
-              href="/admin"
-              className="text-xs text-muted-foreground hover:text-primary transition-colors duration-200"
-            >
-              Admin
-            </Link>
           </nav>
 
-          {/* CTA Button and Language Switcher */}
-          <div className="hidden md:flex items-center space-x-4">
-            <LanguageSwitcher />
-            <Button
-              onClick={handleStartProject}
-              className="bg-gradient-to-r from-primary to-secondary hover:from-primary/90 hover:to-secondary/90"
-            >
-              {t.services.startProject}
-            </Button>
+          {/* Language Switcher */}
+          <div className="hidden md:flex items-center space-x-6 relative z-50">
+            <DebugLanguageSwitcher />
           </div>
 
           {/* Mobile Menu Button */}
-          <Button variant="ghost" size="icon" className="md:hidden" onClick={() => setIsMenuOpen(!isMenuOpen)}>
-            {isMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+          <Button
+            variant="ghost"
+            size="icon"
+            className="md:hidden"
+            onClick={() => setIsMenuOpen(!isMenuOpen)}
+          >
+            {isMenuOpen ? (
+              <X className="h-6 w-6" />
+            ) : (
+              <Menu className="h-6 w-6" />
+            )}
           </Button>
         </div>
 
@@ -118,33 +98,13 @@ export function Header() {
                   {item.label}
                 </button>
               ))}
-              <Link
-                href="/projects"
-                className="text-foreground hover:text-primary transition-colors duration-200 font-medium text-left"
-                onClick={() => setIsMenuOpen(false)}
-              >
-                {t.projects.viewAll}
-              </Link>
-              <Link
-                href="/admin"
-                className="text-xs text-muted-foreground hover:text-primary transition-colors duration-200 text-left"
-                onClick={() => setIsMenuOpen(false)}
-              >
-                Admin Panel
-              </Link>
-              <div className="flex items-center justify-between pt-2">
-                <LanguageSwitcher />
-                <Button
-                  onClick={handleStartProject}
-                  className="bg-gradient-to-r from-primary to-secondary hover:from-primary/90 hover:to-secondary/90 flex-1 ml-4"
-                >
-                  {t.services.startProject}
-                </Button>
+              <div className="flex items-center justify-between pt-2 relative z-50">
+                <DebugLanguageSwitcher />
               </div>
             </div>
           </nav>
         )}
       </div>
     </header>
-  )
+  );
 }
