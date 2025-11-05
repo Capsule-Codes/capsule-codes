@@ -41,13 +41,13 @@ export function Header() {
           {/* Logo */}
           <Link href="/" className="flex items-center space-x-2">
             <Image
-              src="/images/capsule-codes-logo.png"
+              src="/logo.svg"
               alt="Capsule Codes"
               width={50}
               height={50}
-              className="animate-pulse-glow"
+              className="animate-pulse"
             />
-            <span className="text-xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
+            <span className="text-xl font-bold bg-linear-to-r from-primary to-secondary bg-clip-text text-transparent">
               Capsule Codes
             </span>
           </Link>

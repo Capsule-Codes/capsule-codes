@@ -15,6 +15,9 @@ export const metadata: Metadata = {
   description:
     "Transforming ideas into digital reality with cutting-edge technology",
   generator: "v0.app",
+  icons: {
+    icon: "/logo.svg",
+  },
 };
 
 export default function RootLayout({
