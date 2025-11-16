@@ -13,10 +13,63 @@ import "./globals.css";
 export const metadata: Metadata = {
   title: "Capsule Codes - Web & App Development",
   description:
-    "Transforming ideas into digital reality with cutting-edge technology",
+    "Transforming ideas into digital reality with cutting-edge technology. Expert web and mobile app development services.",
   generator: "v0.app",
+  keywords: [
+    "web development",
+    "app development",
+    "mobile apps",
+    "fullstack development",
+    "Next.js",
+    "React",
+    "TypeScript",
+    "Supabase",
+  ],
+  authors: [{ name: "Capsule Codes" }],
+  creator: "Capsule Codes",
+  publisher: "Capsule Codes",
   icons: {
     icon: "/logo.svg",
+  },
+  metadataBase: new URL("https://capsulecodes.com"),
+  openGraph: {
+    type: "website",
+    locale: "en_US",
+    alternateLocale: ["es_ES", "it_IT"],
+    url: "https://capsulecodes.com",
+    siteName: "Capsule Codes",
+    title: "Capsule Codes - Web & App Development",
+    description:
+      "Transforming ideas into digital reality with cutting-edge technology. Expert web and mobile app development services.",
+    images: [
+      {
+        url: "/logo.svg",
+        width: 1200,
+        height: 630,
+        alt: "Capsule Codes Logo",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Capsule Codes - Web & App Development",
+    description:
+      "Transforming ideas into digital reality with cutting-edge technology",
+    images: ["/logo.svg"],
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-video-preview": -1,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+    },
+  },
+  verification: {
+    google: "your-google-verification-code",
   },
 };
 

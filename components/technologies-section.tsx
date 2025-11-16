@@ -2,7 +2,6 @@
 
 import { useData } from "@/lib/data-context"
 import { Card, CardContent } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
 import { useLanguage } from "@/hooks/use-language"
 
 export function TechnologiesSection() {
@@ -30,13 +29,6 @@ export function TechnologiesSection() {
   }
 
   const categoryOrder = ["frontend", "mobile", "backend", "database", "deployment"]
-
-  const handleLearnMore = () => {
-    const contactElement = document.querySelector("#contact")
-    if (contactElement) {
-      contactElement.scrollIntoView({ behavior: "smooth" })
-    }
-  }
 
   return (
     <section id="technologies" className="py-20 bg-muted/30">
@@ -71,22 +63,11 @@ export function TechnologiesSection() {
                       <div
                         key={tech.id}
                         className="flex items-center p-3 bg-muted/50 rounded-lg hover:bg-muted transition-colors duration-200"
-                        title={tech.description}
                       >
                         <span className="text-2xl mr-3">{tech.icon}</span>
                         <span className="font-medium">{tech.name}</span>
                       </div>
                     ))}
-                  </div>
-                  <div className="mt-6 text-center">
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      className="border-primary/30 text-primary hover:bg-primary hover:text-primary-foreground bg-transparent"
-                      onClick={handleLearnMore}
-                    >
-                      Saber más
-                    </Button>
                   </div>
                 </CardContent>
               </Card>

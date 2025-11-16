@@ -12,8 +12,16 @@ import Image from "next/image"
 import Link from "next/link"
 
 export default function ProjectsPage() {
-  const { t } = useLanguage()
+  const { t, language } = useLanguage()
   const { projects } = useData()
+
+  // Helper function to get project content in current language
+  const getProjectContent = (project: typeof projects[0]) => {
+    if (project.translations && project.translations[language as keyof typeof project.translations]) {
+      return project.translations[language as keyof typeof project.translations];
+    }
+    return { title: project.title, description: project.description };
+  };
 
   return (
     <div className="min-h-screen bg-background">
@@ -31,26 +39,28 @@ export default function ProjectsPage() {
 
           {/* Projects Grid */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {projects.map((project) => (
-              <Card
-                key={project.id}
-                className="group hover:shadow-lg transition-all duration-300 border-2 hover:border-primary/20"
-              >
-                <CardHeader className="p-0">
-                  <div className="relative h-48 overflow-hidden rounded-t-lg">
-                    <Image
-                      src={project.image || "/placeholder.svg"}
-                      alt={project.title}
-                      fill
-                      className="object-cover group-hover:scale-105 transition-transform duration-300"
-                    />
-                  </div>
-                </CardHeader>
-                <CardContent className="p-6">
-                  <CardTitle className="text-xl mb-2 group-hover:text-primary transition-colors">
-                    {project.title}
-                  </CardTitle>
-                  <CardDescription className="text-muted-foreground mb-4">{project.description}</CardDescription>
+            {projects.map((project) => {
+              const content = getProjectContent(project);
+              return (
+                <Card
+                  key={project.id}
+                  className="group hover:shadow-lg transition-all duration-300 border-2 hover:border-primary/20"
+                >
+                  <CardHeader className="p-0">
+                    <div className="relative h-48 overflow-hidden rounded-t-lg">
+                      <Image
+                        src={project.image || "/placeholder.svg"}
+                        alt={content.title}
+                        fill
+                        className="object-cover group-hover:scale-105 transition-transform duration-300"
+                      />
+                    </div>
+                  </CardHeader>
+                  <CardContent className="p-6">
+                    <CardTitle className="text-xl mb-2 group-hover:text-primary transition-colors">
+                      {content.title}
+                    </CardTitle>
+                    <CardDescription className="text-muted-foreground mb-4">{content.description}</CardDescription>
 
                   {/* Technologies */}
                   <div className="flex flex-wrap gap-2 mb-4">
@@ -81,7 +91,8 @@ export default function ProjectsPage() {
                   </div>
                 </CardContent>
               </Card>
-            ))}
+            );
+            })}
           </div>
 
           {/* Back to Home */}

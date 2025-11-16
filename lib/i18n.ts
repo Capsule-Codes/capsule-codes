@@ -103,6 +103,11 @@ export interface Translations {
       enterprise: string;
     };
   };
+  // Reviews Section
+  reviews: {
+    title: string;
+    subtitle: string;
+  };
   // Contact Section
   contact: {
     title: string;
@@ -110,11 +115,17 @@ export interface Translations {
     form: {
       title: string;
       name: string;
+      namePlaceholder: string;
       email: string;
+      emailPlaceholder: string;
       company: string;
+      companyPlaceholder: string;
       message: string;
       messagePlaceholder: string;
       send: string;
+      sending: string;
+      successMessage: string;
+      errorMessage: string;
     };
     info: {
       title: string;
@@ -122,6 +133,11 @@ export interface Translations {
       email: string;
       phone: string;
       location: string;
+    };
+    hours: {
+      title: string;
+      weekdays: string;
+      weekend: string;
     };
     dragon: {
       title: string;
@@ -135,30 +151,37 @@ export interface Translations {
     web: {
       title: string;
       description: string;
+      features: string[];
     };
     mobile: {
       title: string;
       description: string;
+      features: string[];
     };
     backend: {
       title: string;
       description: string;
+      features: string[];
     };
     cloud: {
       title: string;
       description: string;
+      features: string[];
     };
     design: {
       title: string;
       description: string;
+      features: string[];
     };
     consulting: {
       title: string;
       description: string;
+      features: string[];
     };
     maintenance: {
       title: string;
       description: string;
+      features: string[];
     };
     startProject: string;
     learnMore: string;
@@ -168,9 +191,92 @@ export interface Translations {
     description: string;
     quickLinks: string;
     services: string;
+    technologies: string;
+    company: string;
+    blog: string;
     contact: string;
     followUs: string;
     rights: string;
+    privacyPolicy: string;
+    termsOfService: string;
+    quote: string;
+  };
+  // Admin Panel
+  admin: {
+    common: {
+      save: string;
+      saving: string;
+      cancel: string;
+      edit: string;
+      delete: string;
+      add: string;
+    };
+    technologies: {
+      title: string;
+      newTechnology: string;
+      editTechnology: string;
+      name: string;
+      icon: string;
+      category: string;
+      selectCategory: string;
+      requiredFields: string;
+      deleteConfirm: string;
+      saveError: string;
+      deleteError: string;
+    };
+    reviews: {
+      title: string;
+      newReview: string;
+      editReview: string;
+      author: string;
+      company: string;
+      position: string;
+      rating: string;
+      ratingRange: string;
+      avatar: string;
+      date: string;
+      text: string;
+      invalidRating: string;
+      deleteConfirm: string;
+      saveError: string;
+      deleteError: string;
+    };
+    contactMessages: {
+      title: string;
+      messages: string;
+      noMessages: string;
+      messageFrom: string;
+      email: string;
+      company: string;
+      message: string;
+      status: string;
+      deleteConfirm: string;
+      statuses: {
+        unread: string;
+        read: string;
+        replied: string;
+        archived: string;
+      };
+    };
+    contactInfo: {
+      title: string;
+      contactDetails: string;
+      email: string;
+      phone: string;
+      location: string;
+      locationDefault: string;
+      multilingualLocation: string;
+      saveChanges: string;
+      updated: string;
+      updateError: string;
+    };
+    projects: {
+      images: string;
+      imageDescription: string;
+      selectedImages: string;
+      currentImages: string;
+      maxImages: string;
+    };
   };
 }
 
@@ -288,6 +394,11 @@ export const translations: Record<Language, Translations> = {
         enterprise: "Enterprise",
       },
     },
+    reviews: {
+      title: "What Our Clients Say",
+      subtitle:
+        "Don't just take our word for it - hear from the businesses we've helped transform",
+    },
     contact: {
       title: "Ready to Start?",
       subtitle:
@@ -295,11 +406,17 @@ export const translations: Record<Language, Translations> = {
       form: {
         title: "Send us a Message",
         name: "Name",
+        namePlaceholder: "Your full name",
         email: "Email",
+        emailPlaceholder: "your@email.com",
         company: "Company",
+        companyPlaceholder: "Your company (optional)",
         message: "Message",
         messagePlaceholder: "Tell us about your project...",
         send: "Send Message",
+        sending: "Sending...",
+        successMessage: "Message sent successfully! We'll get back to you soon.",
+        errorMessage: "There was an error sending the message. Please try again.",
       },
       info: {
         title: "Contact Information",
@@ -308,6 +425,11 @@ export const translations: Record<Language, Translations> = {
         email: "Email",
         phone: "Phone",
         location: "Location",
+      },
+      hours: {
+        title: "Business Hours",
+        weekdays: "Monday to Friday: 9:00 AM - 6:00 PM",
+        weekend: "Saturday: 10:00 AM - 2:00 PM",
       },
       dragon: {
         title: "Summon the Innovation Dragon!",
@@ -323,36 +445,43 @@ export const translations: Record<Language, Translations> = {
         title: "Web Development",
         description:
           "Modern and responsive web applications with the latest technologies.",
+        features: ["React & Next.js", "Astro", "TypeScript", "Tailwind CSS"],
       },
       mobile: {
         title: "Mobile Development",
         description:
           "Native and cross-platform mobile apps for iOS and Android.",
+        features: ["React Native", "Expo", "Cross-platform", "Native Performance"],
       },
       backend: {
         title: "Backend & APIs",
         description:
           "Robust backend services and scalable APIs with Node.js and Express.",
+        features: ["Node.js", "Express.js", "MongoDB", "RESTful APIs"],
       },
       cloud: {
         title: "Cloud & DevOps",
         description:
           "Cloud infrastructure and automated deployment for maximum performance.",
+        features: ["Supabase", "Firebase", "Vercel", "CI/CD"],
       },
       design: {
         title: "UI/UX Design",
         description:
           "Intuitive and attractive designs that enhance user experience.",
+        features: ["Figma", "Responsive Design", "User Research", "Prototyping"],
       },
       consulting: {
         title: "Technical Consulting",
         description:
           "Strategic advice to optimize your technological infrastructure.",
+        features: ["Architecture Review", "Performance Audit", "Tech Strategy", "Code Review"],
       },
       maintenance: {
         title: "Maintenance & Support",
         description:
           "Continuous support to keep your applications running optimally.",
+        features: ["24/7 Monitoring", "Bug Fixes", "Updates", "Performance Optimization"],
       },
       startProject: "Start Project",
       learnMore: "Learn More",
@@ -362,9 +491,91 @@ export const translations: Record<Language, Translations> = {
         "Transforming ideas into digital reality with cutting-edge technology.",
       quickLinks: "Quick Links",
       services: "Services",
+      technologies: "Technologies",
+      company: "Company",
+      blog: "Blog",
       contact: "Contact",
       followUs: "Follow Us",
       rights: "All rights reserved.",
+      privacyPolicy: "Privacy Policy",
+      termsOfService: "Terms of Service",
+      quote: "Power comes in response to a need, not a desire. - Goku 🐉",
+    },
+    admin: {
+      common: {
+        save: "Save",
+        saving: "Saving...",
+        cancel: "Cancel",
+        edit: "Edit",
+        delete: "Delete",
+        add: "Add",
+      },
+      technologies: {
+        title: "Technology Management",
+        newTechnology: "New Technology",
+        editTechnology: "Edit Technology",
+        name: "Name",
+        icon: "Icon (emoji)",
+        category: "Category",
+        selectCategory: "Select category",
+        requiredFields: "Please fill all required fields",
+        deleteConfirm: "Are you sure you want to delete this technology?",
+        saveError: "Error saving",
+        deleteError: "Error deleting technology",
+      },
+      reviews: {
+        title: "Review Management",
+        newReview: "Add Review",
+        editReview: "Edit Review",
+        author: "Author",
+        company: "Company",
+        position: "Position",
+        rating: "Rating (1-5)",
+        ratingRange: "Rating must be between 1 and 5",
+        avatar: "Avatar URL",
+        date: "Date",
+        text: "Review Text",
+        invalidRating: "Rating must be between 1 and 5",
+        deleteConfirm: "Are you sure you want to delete this review?",
+        saveError: "Error saving review",
+        deleteError: "Error deleting review",
+      },
+      contactMessages: {
+        title: "Contact Messages",
+        messages: "messages",
+        noMessages: "No messages yet",
+        messageFrom: "Message from",
+        email: "Email",
+        company: "Company",
+        message: "Message",
+        status: "Status",
+        deleteConfirm: "Delete this message?",
+        statuses: {
+          unread: "Unread",
+          read: "Read",
+          replied: "Replied",
+          archived: "Archived",
+        },
+      },
+      contactInfo: {
+        title: "Contact Information",
+        contactDetails: "Contact Details",
+        email: "Email",
+        phone: "Phone",
+        location: "Location",
+        locationDefault: "Location (default)",
+        multilingualLocation: "Multilingual Location",
+        saveChanges: "Save Changes",
+        updated: "Information updated",
+        updateError: "Error updating",
+      },
+      projects: {
+        images: "Project Images (Azure)",
+        imageDescription: "Max 10 images. Will be automatically converted to WebP.",
+        selectedImages: "selected",
+        currentImages: "Current Images",
+        maxImages: "Maximum 10 images allowed",
+      },
     },
   },
   es: {
@@ -480,6 +691,11 @@ export const translations: Record<Language, Translations> = {
         enterprise: "Empresarial",
       },
     },
+    reviews: {
+      title: "Lo Que Dicen Nuestros Clientes",
+      subtitle:
+        "No solo tomes nuestra palabra - escucha a las empresas que hemos ayudado a transformar",
+    },
     contact: {
       title: "¿Listo para Comenzar?",
       subtitle:
@@ -487,11 +703,17 @@ export const translations: Record<Language, Translations> = {
       form: {
         title: "Envíanos un Mensaje",
         name: "Nombre",
+        namePlaceholder: "Tu nombre completo",
         email: "Email",
+        emailPlaceholder: "tu@email.com",
         company: "Empresa",
+        companyPlaceholder: "Tu empresa (opcional)",
         message: "Mensaje",
         messagePlaceholder: "Cuéntanos sobre tu proyecto...",
         send: "Enviar Mensaje",
+        sending: "Enviando...",
+        successMessage: "¡Mensaje enviado exitosamente! Nos pondremos en contacto pronto.",
+        errorMessage: "Hubo un error al enviar el mensaje. Por favor intenta nuevamente.",
       },
       info: {
         title: "Información de Contacto",
@@ -500,6 +722,11 @@ export const translations: Record<Language, Translations> = {
         email: "Email",
         phone: "Teléfono",
         location: "Ubicación",
+      },
+      hours: {
+        title: "Horario de Atención",
+        weekdays: "Lunes a Viernes: 9:00 AM - 6:00 PM",
+        weekend: "Sábados: 10:00 AM - 2:00 PM",
       },
       dragon: {
         title: "¡Invoca al Dragón de la Innovación!",
@@ -515,36 +742,43 @@ export const translations: Record<Language, Translations> = {
         title: "Desarrollo Web",
         description:
           "Aplicaciones web modernas y responsivas con las últimas tecnologías.",
+        features: ["React & Next.js", "Astro", "TypeScript", "Tailwind CSS"],
       },
       mobile: {
         title: "Desarrollo Móvil",
         description:
           "Apps móviles nativas y multiplataforma para iOS y Android.",
+        features: ["React Native", "Expo", "Multiplataforma", "Rendimiento Nativo"],
       },
       backend: {
         title: "Backend y APIs",
         description:
           "Servicios backend robustos y APIs escalables con Node.js y Express.",
+        features: ["Node.js", "Express.js", "MongoDB", "APIs RESTful"],
       },
       cloud: {
         title: "Cloud y DevOps",
         description:
           "Infraestructura en la nube y despliegue automatizado para máximo rendimiento.",
+        features: ["Supabase", "Firebase", "Vercel", "CI/CD"],
       },
       design: {
         title: "Diseño UI/UX",
         description:
           "Diseños intuitivos y atractivos que mejoran la experiencia del usuario.",
+        features: ["Figma", "Diseño Responsivo", "Investigación de Usuarios", "Prototipado"],
       },
       consulting: {
         title: "Consultoría Técnica",
         description:
           "Asesoramiento estratégico para optimizar tu infraestructura tecnológica.",
+        features: ["Revisión de Arquitectura", "Auditoría de Rendimiento", "Estrategia Tech", "Revisión de Código"],
       },
       maintenance: {
         title: "Mantenimiento y Soporte",
         description:
           "Soporte continuo para mantener tus aplicaciones funcionando de manera óptima.",
+        features: ["Monitoreo 24/7", "Corrección de Bugs", "Actualizaciones", "Optimización de Rendimiento"],
       },
       startProject: "Comenzar Proyecto",
       learnMore: "Saber Más",
@@ -554,9 +788,91 @@ export const translations: Record<Language, Translations> = {
         "Transformando ideas en realidad digital con tecnología de vanguardia.",
       quickLinks: "Enlaces Rápidos",
       services: "Servicios",
+      technologies: "Tecnologías",
+      company: "Empresa",
+      blog: "Blog",
       contact: "Contacto",
       followUs: "Síguenos",
       rights: "Todos los derechos reservados.",
+      privacyPolicy: "Política de Privacidad",
+      termsOfService: "Términos de Servicio",
+      quote: "El poder viene en respuesta a una necesidad, no a un deseo. - Goku 🐉",
+    },
+    admin: {
+      common: {
+        save: "Guardar",
+        saving: "Guardando...",
+        cancel: "Cancelar",
+        edit: "Editar",
+        delete: "Eliminar",
+        add: "Agregar",
+      },
+      technologies: {
+        title: "Gestión de Tecnologías",
+        newTechnology: "Nueva Tecnología",
+        editTechnology: "Editar Tecnología",
+        name: "Nombre",
+        icon: "Icono (emoji)",
+        category: "Categoría",
+        selectCategory: "Seleccionar categoría",
+        requiredFields: "Por favor completa todos los campos requeridos",
+        deleteConfirm: "¿Estás seguro de que quieres eliminar esta tecnología?",
+        saveError: "Error al guardar",
+        deleteError: "Error al eliminar la tecnología",
+      },
+      reviews: {
+        title: "Gestión de Reseñas",
+        newReview: "Agregar Reseña",
+        editReview: "Editar Reseña",
+        author: "Autor",
+        company: "Empresa",
+        position: "Cargo",
+        rating: "Calificación (1-5)",
+        ratingRange: "La calificación debe estar entre 1 y 5",
+        avatar: "URL del Avatar",
+        date: "Fecha",
+        text: "Texto de la Reseña",
+        invalidRating: "La calificación debe ser entre 1 y 5",
+        deleteConfirm: "¿Estás seguro de que quieres eliminar esta reseña?",
+        saveError: "Error al guardar la reseña",
+        deleteError: "Error al eliminar la reseña",
+      },
+      contactMessages: {
+        title: "Mensajes de Contacto",
+        messages: "mensajes",
+        noMessages: "No hay mensajes aún",
+        messageFrom: "Mensaje de",
+        email: "Email",
+        company: "Empresa",
+        message: "Mensaje",
+        status: "Estado",
+        deleteConfirm: "¿Eliminar este mensaje?",
+        statuses: {
+          unread: "No leído",
+          read: "Leído",
+          replied: "Respondido",
+          archived: "Archivado",
+        },
+      },
+      contactInfo: {
+        title: "Información de Contacto",
+        contactDetails: "Datos de Contacto",
+        email: "Email",
+        phone: "Teléfono",
+        location: "Ubicación",
+        locationDefault: "Ubicación (por defecto)",
+        multilingualLocation: "Ubicación Multilingüe",
+        saveChanges: "Guardar Cambios",
+        updated: "Información actualizada",
+        updateError: "Error al actualizar",
+      },
+      projects: {
+        images: "Imágenes del Proyecto (Azure)",
+        imageDescription: "Máximo 10 imágenes. Se convertirán a WebP automáticamente.",
+        selectedImages: "seleccionadas",
+        currentImages: "Imágenes Actuales",
+        maxImages: "Máximo 10 imágenes permitidas",
+      },
     },
   },
   it: {
@@ -672,6 +988,11 @@ export const translations: Record<Language, Translations> = {
         enterprise: "Enterprise",
       },
     },
+    reviews: {
+      title: "Cosa Dicono I Nostri Clienti",
+      subtitle:
+        "Non prendere solo la nostra parola - ascolta le aziende che abbiamo aiutato a trasformare",
+    },
     contact: {
       title: "Pronto per Iniziare?",
       subtitle:
@@ -679,11 +1000,17 @@ export const translations: Record<Language, Translations> = {
       form: {
         title: "Inviaci un Messaggio",
         name: "Nome",
+        namePlaceholder: "Il tuo nome completo",
         email: "Email",
+        emailPlaceholder: "tua@email.com",
         company: "Azienda",
+        companyPlaceholder: "La tua azienda (opzionale)",
         message: "Messaggio",
         messagePlaceholder: "Raccontaci del tuo progetto...",
         send: "Invia Messaggio",
+        sending: "Invio in corso...",
+        successMessage: "Messaggio inviato con successo! Ti ricontatteremo presto.",
+        errorMessage: "Si è verificato un errore nell'invio del messaggio. Riprova per favore.",
       },
       info: {
         title: "Informazioni di Contatto",
@@ -692,6 +1019,11 @@ export const translations: Record<Language, Translations> = {
         email: "Email",
         phone: "Telefono",
         location: "Posizione",
+      },
+      hours: {
+        title: "Orari di Apertura",
+        weekdays: "Lunedì a Venerdì: 9:00 - 18:00",
+        weekend: "Sabato: 10:00 - 14:00",
       },
       dragon: {
         title: "Evoca il Drago dell'Innovazione!",
@@ -707,35 +1039,42 @@ export const translations: Record<Language, Translations> = {
         title: "Sviluppo Web",
         description:
           "Applicazioni web moderne e responsive con le ultime tecnologie.",
+        features: ["React & Next.js", "Astro", "TypeScript", "Tailwind CSS"],
       },
       mobile: {
         title: "Sviluppo Mobile",
         description: "App mobile native e cross-platform per iOS e Android.",
+        features: ["React Native", "Expo", "Cross-platform", "Performance Nativa"],
       },
       backend: {
         title: "Backend e API",
         description:
           "Servizi backend robusti e API scalabili con Node.js ed Express.",
+        features: ["Node.js", "Express.js", "MongoDB", "API RESTful"],
       },
       cloud: {
         title: "Cloud e DevOps",
         description:
           "Infrastruttura cloud e deployment automatizzato per massime prestazioni.",
+        features: ["Supabase", "Firebase", "Vercel", "CI/CD"],
       },
       design: {
         title: "Design UI/UX",
         description:
           "Design intuitivi e attraenti che migliorano l'esperienza utente.",
+        features: ["Figma", "Design Responsive", "Ricerca Utenti", "Prototipazione"],
       },
       consulting: {
         title: "Consulenza Tecnica",
         description:
           "Consulenza strategica per ottimizzare la tua infrastruttura tecnologica.",
+        features: ["Revisione Architettura", "Audit Performance", "Strategia Tech", "Revisione Codice"],
       },
       maintenance: {
         title: "Manutenzione e Supporto",
         description:
           "Supporto continuo per mantenere le tue applicazioni funzionanti in modo ottimale.",
+        features: ["Monitoraggio 24/7", "Correzione Bug", "Aggiornamenti", "Ottimizzazione Performance"],
       },
       startProject: "Inizia Progetto",
       learnMore: "Scopri di Più",
@@ -745,9 +1084,91 @@ export const translations: Record<Language, Translations> = {
         "Trasformiamo idee in realtà digitale con tecnologia all'avanguardia.",
       quickLinks: "Link Rapidi",
       services: "Servizi",
+      technologies: "Tecnologie",
+      company: "Azienda",
+      blog: "Blog",
       contact: "Contatti",
       followUs: "Seguici",
       rights: "Tutti i diritti riservati.",
+      privacyPolicy: "Informativa sulla Privacy",
+      termsOfService: "Termini di Servizio",
+      quote: "Il potere viene in risposta a un bisogno, non a un desiderio. - Goku 🐉",
+    },
+    admin: {
+      common: {
+        save: "Salva",
+        saving: "Salvataggio...",
+        cancel: "Annulla",
+        edit: "Modifica",
+        delete: "Elimina",
+        add: "Aggiungi",
+      },
+      technologies: {
+        title: "Gestione Tecnologie",
+        newTechnology: "Nuova Tecnologia",
+        editTechnology: "Modifica Tecnologia",
+        name: "Nome",
+        icon: "Icona (emoji)",
+        category: "Categoria",
+        selectCategory: "Seleziona categoria",
+        requiredFields: "Compila tutti i campi obbligatori",
+        deleteConfirm: "Sei sicuro di voler eliminare questa tecnologia?",
+        saveError: "Errore nel salvataggio",
+        deleteError: "Errore nell'eliminazione della tecnologia",
+      },
+      reviews: {
+        title: "Gestione Recensioni",
+        newReview: "Aggiungi Recensione",
+        editReview: "Modifica Recensione",
+        author: "Autore",
+        company: "Azienda",
+        position: "Posizione",
+        rating: "Valutazione (1-5)",
+        ratingRange: "La valutazione deve essere tra 1 e 5",
+        avatar: "URL Avatar",
+        date: "Data",
+        text: "Testo della Recensione",
+        invalidRating: "La valutazione deve essere tra 1 e 5",
+        deleteConfirm: "Sei sicuro di voler eliminare questa recensione?",
+        saveError: "Errore nel salvataggio della recensione",
+        deleteError: "Errore nell'eliminazione della recensione",
+      },
+      contactMessages: {
+        title: "Messaggi di Contatto",
+        messages: "messaggi",
+        noMessages: "Nessun messaggio ancora",
+        messageFrom: "Messaggio da",
+        email: "Email",
+        company: "Azienda",
+        message: "Messaggio",
+        status: "Stato",
+        deleteConfirm: "Eliminare questo messaggio?",
+        statuses: {
+          unread: "Non letto",
+          read: "Letto",
+          replied: "Risposto",
+          archived: "Archiviato",
+        },
+      },
+      contactInfo: {
+        title: "Informazioni di Contatto",
+        contactDetails: "Dati di Contatto",
+        email: "Email",
+        phone: "Telefono",
+        location: "Posizione",
+        locationDefault: "Posizione (predefinita)",
+        multilingualLocation: "Posizione Multilingue",
+        saveChanges: "Salva Modifiche",
+        updated: "Informazioni aggiornate",
+        updateError: "Errore nell'aggiornamento",
+      },
+      projects: {
+        images: "Immagini del Progetto (Azure)",
+        imageDescription: "Massimo 10 immagini. Saranno convertite in WebP automaticamente.",
+        selectedImages: "selezionate",
+        currentImages: "Immagini Attuali",
+        maxImages: "Massimo 10 immagini consentite",
+      },
     },
   },
 };

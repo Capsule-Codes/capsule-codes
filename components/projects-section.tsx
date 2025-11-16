@@ -68,10 +68,12 @@ export function ProjectsSection() {
                     <Button
                       size="sm"
                       className="flex-1 bg-gradient-to-r from-primary to-secondary hover:from-primary/90 hover:to-secondary/90"
-                      onClick={() => window.open(project.liveUrl, "_blank")}
+                      asChild
                     >
-                      <ExternalLink className="w-4 h-4 mr-2" />
-                      {t.projects.viewDemo}
+                      <a href={project.liveUrl} target="_blank" rel="noopener noreferrer">
+                        <ExternalLink className="w-4 h-4 mr-2" />
+                        {t.projects.viewDemo}
+                      </a>
                     </Button>
                   )}
                   {project.githubUrl && (
@@ -79,9 +81,11 @@ export function ProjectsSection() {
                       size="sm"
                       variant="outline"
                       className="hover:bg-muted bg-transparent"
-                      onClick={() => window.open(project.githubUrl, "_blank")}
+                      asChild
                     >
-                      <Github className="w-4 h-4" />
+                      <a href={project.githubUrl} target="_blank" rel="noopener noreferrer">
+                        <Github className="w-4 h-4" />
+                      </a>
                     </Button>
                   )}
                 </div>

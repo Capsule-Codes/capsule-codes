@@ -13,7 +13,7 @@ export function Footer() {
     servicios: [
       { name: t.services.web.title, href: "#services" },
       { name: t.services.mobile.title, href: "#services" },
-      { name: "Backend & APIs", href: "#services" },
+      { name: t.services.backend.title, href: "#services" },
       { name: t.services.consulting.title, href: "#services" },
     ],
     tecnologias: [
@@ -26,7 +26,7 @@ export function Footer() {
       { name: t.nav.about, href: "#about" },
       { name: t.nav.projects, href: "#projects" },
       { name: t.nav.contact, href: "#contact" },
-      { name: "Blog", href: "#" },
+      { name: t.footer.blog, href: "#" },
     ],
   }
 
@@ -83,7 +83,7 @@ export function Footer() {
 
           {/* Technologies */}
           <div>
-            <h3 className="font-semibold text-foreground mb-4">Tecnologías</h3>
+            <h3 className="font-semibold text-foreground mb-4">{t.footer.technologies}</h3>
             <ul className="space-y-3">
               {footerLinks.tecnologias.map((link, index) => (
                 <li key={index}>
@@ -100,7 +100,7 @@ export function Footer() {
 
           {/* Company */}
           <div>
-            <h3 className="font-semibold text-foreground mb-4">Empresa</h3>
+            <h3 className="font-semibold text-foreground mb-4">{t.footer.company}</h3>
             <ul className="space-y-3">
               {footerLinks.empresa.map((link, index) => (
                 <li key={index}>
@@ -124,10 +124,10 @@ export function Footer() {
             </p>
             <div className="flex items-center space-x-6 text-sm text-muted-foreground">
               <Link href="#" className="hover:text-primary transition-colors duration-200">
-                Política de Privacidad
+                {t.footer.privacyPolicy}
               </Link>
               <Link href="#" className="hover:text-primary transition-colors duration-200">
-                Términos de Servicio
+                {t.footer.termsOfService}
               </Link>
             </div>
           </div>
@@ -135,7 +135,7 @@ export function Footer() {
           {/* Dragon Ball Easter Egg */}
           <div className="text-center mt-8">
             <p className="text-xs text-muted-foreground/70">
-              "El poder viene en respuesta a una necesidad, no a un deseo." - Goku 🐉
+              "{t.footer.quote}"
             </p>
           </div>
         </div>

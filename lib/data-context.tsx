@@ -9,6 +9,18 @@ export interface ProjectTranslations {
   description: string;
 }
 
+export interface ProjectImage {
+  mediaId: string;
+  blobKey: string;
+  mimeType: string;
+  width: number;
+  height: number;
+  sizeBytes: number;
+  alt: string;
+  sortOrder: number;
+  createdAt: string;
+}
+
 export interface Project {
   id: string;
   title: string; // Fallback para compatibilidad
@@ -18,7 +30,8 @@ export interface Project {
     es: ProjectTranslations;
     it: ProjectTranslations;
   };
-  image: string;
+  image: string; // Deprecated - kept for backward compatibility
+  images?: ProjectImage[]; // New field for Azure Blob Storage images
   technologies: string[];
   liveUrl?: string;
   githubUrl?: string;
@@ -28,13 +41,11 @@ export interface Project {
 // Technology interfaces
 export interface TechnologyTranslations {
   name: string;
-  description: string;
 }
 
 export interface Technology {
   id: string;
   name: string; // Fallback para compatibilidad
-  description: string; // Fallback para compatibilidad
   category: "frontend" | "backend" | "mobile" | "database" | "deployment";
   icon: string;
   translations: {

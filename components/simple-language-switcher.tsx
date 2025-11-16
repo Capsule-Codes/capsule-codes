@@ -18,10 +18,7 @@ export function SimpleLanguageSwitcher() {
 
   const currentLanguage = languages.find((lang) => lang.code === language);
 
-  console.log("SimpleLanguageSwitcher rendered, current language:", language);
-
   const handleLanguageChange = (langCode: Language) => {
-    console.log("Changing language to:", langCode);
     setLanguage(langCode);
     setIsOpen(false);
 

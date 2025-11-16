@@ -52,25 +52,26 @@ Sito web professionale sviluppato con Next.js 14, TypeScript e Tailwind CSS. Inc
 
 ```bash
 # Install dependencies
-pnpm install
+npm install
 
 # Run development server
-pnpm dev
+npm run dev
 
 # Build for production
-pnpm build
+npm run build
 
 # Start production server
-pnpm start
+npm start
 ```
 
 ## 🛠️ Tech Stack
 
 - **Framework**: Next.js 14
 - **Language**: TypeScript
-- **Styling**: Tailwind CSS
+- **Styling**: Tailwind CSS v4
 - **UI Components**: shadcn/ui
-- **Package Manager**: pnpm
+- **Database**: Supabase
+- **Package Manager**: npm
 - **Deployment**: Vercel (recommended)
 
 ## 📁 Project Structure

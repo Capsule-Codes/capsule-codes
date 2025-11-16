@@ -4,14 +4,17 @@ import type React from "react";
 import { createContext, useContext, useState, useEffect } from "react";
 import { supabase } from "./supabase";
 import type { Project, Technology, Review } from "./data-context";
+import type { ContactMessage, ContactInfo } from "./types/contact";
 
 interface SupabaseContextType {
   projects: Project[];
   technologies: Technology[];
   reviews: Review[];
+  contactMessages: ContactMessage[];
+  contactInfo: ContactInfo | null;
   loading: boolean;
   error: string | null;
-  addProject: (project: Omit<Project, "id">) => Promise<void>;
+  addProject: (project: Omit<Project, "id">) => Promise<Project | void>;
   updateProject: (id: string, project: Partial<Project>) => Promise<void>;
   deleteProject: (id: string) => Promise<void>;
   addTechnology: (technology: Omit<Technology, "id">) => Promise<void>;
@@ -20,9 +23,13 @@ interface SupabaseContextType {
     technology: Partial<Technology>
   ) => Promise<void>;
   deleteTechnology: (id: string) => Promise<void>;
-  addReview: (review: Omit<Review, "id">) => Promise<void>;
+  addReview: (review: Omit<Review, "id">) => Promise<Review | void>;
   updateReview: (id: string, review: Partial<Review>) => Promise<void>;
   deleteReview: (id: string) => Promise<void>;
+  addContactMessage: (message: Omit<ContactMessage, "id" | "status" | "created_at" | "updated_at">) => Promise<void>;
+  updateContactMessageStatus: (id: string, status: ContactMessage["status"]) => Promise<void>;
+  deleteContactMessage: (id: string) => Promise<void>;
+  updateContactInfo: (info: Partial<ContactInfo>) => Promise<void>;
   refreshData: () => Promise<void>;
 }
 
@@ -34,6 +41,8 @@ export function SupabaseProvider({ children }: { children: React.ReactNode }) {
   const [projects, setProjects] = useState<Project[]>([]);
   const [technologies, setTechnologies] = useState<Technology[]>([]);
   const [reviews, setReviews] = useState<Review[]>([]);
+  const [contactMessages, setContactMessages] = useState<ContactMessage[]>([]);
+  const [contactInfo, setContactInfo] = useState<ContactInfo | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -68,11 +77,28 @@ export function SupabaseProvider({ children }: { children: React.ReactNode }) {
 
       if (reviewsError) throw reviewsError;
 
+      // Load contact messages (only for authenticated users)
+      const { data: contactMessagesData, error: contactMessagesError } = await supabase
+        .from("contact_messages")
+        .select("*")
+        .order("created_at", { ascending: false });
+
+      // Don't throw error if contact_messages table doesn't exist or user isn't authenticated
+
+      // Load contact info
+      const { data: contactInfoData, error: contactInfoError } = await supabase
+        .from("contact_info")
+        .select("*")
+        .single();
+
+      // Don't throw error if contact_info table doesn't exist
+
       setProjects(projectsData || []);
       setTechnologies(technologiesData || []);
       setReviews(reviewsData || []);
+      setContactMessages(contactMessagesData || []);
+      setContactInfo(contactInfoData || null);
     } catch (err) {
-      console.error("Error loading data:", err);
       setError(err instanceof Error ? err.message : "An error occurred");
     } finally {
       setLoading(false);
@@ -95,6 +121,7 @@ export function SupabaseProvider({ children }: { children: React.ReactNode }) {
             description: project.description,
             translations: project.translations,
             image: project.image,
+            images: project.images || [],
             technologies: project.technologies,
             live_url: project.liveUrl,
             github_url: project.githubUrl,
@@ -107,27 +134,33 @@ export function SupabaseProvider({ children }: { children: React.ReactNode }) {
       if (error) throw error;
 
       setProjects((prev) => [data, ...prev]);
+      return data;
     } catch (err) {
-      console.error("Error adding project:", err);
       setError(err instanceof Error ? err.message : "Failed to add project");
+      throw err;
     }
   };
 
   const updateProject = async (id: string, project: Partial<Project>) => {
     try {
+      const updateData: any = {
+        updated_at: new Date().toISOString(),
+      };
+
+      // Only include fields that are provided
+      if (project.title !== undefined) updateData.title = project.title;
+      if (project.description !== undefined) updateData.description = project.description;
+      if (project.translations !== undefined) updateData.translations = project.translations;
+      if (project.image !== undefined) updateData.image = project.image;
+      if (project.images !== undefined) updateData.images = project.images;
+      if (project.technologies !== undefined) updateData.technologies = project.technologies;
+      if (project.liveUrl !== undefined) updateData.live_url = project.liveUrl;
+      if (project.githubUrl !== undefined) updateData.github_url = project.githubUrl;
+      if (project.category !== undefined) updateData.category = project.category;
+
       const { data, error } = await supabase
         .from("projects")
-        .update({
-          title: project.title,
-          description: project.description,
-          translations: project.translations,
-          image: project.image,
-          technologies: project.technologies,
-          live_url: project.liveUrl,
-          github_url: project.githubUrl,
-          category: project.category,
-          updated_at: new Date().toISOString(),
-        })
+        .update(updateData)
         .eq("id", id)
         .select()
         .single();
@@ -136,7 +169,6 @@ export function SupabaseProvider({ children }: { children: React.ReactNode }) {
 
       setProjects((prev) => prev.map((p) => (p.id === id ? data : p)));
     } catch (err) {
-      console.error("Error updating project:", err);
       setError(err instanceof Error ? err.message : "Failed to update project");
     }
   };
@@ -149,34 +181,42 @@ export function SupabaseProvider({ children }: { children: React.ReactNode }) {
 
       setProjects((prev) => prev.filter((p) => p.id !== id));
     } catch (err) {
-      console.error("Error deleting project:", err);
       setError(err instanceof Error ? err.message : "Failed to delete project");
     }
   };
 
   // Technology functions
   const addTechnology = async (technology: Omit<Technology, "id">) => {
+    console.log("🔵 [Supabase] addTechnology called with:", technology);
     try {
+      const insertData = {
+        name: technology.name,
+        category: technology.category,
+        icon: technology.icon,
+        translations: technology.translations,
+      };
+
+      console.log("📤 [Supabase] Inserting data:", insertData);
+
       const { data, error } = await supabase
         .from("technologies")
-        .insert([
-          {
-            name: technology.name,
-            category: technology.category,
-            icon: technology.icon,
-            description: technology.description,
-            translations: technology.translations,
-          },
-        ])
+        .insert([insertData])
         .select()
         .single();
 
-      if (error) throw error;
+      console.log("📥 [Supabase] Response:", { data, error });
 
+      if (error) {
+        console.error("❌ [Supabase] Insert error:", error);
+        throw error;
+      }
+
+      console.log("✅ [Supabase] Technology added successfully:", data);
       setTechnologies((prev) => [data, ...prev]);
     } catch (err) {
-      console.error("Error adding technology:", err);
+      console.error("❌ [Supabase] addTechnology error:", err);
       setError(err instanceof Error ? err.message : "Failed to add technology");
+      throw err;
     }
   };
 
@@ -191,7 +231,6 @@ export function SupabaseProvider({ children }: { children: React.ReactNode }) {
           name: technology.name,
           category: technology.category,
           icon: technology.icon,
-          description: technology.description,
           translations: technology.translations,
           updated_at: new Date().toISOString(),
         })
@@ -203,7 +242,6 @@ export function SupabaseProvider({ children }: { children: React.ReactNode }) {
 
       setTechnologies((prev) => prev.map((t) => (t.id === id ? data : t)));
     } catch (err) {
-      console.error("Error updating technology:", err);
       setError(
         err instanceof Error ? err.message : "Failed to update technology"
       );
@@ -221,7 +259,6 @@ export function SupabaseProvider({ children }: { children: React.ReactNode }) {
 
       setTechnologies((prev) => prev.filter((t) => t.id !== id));
     } catch (err) {
-      console.error("Error deleting technology:", err);
       setError(
         err instanceof Error ? err.message : "Failed to delete technology"
       );
@@ -251,17 +288,15 @@ export function SupabaseProvider({ children }: { children: React.ReactNode }) {
       if (error) throw error;
 
       setReviews((prev) => [data, ...prev]);
+      return data;
     } catch (err) {
-      console.error("Error adding review:", err);
       setError(err instanceof Error ? err.message : "Failed to add review");
+      throw err;
     }
   };
 
   const updateReview = async (id: string, review: Partial<Review>) => {
     try {
-      console.log("Supabase updateReview called with:", { id, review });
-
-      // Verificar que todos los campos requeridos estén presentes
       const updateData = {
         text: review.text,
         author: review.author,
@@ -274,8 +309,6 @@ export function SupabaseProvider({ children }: { children: React.ReactNode }) {
         updated_at: new Date().toISOString(),
       };
 
-      console.log("Update data prepared:", updateData);
-
       const { data, error } = await supabase
         .from("reviews")
         .update(updateData)
@@ -283,15 +316,7 @@ export function SupabaseProvider({ children }: { children: React.ReactNode }) {
         .select()
         .single();
 
-      console.log("Supabase response:", { data, error });
-
       if (error) {
-        console.error("Supabase error details:", {
-          message: error.message,
-          details: error.details,
-          hint: error.hint,
-          code: error.code,
-        });
         throw error;
       }
 
@@ -299,13 +324,10 @@ export function SupabaseProvider({ children }: { children: React.ReactNode }) {
         throw new Error("No data returned from update operation");
       }
 
-      console.log("Updating local state with:", data);
       setReviews((prev) => prev.map((r) => (r.id === id ? data : r)));
-      console.log("Review updated successfully in local state");
     } catch (err) {
-      console.error("Error updating review:", err);
       setError(err instanceof Error ? err.message : "Failed to update review");
-      throw err; // Re-throw para que el componente pueda manejar el error
+      throw err;
     }
   };
 
@@ -317,7 +339,6 @@ export function SupabaseProvider({ children }: { children: React.ReactNode }) {
 
       setReviews((prev) => prev.filter((r) => r.id !== id));
     } catch (err) {
-      console.error("Error deleting review:", err);
       setError(err instanceof Error ? err.message : "Failed to delete review");
     }
   };
@@ -326,12 +347,92 @@ export function SupabaseProvider({ children }: { children: React.ReactNode }) {
     await loadData();
   };
 
+  // Contact message functions
+  const addContactMessage = async (message: Omit<ContactMessage, "id" | "status" | "created_at" | "updated_at">) => {
+    try {
+      const { data, error } = await supabase
+        .from("contact_messages")
+        .insert([
+          {
+            name: message.name,
+            email: message.email,
+            company: message.company,
+            message: message.message,
+          },
+        ])
+        .select()
+        .single();
+
+      if (error) throw error;
+
+      setContactMessages((prev) => [data, ...prev]);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to send message");
+      throw err;
+    }
+  };
+
+  const updateContactMessageStatus = async (id: string, status: ContactMessage["status"]) => {
+    try {
+      const { data, error } = await supabase
+        .from("contact_messages")
+        .update({ status })
+        .eq("id", id)
+        .select()
+        .single();
+
+      if (error) throw error;
+
+      setContactMessages((prev) => prev.map((m) => (m.id === id ? data : m)));
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to update message status");
+    }
+  };
+
+  const deleteContactMessage = async (id: string) => {
+    try {
+      const { error } = await supabase.from("contact_messages").delete().eq("id", id);
+
+      if (error) throw error;
+
+      setContactMessages((prev) => prev.filter((m) => m.id !== id));
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to delete message");
+    }
+  };
+
+  // Contact info functions
+  const updateContactInfo = async (info: Partial<ContactInfo>) => {
+    try {
+      const { data, error } = await supabase
+        .from("contact_info")
+        .update({
+          email: info.email,
+          phone: info.phone,
+          location: info.location,
+          translations: info.translations,
+        })
+        .eq("id", "00000000-0000-0000-0000-000000000001")
+        .select()
+        .single();
+
+      if (error) throw error;
+
+      setContactInfo(data);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to update contact info");
+      throw err;
+    }
+  };
+
   return (
     <SupabaseContext.Provider
       value={{
         projects,
         technologies,
         reviews,
+        contactMessages,
+        contactInfo,
         loading,
         error,
         addProject,
@@ -343,6 +444,10 @@ export function SupabaseProvider({ children }: { children: React.ReactNode }) {
         addReview,
         updateReview,
         deleteReview,
+        addContactMessage,
+        updateContactMessageStatus,
+        deleteContactMessage,
+        updateContactInfo,
         refreshData,
       }}
     >

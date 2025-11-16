@@ -4,7 +4,7 @@ import { ReviewsCarousel } from "./reviews-carousel";
 import { useLanguage } from "@/hooks/use-language";
 
 export function ReviewsSection() {
-  const { language } = useLanguage();
+  const { t } = useLanguage();
 
   // Check if Supabase is configured
   const isSupabaseConfigured =
@@ -16,27 +16,6 @@ export function ReviewsSection() {
     return null;
   }
 
-  const sectionTitles = {
-    en: {
-      title: "What Our Clients Say",
-      subtitle:
-        "Don't just take our word for it - hear from the businesses we've helped transform",
-    },
-    es: {
-      title: "Lo Que Dicen Nuestros Clientes",
-      subtitle:
-        "No solo tomes nuestra palabra - escucha a las empresas que hemos ayudado a transformar",
-    },
-    it: {
-      title: "Cosa Dicono I Nostri Clienti",
-      subtitle:
-        "Non prendere solo la nostra parola - ascolta le aziende che abbiamo aiutato a trasformare",
-    },
-  };
-
-  const currentTitles =
-    sectionTitles[language as keyof typeof sectionTitles] || sectionTitles.en;
-
   return (
     <section
       id="reviews"
@@ -45,10 +24,10 @@ export function ReviewsSection() {
       <div className="container mx-auto px-4">
         <div className="text-center mb-16">
           <h2 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent mb-6">
-            {currentTitles.title}
+            {t.reviews.title}
           </h2>
           <p className="text-xl text-muted-foreground max-w-3xl mx-auto leading-relaxed">
-            {currentTitles.subtitle}
+            {t.reviews.subtitle}
           </p>
         </div>
 

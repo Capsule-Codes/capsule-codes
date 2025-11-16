@@ -38,10 +38,17 @@ import {
   Code,
   Star,
   LogOut,
+  Mail,
+  Loader2,
+  Upload,
+  Image as ImageIcon,
 } from "lucide-react";
-import type { Project, Technology, Review } from "@/lib/data-context";
+import type { Project, Technology, Review, ProjectImage } from "@/lib/data-context";
 import { SimpleLanguageSwitcher } from "@/components/simple-language-switcher";
+import { ContactMessages } from "@/components/admin/contact-messages";
+import { ContactInfoSettings } from "@/components/admin/contact-info-settings";
 import { useLanguage } from "@/hooks/use-language";
+import { compressImages, validateImageFiles } from "@/lib/image-compression";
 
 export default function AdminPage() {
   const { user, loading: authLoading, signIn, signOut, isAdmin } = useAuth();
@@ -49,43 +56,8 @@ export default function AdminPage() {
   const [loginError, setLoginError] = useState("");
   const { t, language } = useLanguage();
 
-  const [websiteLanguage, setWebsiteLanguage] = useState<string>("en");
-
-  // Listen for changes in website language
-  useEffect(() => {
-    const handleLanguageChange = () => {
-      const lang = localStorage.getItem("capsule-codes-language") || "en";
-      setWebsiteLanguage(lang);
-    };
-
-    // Set initial language
-    handleLanguageChange();
-
-    // Listen for storage changes (from other tabs) - this is the key for cross-tab communication
-    window.addEventListener("storage", (e) => {
-      if (e.key === "capsule-codes-language") {
-        setWebsiteLanguage(e.newValue || "en");
-      }
-    });
-
-    // Listen for custom events (from same tab)
-    window.addEventListener("languageChanged", handleLanguageChange);
-
-    // Poll localStorage every 500ms as a fallback
-    const interval = setInterval(() => {
-      const currentLang =
-        localStorage.getItem("capsule-codes-language") || "en";
-      if (currentLang !== websiteLanguage) {
-        setWebsiteLanguage(currentLang);
-      }
-    }, 500);
-
-    return () => {
-      window.removeEventListener("storage", handleLanguageChange);
-      window.removeEventListener("languageChanged", handleLanguageChange);
-      clearInterval(interval);
-    };
-  }, [websiteLanguage]);
+  // Use language context directly for project content display
+  const websiteLanguage = language;
 
   // Helper function to get project content in website language (not admin language)
   const getProjectContent = (project: Project) => {
@@ -98,12 +70,6 @@ export default function AdminPage() {
       ];
     }
     return { title: project.title, description: project.description };
-  };
-
-  // Admin credentials (in production, use proper authentication)
-  const ADMIN_CREDENTIALS = {
-    username: "admin",
-    password: "capsule2024",
   };
 
   const handleLogin = async (e: React.FormEvent) => {
@@ -147,8 +113,21 @@ export default function AdminPage() {
   );
   const [isProjectDialogOpen, setIsProjectDialogOpen] = useState(false);
   const [isTechDialogOpen, setIsTechDialogOpen] = useState(false);
+  const [isSavingTech, setIsSavingTech] = useState(false);
   const [editingReview, setEditingReview] = useState<Review | null>(null);
   const [isReviewDialogOpen, setIsReviewDialogOpen] = useState(false);
+  const [isSavingReview, setIsSavingReview] = useState(false);
+
+  // Image upload states
+  const [selectedImages, setSelectedImages] = useState<File[]>([]);
+  const [uploadingImages, setUploadingImages] = useState(false);
+  const [imageUploadError, setImageUploadError] = useState<string>("");
+  const [projectImages, setProjectImages] = useState<ProjectImage[]>([]);
+
+  // Avatar upload states
+  const [selectedAvatar, setSelectedAvatar] = useState<File | null>(null);
+  const [uploadingAvatar, setUploadingAvatar] = useState(false);
+  const [avatarPreview, setAvatarPreview] = useState<string>("");
 
   // Project form state
   const [projectForm, setProjectForm] = useState({
@@ -176,7 +155,6 @@ export default function AdminPage() {
       | "mobile"
       | "database"
       | "deployment",
-    description: "",
   });
 
   // Review form state
@@ -221,17 +199,28 @@ export default function AdminPage() {
       liveUrl: project.liveUrl || "",
       githubUrl: project.githubUrl || "",
     });
+    setProjectImages(project.images || []);
+    setSelectedImages([]);
+    setImageUploadError("");
     setIsProjectDialogOpen(true);
   };
 
   const handleSaveProject = async () => {
     try {
+      setUploadingImages(true);
+      setImageUploadError("");
+
+      // Use first Azure image as primary image for backward compatibility
+      const primaryImage = projectImages.length > 0
+        ? `/api/images/${projectImages[0].blobKey}`
+        : projectForm.image;
+
       const projectData = {
         title: projectForm.translations.en.title || projectForm.title,
         description:
           projectForm.translations.en.description || projectForm.description,
         translations: projectForm.translations,
-        image: projectForm.image,
+        image: primaryImage,
         technologies: projectForm.technologies
           .split(",")
           .map((tech) => tech.trim())
@@ -241,15 +230,71 @@ export default function AdminPage() {
         githubUrl: projectForm.githubUrl,
       };
 
+      let projectId: string;
+
       if (editingProject) {
         await updateProject(editingProject.id, projectData);
+        projectId = editingProject.id;
       } else {
-        await addProject(projectData);
+        const newProject = await addProject(projectData);
+        projectId = newProject?.id || "";
       }
 
+      // Upload images if any are selected
+      if (selectedImages.length > 0 && projectId) {
+        // Validate images
+        const validation = validateImageFiles(selectedImages);
+        if (!validation.valid) {
+          setImageUploadError(
+            `Invalid image formats: ${validation.invalidFiles.join(", ")}`
+          );
+          setUploadingImages(false);
+          return;
+        }
+
+        // Compress images
+        const compressedImages = await compressImages(selectedImages);
+
+        // Upload to Azure via API
+        const formData = new FormData();
+        for (const file of compressedImages) {
+          formData.append("images", file);
+        }
+        formData.append("altText", projectForm.translations.en.title);
+
+        const response = await fetch(`/api/admin/projects/${projectId}/images`, {
+          method: "POST",
+          body: formData,
+        });
+
+        if (!response.ok) {
+          const errorData = await response.json();
+          setImageUploadError(errorData.message || "Error uploading images");
+          setUploadingImages(false);
+          return;
+        }
+
+        const result = await response.json();
+
+        // Update project with images and set primary image
+        const updatedImages = [...projectImages, ...result.images];
+        const newPrimaryImage = updatedImages.length > 0
+          ? `/api/images/${updatedImages[0].blobKey}`
+          : projectForm.image;
+
+        await updateProject(projectId, {
+          images: updatedImages,
+          image: newPrimaryImage,
+        } as any);
+      }
+
+      await refreshData();
       resetProjectForm();
+      setUploadingImages(false);
     } catch (error) {
       console.error("Error saving project:", error);
+      setImageUploadError("Error saving project");
+      setUploadingImages(false);
     }
   };
 
@@ -257,7 +302,7 @@ export default function AdminPage() {
     try {
       await deleteProject(id);
     } catch (error) {
-      console.error("Error deleting project:", error);
+      // Error handled silently
     }
   };
 
@@ -277,7 +322,58 @@ export default function AdminPage() {
       githubUrl: "",
     });
     setEditingProject(null);
+    setSelectedImages([]);
+    setProjectImages([]);
+    setImageUploadError("");
     setIsProjectDialogOpen(false);
+  };
+
+  // Image handlers
+  const handleImageSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (files && files.length > 0) {
+      const fileArray = Array.from(files);
+      setSelectedImages(fileArray);
+      setImageUploadError("");
+    }
+  };
+
+  const handleDeleteImage = async (image: ProjectImage) => {
+    if (!editingProject) return;
+
+    try {
+      const response = await fetch(
+        `/api/admin/projects/${editingProject.id}/images?blobKey=${encodeURIComponent(image.blobKey)}&mediaId=${image.mediaId}`,
+        {
+          method: "DELETE",
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error("Failed to delete image");
+      }
+
+      // Update local state
+      const updatedImages = projectImages.filter(
+        (img) => img.mediaId !== image.mediaId
+      );
+      setProjectImages(updatedImages);
+
+      // Update primary image for backward compatibility
+      const newPrimaryImage = updatedImages.length > 0
+        ? `/api/images/${updatedImages[0].blobKey}`
+        : "";
+
+      // Update project in database
+      await updateProject(editingProject.id, {
+        images: updatedImages,
+        image: newPrimaryImage,
+      } as any);
+      await refreshData();
+    } catch (error) {
+      console.error("Error deleting image:", error);
+      setImageUploadError("Error deleting image");
+    }
   };
 
   // Technology handlers
@@ -287,42 +383,68 @@ export default function AdminPage() {
       name: tech.name,
       icon: tech.icon,
       category: tech.category,
-      description: tech.description,
     });
     setIsTechDialogOpen(true);
   };
 
   const handleSaveTechnology = async () => {
+    console.log("🚀 handleSaveTechnology called");
+    console.log("📝 Form data:", techForm);
+
     try {
+      // Validate required fields
+      if (!techForm.name || !techForm.icon) {
+        console.log("❌ Validation failed - missing fields");
+        alert(t.admin.technologies.requiredFields);
+        return;
+      }
+
+      console.log("✅ Validation passed");
+      setIsSavingTech(true);
+
       const techData = {
         name: techForm.name,
         icon: techForm.icon,
         category: techForm.category,
-        description: techForm.description,
         translations: {
-          en: { name: techForm.name, description: techForm.description },
-          es: { name: techForm.name, description: techForm.description },
-          it: { name: techForm.name, description: techForm.description },
+          en: { name: techForm.name },
+          es: { name: techForm.name },
+          it: { name: techForm.name },
         },
       };
 
+      console.log("💾 Saving technology:", techData);
+
       if (editingTechnology) {
+        console.log("📝 Updating existing technology");
         await updateTechnology(editingTechnology.id, techData);
       } else {
+        console.log("➕ Adding new technology");
         await addTechnology(techData);
       }
 
+      console.log("✅ Save successful, refreshing data");
+      await refreshData();
+      console.log("✅ Data refreshed, resetting form");
       resetTechForm();
     } catch (error) {
-      console.error("Error saving technology:", error);
+      console.error("❌ Error in handleSaveTechnology:", error);
+      alert(`${t.admin.technologies.saveError}: ${error instanceof Error ? error.message : "Error"}`);
+    } finally {
+      setIsSavingTech(false);
     }
   };
 
   const handleDeleteTechnology = async (id: string) => {
+    if (!confirm(t.admin.technologies.deleteConfirm)) {
+      return;
+    }
+
     try {
       await deleteTechnology(id);
+      await refreshData();
     } catch (error) {
-      console.error("Error deleting technology:", error);
+      alert(`${t.admin.technologies.deleteError}: ${error instanceof Error ? error.message : "Error"}`);
     }
   };
 
@@ -331,7 +453,6 @@ export default function AdminPage() {
       name: "",
       icon: "",
       category: "frontend",
-      description: "",
     });
     setEditingTechnology(null);
     setIsTechDialogOpen(false);
@@ -345,18 +466,48 @@ export default function AdminPage() {
       author: review.author,
       company: review.company,
       position: review.position,
-      translations: review.translations,
+      translations: review.translations || {
+        en: { text: review.text, author: review.author, company: review.company, position: review.position },
+        es: { text: review.text, author: review.author, company: review.company, position: review.position },
+        it: { text: review.text, author: review.author, company: review.company, position: review.position },
+      },
       rating: review.rating,
       avatar: review.avatar || "",
       date: review.date,
     });
+    setAvatarPreview(review.avatar || "");
+    setSelectedAvatar(null);
     setIsReviewDialogOpen(true);
+  };
+
+  const handleAvatarSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setSelectedAvatar(file);
+      // Create preview
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setAvatarPreview(reader.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
   };
 
   const handleSaveReview = async () => {
     try {
-      console.log("Saving review...", { editingReview, reviewForm });
+      // Validate rating
+      if (reviewForm.rating < 1 || reviewForm.rating > 5 || isNaN(reviewForm.rating)) {
+        alert(t.admin.reviews.invalidRating);
+        return;
+      }
 
+      setIsSavingReview(true);
+      setUploadingAvatar(true);
+
+      let avatarUrl = reviewForm.avatar;
+
+      // First, save or update the review to get an ID
+      let reviewId: string;
       const reviewData = {
         text: reviewForm.text,
         author: reviewForm.author,
@@ -364,31 +515,48 @@ export default function AdminPage() {
         position: reviewForm.position,
         translations: reviewForm.translations,
         rating: reviewForm.rating,
-        avatar: reviewForm.avatar,
+        avatar: avatarUrl,
         date: reviewForm.date,
       };
 
-      console.log("Review data to save:", reviewData);
-
       if (editingReview) {
-        console.log("Updating review with ID:", editingReview.id);
         await updateReview(editingReview.id, reviewData);
-        console.log("Review updated successfully");
+        reviewId = editingReview.id;
       } else {
-        console.log("Adding new review");
-        await addReview(reviewData);
-        console.log("Review added successfully");
+        const newReview = await addReview(reviewData);
+        reviewId = newReview?.id || "";
       }
 
+      // Upload avatar if selected
+      if (selectedAvatar && reviewId) {
+        const formData = new FormData();
+        formData.append("avatar", selectedAvatar);
+
+        const response = await fetch(`/api/admin/reviews/${reviewId}/avatar`, {
+          method: "POST",
+          body: formData,
+        });
+
+        if (!response.ok) {
+          const errorData = await response.json();
+          throw new Error(errorData.message || "Error uploading avatar");
+        }
+
+        const result = await response.json();
+        avatarUrl = result.avatarUrl;
+
+        // Update review with avatar URL
+        await updateReview(reviewId, { avatar: avatarUrl } as any);
+      }
+
+      await refreshData();
       resetReviewForm();
       setIsReviewDialogOpen(false);
     } catch (error) {
-      console.error("Error saving review:", error);
-      alert(
-        `Error al guardar la reseña: ${
-          error instanceof Error ? error.message : "Error desconocido"
-        }`
-      );
+      alert(`${t.admin.reviews.saveError}: ${error instanceof Error ? error.message : "Error"}`);
+    } finally {
+      setIsSavingReview(false);
+      setUploadingAvatar(false);
     }
   };
 
@@ -408,7 +576,22 @@ export default function AdminPage() {
       date: new Date().toISOString().split("T")[0],
     });
     setEditingReview(null);
+    setSelectedAvatar(null);
+    setAvatarPreview("");
     setIsReviewDialogOpen(false);
+  };
+
+  const handleDeleteReview = async (id: string) => {
+    if (!confirm(t.admin.reviews.deleteConfirm)) {
+      return;
+    }
+
+    try {
+      await deleteReview(id);
+      await refreshData();
+    } catch (error) {
+      alert(`${t.admin.reviews.deleteError}: ${error instanceof Error ? error.message : "Error"}`);
+    }
   };
 
   if (authLoading) {
@@ -551,62 +734,6 @@ export default function AdminPage() {
                     ? "Gestisci progetti e tecnologie"
                     : "Manage projects and technologies"}
                 </p>
-                <div className="flex flex-col md:flex-row md:items-center gap-2 mt-2">
-                  <div className="flex items-center gap-2">
-                    <span className="text-xs text-muted-foreground">
-                      Panel:{" "}
-                      {language === "es"
-                        ? "Español"
-                        : language === "it"
-                        ? "Italiano"
-                        : "English"}
-                    </span>
-                    <span className="text-xs text-muted-foreground">|</span>
-                    <span className="text-xs text-muted-foreground">
-                      Proyectos: {websiteLanguage}
-                    </span>
-                  </div>
-                  <div className="flex gap-2">
-                    <button
-                      onClick={() => {
-                        const nextLang =
-                          websiteLanguage === "en"
-                            ? "es"
-                            : websiteLanguage === "es"
-                            ? "it"
-                            : "en";
-                        localStorage.setItem(
-                          "capsule-codes-language",
-                          nextLang
-                        );
-                        setWebsiteLanguage(nextLang);
-                      }}
-                      className="text-blue-500 text-xs px-2 py-1 bg-blue-50 rounded hover:bg-blue-100 transition-colors"
-                    >
-                      {websiteLanguage} →{" "}
-                      {websiteLanguage === "en"
-                        ? "es"
-                        : websiteLanguage === "es"
-                        ? "it"
-                        : "en"}
-                    </button>
-                    <button
-                      onClick={() => {
-                        setWebsiteLanguage((prev) =>
-                          prev === "en" ? "es" : "en"
-                        );
-                        setTimeout(() => {
-                          setWebsiteLanguage((prev) =>
-                            prev === "en" ? "es" : "en"
-                          );
-                        }, 100);
-                      }}
-                      className="text-green-500 text-xs px-2 py-1 bg-green-50 rounded hover:bg-green-100 transition-colors"
-                    >
-                      Re-render
-                    </button>
-                  </div>
-                </div>
               </div>
             </div>
             <div className="flex flex-col md:flex-row items-start md:items-center gap-2">
@@ -631,7 +758,7 @@ export default function AdminPage() {
                     try {
                       await signOut();
                     } catch (error) {
-                      console.error("Error signing out:", error);
+                      // Error handled silently
                     }
                   }}
                   className="text-xs flex items-center space-x-1"
@@ -699,7 +826,7 @@ export default function AdminPage() {
         )}
 
         <Tabs defaultValue="projects" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-3">
+          <TabsList className="grid w-full grid-cols-5">
             <TabsTrigger value="projects" className="flex items-center gap-2">
               <FolderOpen className="w-4 h-4" />
               {language === "es"
@@ -726,6 +853,22 @@ export default function AdminPage() {
                 : language === "it"
                 ? "Recensioni"
                 : "Reviews"}
+            </TabsTrigger>
+            <TabsTrigger value="messages" className="flex items-center gap-2">
+              <Mail className="w-4 h-4" />
+              {language === "es"
+                ? "Mensajes"
+                : language === "it"
+                ? "Messaggi"
+                : "Messages"}
+            </TabsTrigger>
+            <TabsTrigger value="settings" className="flex items-center gap-2">
+              <Settings className="w-4 h-4" />
+              {language === "es"
+                ? "Contacto"
+                : language === "it"
+                ? "Contatto"
+                : "Contact"}
             </TabsTrigger>
           </TabsList>
 
@@ -962,26 +1105,72 @@ export default function AdminPage() {
                         </SelectContent>
                       </Select>
                     </div>
-                    <div>
-                      <Label htmlFor="image">
-                        {language === "es"
-                          ? "URL de Imagen"
-                          : language === "it"
-                          ? "URL Immagine"
-                          : "Image URL"}
-                      </Label>
-                      <Input
-                        id="image"
-                        value={projectForm.image}
-                        onChange={(e) =>
-                          setProjectForm({
-                            ...projectForm,
-                            image: e.target.value,
-                          })
-                        }
-                        placeholder="/path/to/image.png"
-                      />
+
+                    {/* Azure Image Upload */}
+                    <div className="space-y-4">
+                      <div>
+                        <Label htmlFor="images">
+                          {t.admin.projects.images}
+                        </Label>
+                        <div className="flex items-center gap-4">
+                          <Input
+                            id="images"
+                            type="file"
+                            multiple
+                            accept="image/*"
+                            onChange={handleImageSelect}
+                            disabled={uploadingImages}
+                          />
+                          {selectedImages.length > 0 && (
+                            <Badge variant="secondary">
+                              {selectedImages.length} {t.admin.projects.selectedImages}
+                            </Badge>
+                          )}
+                        </div>
+                        <p className="text-xs text-muted-foreground mt-1">
+                          {t.admin.projects.imageDescription}
+                        </p>
+                      </div>
+
+                      {/* Show existing images */}
+                      {projectImages.length > 0 && (
+                        <div>
+                          <Label className="text-sm font-medium mb-2 block">
+                            {t.admin.projects.currentImages}
+                          </Label>
+                          <div className="grid grid-cols-3 gap-2">
+                            {projectImages.map((img) => (
+                              <div
+                                key={img.mediaId}
+                                className="relative group rounded-lg overflow-hidden border"
+                              >
+                                <img
+                                  src={`/api/images/${img.blobKey}`}
+                                  alt={img.alt}
+                                  className="w-full h-24 object-cover"
+                                />
+                                <Button
+                                  size="sm"
+                                  variant="destructive"
+                                  className="absolute top-1 right-1 opacity-0 group-hover:opacity-100 transition-opacity"
+                                  onClick={() => handleDeleteImage(img)}
+                                >
+                                  <Trash2 className="w-3 h-3" />
+                                </Button>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+
+                      {/* Upload error */}
+                      {imageUploadError && (
+                        <p className="text-sm text-destructive">
+                          {imageUploadError}
+                        </p>
+                      )}
                     </div>
+
                     <div>
                       <Label htmlFor="technologies">
                         {language === "es"
@@ -1055,14 +1244,28 @@ export default function AdminPage() {
                       </Button>
                       <Button
                         onClick={handleSaveProject}
+                        disabled={uploadingImages}
                         className="bg-gradient-to-r from-primary to-secondary"
                       >
-                        <Save className="w-4 h-4 mr-2" />
-                        {language === "es"
-                          ? "Guardar"
-                          : language === "it"
-                          ? "Salva"
-                          : "Save"}
+                        {uploadingImages ? (
+                          <>
+                            <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                            {language === "es"
+                              ? "Guardando..."
+                              : language === "it"
+                              ? "Salvataggio..."
+                              : "Saving..."}
+                          </>
+                        ) : (
+                          <>
+                            <Save className="w-4 h-4 mr-2" />
+                            {language === "es"
+                              ? "Guardar"
+                              : language === "it"
+                              ? "Salva"
+                              : "Save"}
+                          </>
+                        )}
                       </Button>
                     </div>
                   </div>
@@ -1156,37 +1359,21 @@ export default function AdminPage() {
                     className="bg-gradient-to-r from-primary to-secondary"
                   >
                     <Plus className="w-4 h-4 mr-2" />
-                    {language === "es"
-                      ? "Nueva Tecnología"
-                      : language === "it"
-                      ? "Nuova Tecnologia"
-                      : "New Technology"}
+                    {t.admin.technologies.newTechnology}
                   </Button>
                 </DialogTrigger>
                 <DialogContent>
                   <DialogHeader>
                     <DialogTitle>
                       {editingTechnology
-                        ? language === "es"
-                          ? "Editar Tecnología"
-                          : language === "it"
-                          ? "Modifica Tecnologia"
-                          : "Edit Technology"
-                        : language === "es"
-                        ? "Nueva Tecnología"
-                        : language === "it"
-                        ? "Nuova Tecnologia"
-                        : "New Technology"}
+                        ? t.admin.technologies.editTechnology
+                        : t.admin.technologies.newTechnology}
                     </DialogTitle>
                   </DialogHeader>
                   <div className="space-y-4">
                     <div>
                       <Label htmlFor="techName">
-                        {language === "es"
-                          ? "Nombre"
-                          : language === "it"
-                          ? "Nome"
-                          : "Name"}
+                        {t.admin.technologies.name}
                       </Label>
                       <Input
                         id="techName"
@@ -1199,11 +1386,7 @@ export default function AdminPage() {
                     </div>
                     <div>
                       <Label htmlFor="techIcon">
-                        {language === "es"
-                          ? "Icono (emoji)"
-                          : language === "it"
-                          ? "Icona (emoji)"
-                          : "Icon (emoji)"}
+                        {t.admin.technologies.icon}
                       </Label>
                       <Input
                         id="techIcon"
@@ -1215,32 +1398,8 @@ export default function AdminPage() {
                       />
                     </div>
                     <div>
-                      <Label htmlFor="techDescription">
-                        {language === "es"
-                          ? "Descripción"
-                          : language === "it"
-                          ? "Descrizione"
-                          : "Description"}
-                      </Label>
-                      <Input
-                        id="techDescription"
-                        value={techForm.description}
-                        onChange={(e) =>
-                          setTechForm({
-                            ...techForm,
-                            description: e.target.value,
-                          })
-                        }
-                        placeholder="Modern UI library"
-                      />
-                    </div>
-                    <div>
                       <Label htmlFor="techCategory">
-                        {language === "es"
-                          ? "Categoría"
-                          : language === "it"
-                          ? "Categoria"
-                          : "Category"}
+                        {t.admin.technologies.category}
                       </Label>
                       <Select
                         value={techForm.category}
@@ -1255,13 +1414,7 @@ export default function AdminPage() {
                       >
                         <SelectTrigger>
                           <SelectValue
-                            placeholder={
-                              language === "es"
-                                ? "Seleccionar categoría"
-                                : language === "it"
-                                ? "Seleziona categoria"
-                                : "Select category"
-                            }
+                            placeholder={t.admin.technologies.selectCategory}
                           />
                         </SelectTrigger>
                         <SelectContent>
@@ -1274,24 +1427,22 @@ export default function AdminPage() {
                       </Select>
                     </div>
                     <div className="flex justify-end space-x-2">
-                      <Button variant="outline" onClick={resetTechForm}>
+                      <Button type="button" variant="outline" onClick={resetTechForm}>
                         <X className="w-4 h-4 mr-2" />
-                        {language === "es"
-                          ? "Cancelar"
-                          : language === "it"
-                          ? "Annulla"
-                          : "Cancel"}
+                        {t.admin.common.cancel}
                       </Button>
                       <Button
+                        type="button"
                         onClick={handleSaveTechnology}
-                        className="bg-gradient-to-r from-primary to-secondary"
+                        disabled={isSavingTech}
+                        className="bg-gradient-to-r from-primary to-secondary hover:from-primary/90 hover:to-secondary/90 cursor-pointer transition-all"
                       >
-                        <Save className="w-4 h-4 mr-2" />
-                        {language === "es"
-                          ? "Guardar"
-                          : language === "it"
-                          ? "Salva"
-                          : "Save"}
+                        {isSavingTech ? (
+                          <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                        ) : (
+                          <Save className="w-4 h-4 mr-2" />
+                        )}
+                        {isSavingTech ? t.admin.common.saving : t.admin.common.save}
                       </Button>
                     </div>
                   </div>
@@ -1366,27 +1517,15 @@ export default function AdminPage() {
                     onClick={() => setEditingReview(null)}
                     className="bg-gradient-to-r from-primary to-secondary"
                   >
-                    {language === "es"
-                      ? "Agregar Reseña"
-                      : language === "it"
-                      ? "Aggiungi Recensione"
-                      : "Add Review"}
+                    {t.admin.reviews.newReview}
                   </Button>
                 </DialogTrigger>
                 <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
                   <DialogHeader>
                     <DialogTitle>
                       {editingReview
-                        ? language === "es"
-                          ? "Editar Reseña"
-                          : language === "it"
-                          ? "Modifica Recensione"
-                          : "Edit Review"
-                        : language === "es"
-                        ? "Nueva Reseña"
-                        : language === "it"
-                        ? "Nuova Recensione"
-                        : "New Review"}
+                        ? t.admin.reviews.editReview
+                        : t.admin.reviews.newReview}
                     </DialogTitle>
                   </DialogHeader>
                   <div className="space-y-6">
@@ -1394,11 +1533,7 @@ export default function AdminPage() {
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <div>
                         <Label htmlFor="author">
-                          {language === "es"
-                            ? "Autor"
-                            : language === "it"
-                            ? "Autore"
-                            : "Author"}
+                          {t.admin.reviews.author}
                         </Label>
                         <Input
                           id="author"
@@ -1420,11 +1555,7 @@ export default function AdminPage() {
                       </div>
                       <div>
                         <Label htmlFor="company">
-                          {language === "es"
-                            ? "Empresa"
-                            : language === "it"
-                            ? "Azienda"
-                            : "Company"}
+                          {t.admin.reviews.company}
                         </Label>
                         <Input
                           id="company"
@@ -1446,11 +1577,7 @@ export default function AdminPage() {
                       </div>
                       <div>
                         <Label htmlFor="position">
-                          {language === "es"
-                            ? "Cargo"
-                            : language === "it"
-                            ? "Posizione"
-                            : "Position"}
+                          {t.admin.reviews.position}
                         </Label>
                         <Input
                           id="position"
@@ -1472,11 +1599,7 @@ export default function AdminPage() {
                       </div>
                       <div>
                         <Label htmlFor="rating">
-                          {language === "es"
-                            ? "Calificación (1-5)"
-                            : language === "it"
-                            ? "Valutazione (1-5)"
-                            : "Rating (1-5)"}
+                          {t.admin.reviews.rating}
                         </Label>
                         <Input
                           id="rating"
@@ -1484,12 +1607,14 @@ export default function AdminPage() {
                           min="1"
                           max="5"
                           value={reviewForm.rating}
-                          onChange={(e) =>
+                          onChange={(e) => {
+                            const value = parseInt(e.target.value);
                             setReviewForm({
                               ...reviewForm,
-                              rating: parseInt(e.target.value),
-                            })
-                          }
+                              rating: isNaN(value) ? 5 : Math.min(5, Math.max(1, value)),
+                            });
+                          }}
+                          required
                         />
                       </div>
                     </div>
@@ -1591,27 +1716,43 @@ export default function AdminPage() {
                     </div>
 
                     {/* Additional Info */}
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="space-y-4">
+                      {/* Avatar Upload */}
                       <div>
                         <Label htmlFor="avatar">
                           {language === "es"
-                            ? "Avatar (URL)"
+                            ? "Avatar (Azure)"
                             : language === "it"
-                            ? "Avatar (URL)"
-                            : "Avatar (URL)"}
+                            ? "Avatar (Azure)"
+                            : "Avatar (Azure)"}
                         </Label>
-                        <Input
-                          id="avatar"
-                          value={reviewForm.avatar}
-                          onChange={(e) =>
-                            setReviewForm({
-                              ...reviewForm,
-                              avatar: e.target.value,
-                            })
-                          }
-                          placeholder="https://example.com/avatar.jpg"
-                        />
+                        <div className="flex items-center gap-4">
+                          <Input
+                            id="avatar"
+                            type="file"
+                            accept="image/*"
+                            onChange={handleAvatarSelect}
+                            disabled={uploadingAvatar}
+                          />
+                          {avatarPreview && (
+                            <div className="relative w-16 h-16 rounded-full overflow-hidden border-2 border-primary">
+                              <img
+                                src={avatarPreview}
+                                alt="Avatar preview"
+                                className="w-full h-full object-cover"
+                              />
+                            </div>
+                          )}
+                        </div>
+                        <p className="text-xs text-muted-foreground mt-1">
+                          {language === "es"
+                            ? "Se convertirá a WebP 400x400px automáticamente."
+                            : language === "it"
+                            ? "Sarà convertito in WebP 400x400px automaticamente."
+                            : "Will be automatically converted to WebP 400x400px."}
+                        </p>
                       </div>
+
                       <div>
                         <Label htmlFor="date">
                           {language === "es"
@@ -1635,19 +1776,21 @@ export default function AdminPage() {
                     </div>
 
                     <div className="flex justify-end space-x-2">
-                      <Button variant="outline" onClick={resetReviewForm}>
-                        {language === "es"
-                          ? "Cancelar"
-                          : language === "it"
-                          ? "Annulla"
-                          : "Cancel"}
+                      <Button variant="outline" onClick={resetReviewForm} disabled={isSavingReview}>
+                        <X className="w-4 h-4 mr-2" />
+                        {t.admin.common.cancel}
                       </Button>
-                      <Button onClick={handleSaveReview}>
-                        {language === "es"
-                          ? "Guardar"
-                          : language === "it"
-                          ? "Salva"
-                          : "Save"}
+                      <Button
+                        onClick={handleSaveReview}
+                        disabled={isSavingReview}
+                        className="bg-gradient-to-r from-primary to-secondary hover:from-primary/90 hover:to-secondary/90 cursor-pointer transition-all"
+                      >
+                        {isSavingReview ? (
+                          <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                        ) : (
+                          <Save className="w-4 h-4 mr-2" />
+                        )}
+                        {isSavingReview ? t.admin.common.saving : t.admin.common.save}
                       </Button>
                     </div>
                   </div>
@@ -1685,7 +1828,7 @@ export default function AdminPage() {
                         <Button
                           variant="ghost"
                           size="sm"
-                          onClick={() => deleteReview(review.id)}
+                          onClick={() => handleDeleteReview(review.id)}
                         >
                           <Trash2 className="w-4 h-4" />
                         </Button>
@@ -1717,6 +1860,16 @@ export default function AdminPage() {
                 </Card>
               ))}
             </div>
+          </TabsContent>
+
+          {/* Contact Messages Tab */}
+          <TabsContent value="messages">
+            <ContactMessages />
+          </TabsContent>
+
+          {/* Contact Info Settings Tab */}
+          <TabsContent value="settings">
+            <ContactInfoSettings />
           </TabsContent>
         </Tabs>
       </div>

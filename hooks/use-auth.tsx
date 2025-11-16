@@ -2,10 +2,9 @@
 
 import { createContext, useContext, useState, useEffect } from "react";
 import { supabase } from "@/lib/supabase";
-import type { User } from "@supabase/supabase-js";
 
 interface AuthContextType {
-  user: User | null;
+  user: { email: string } | null;
   loading: boolean;
   signIn: (
     email: string,
@@ -18,78 +17,44 @@ interface AuthContextType {
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
-  const [user, setUser] = useState<User | null>(null);
+  const [user, setUser] = useState<{ email: string } | null>(null);
   const [loading, setLoading] = useState(true);
   const [isAdmin, setIsAdmin] = useState(false);
 
   useEffect(() => {
-    // Obtener sesión inicial
-    const getInitialSession = async () => {
-      const {
-        data: { session },
-      } = await supabase.auth.getSession();
-      setUser(session?.user ?? null);
-
-      if (session?.user) {
-        await checkAdminRole(session.user.id);
+    // Check if user is logged in (from localStorage)
+    const checkSession = () => {
+      const storedUser = localStorage.getItem("admin_user");
+      if (storedUser) {
+        const userData = JSON.parse(storedUser);
+        setUser(userData);
+        setIsAdmin(true);
       }
       setLoading(false);
     };
 
-    getInitialSession();
-
-    // Escuchar cambios de autenticación
-    const {
-      data: { subscription },
-    } = supabase.auth.onAuthStateChange(async (event, session) => {
-      setUser(session?.user ?? null);
-
-      if (session?.user) {
-        await checkAdminRole(session.user.id);
-      } else {
-        setIsAdmin(false);
-      }
-
-      setLoading(false);
-    });
-
-    return () => subscription.unsubscribe();
+    checkSession();
   }, []);
-
-  const checkAdminRole = async (userId: string) => {
-    try {
-      const { data, error } = await supabase
-        .from("user_roles")
-        .select("role")
-        .eq("user_id", userId)
-        .eq("role", "admin")
-        .single();
-
-      if (error && error.code !== "PGRST116") {
-        setIsAdmin(false);
-        return;
-      }
-
-      setIsAdmin(!!data);
-    } catch (error) {
-      setIsAdmin(false);
-    }
-  };
 
   const signIn = async (email: string, password: string) => {
     try {
-      const { data, error } = await supabase.auth.signInWithPassword({
-        email,
-        password,
-      });
+      // Query admin_credentials table
+      const { data, error } = await supabase
+        .from("admin_credentials")
+        .select("*")
+        .eq("email", email)
+        .eq("password", password)
+        .single();
 
-      if (error) {
-        return { error: error.message };
+      if (error || !data) {
+        return { error: "Invalid email or password" };
       }
 
-      if (data.user) {
-        await checkAdminRole(data.user.id);
-      }
+      // Store user in localStorage
+      const userData = { email: data.email };
+      localStorage.setItem("admin_user", JSON.stringify(userData));
+      setUser(userData);
+      setIsAdmin(true);
 
       return { error: null };
     } catch (error) {
@@ -99,10 +64,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const signOut = async () => {
     try {
-      const { error } = await supabase.auth.signOut();
-      if (error) {
-        throw error;
-      }
+      localStorage.removeItem("admin_user");
+      setUser(null);
+      setIsAdmin(false);
     } catch (error) {
       throw error;
     }

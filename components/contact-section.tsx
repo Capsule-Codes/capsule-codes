@@ -1,57 +1,113 @@
-"use client"
+"use client";
 
-import type React from "react"
+import type React from "react";
 
-import { useState } from "react"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Textarea } from "@/components/ui/textarea"
-import { Mail, Phone, MapPin, Send } from "lucide-react"
-import { useLanguage } from "@/hooks/use-language"
+import { useState } from "react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Mail, Phone, MapPin, Send, CheckCircle2, XCircle, Loader2 } from "lucide-react";
+import { useLanguage } from "@/hooks/use-language";
+import { useSupabase } from "@/lib/supabase-context";
+import { contactFormSchema, type ContactFormData } from "@/lib/validations/contact";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+
+type FormStatus = "idle" | "loading" | "success" | "error";
 
 export function ContactSection() {
-  const { t } = useLanguage()
-  const [formData, setFormData] = useState({
+  const { t } = useLanguage();
+  const { addContactMessage, contactInfo } = useSupabase();
+
+  const [formData, setFormData] = useState<ContactFormData>({
     name: "",
     email: "",
     company: "",
     message: "",
-  })
+  });
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
-    // Handle form submission here
-    console.log("Form submitted:", formData)
-  }
+  const [status, setStatus] = useState<FormStatus>("idle");
+  const [errors, setErrors] = useState<Partial<Record<keyof ContactFormData, string>>>({});
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setErrors({});
+    setStatus("loading");
+
+    try {
+      // Validate with Zod
+      const validatedData = contactFormSchema.parse(formData);
+
+      // Save to Supabase
+      await addContactMessage(validatedData);
+
+      // Optionally send email notification
+      await fetch("/api/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(validatedData),
+      });
+
+      setStatus("success");
+      // Reset form
+      setFormData({
+        name: "",
+        email: "",
+        company: "",
+        message: "",
+      });
+
+      // Reset success message after 5 seconds
+      setTimeout(() => setStatus("idle"), 5000);
+    } catch (error) {
+      setStatus("error");
+
+      if (error instanceof Error && error.name === "ZodError") {
+        const zodError = error as any;
+        const fieldErrors: Partial<Record<keyof ContactFormData, string>> = {};
+        zodError.errors?.forEach((err: any) => {
+          if (err.path[0]) {
+            fieldErrors[err.path[0] as keyof ContactFormData] = err.message;
+          }
+        });
+        setErrors(fieldErrors);
+      }
+
+      setTimeout(() => setStatus("idle"), 5000);
+    }
+  };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     setFormData((prev) => ({
       ...prev,
       [e.target.name]: e.target.value,
-    }))
-  }
+    }));
+    // Clear error for this field when user types
+    if (errors[e.target.name as keyof ContactFormData]) {
+      setErrors((prev) => ({ ...prev, [e.target.name]: undefined }));
+    }
+  };
 
-  const contactInfo = [
+  const contactInfoItems = contactInfo ? [
     {
       icon: <Mail className="w-6 h-6 text-primary" />,
       title: t.contact.info.email,
-      value: "hola@capsulecodes.com",
-      link: "mailto:hola@capsulecodes.com",
+      value: contactInfo.email,
+      link: `mailto:${contactInfo.email}`,
     },
     {
       icon: <Phone className="w-6 h-6 text-secondary" />,
       title: t.contact.info.phone,
-      value: "+1 (555) 123-4567",
-      link: "tel:+15551234567",
+      value: contactInfo.phone,
+      link: `tel:${contactInfo.phone.replace(/\s/g, "")}`,
     },
     {
       icon: <MapPin className="w-6 h-6 text-accent" />,
       title: t.contact.info.location,
-      value: "Ciudad del Futuro, Tech District",
+      value: contactInfo.location,
       link: "#",
     },
-  ]
+  ] : null;
 
   return (
     <section id="contact" className="py-20 bg-muted/30">
@@ -66,7 +122,7 @@ export function ContactSection() {
           <p className="text-xl text-muted-foreground max-w-3xl mx-auto text-pretty">{t.contact.subtitle}</p>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
+        <div className={`grid grid-cols-1 ${contactInfoItems ? 'lg:grid-cols-2' : ''} gap-12`}>
           {/* Contact Form */}
           <Card className="border-border/50">
             <CardHeader>
@@ -74,6 +130,24 @@ export function ContactSection() {
             </CardHeader>
             <CardContent>
               <form onSubmit={handleSubmit} className="space-y-6">
+                {status === "success" && (
+                  <Alert className="bg-green-50 border-green-200">
+                    <CheckCircle2 className="h-4 w-4 text-green-600" />
+                    <AlertDescription className="text-green-800">
+                      {t.contact.form.successMessage}
+                    </AlertDescription>
+                  </Alert>
+                )}
+
+                {status === "error" && !Object.keys(errors).length && (
+                  <Alert className="bg-red-50 border-red-200">
+                    <XCircle className="h-4 w-4 text-red-600" />
+                    <AlertDescription className="text-red-800">
+                      {t.contact.form.errorMessage}
+                    </AlertDescription>
+                  </Alert>
+                )}
+
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
                     <label htmlFor="name" className="block text-sm font-medium mb-2">
@@ -84,9 +158,13 @@ export function ContactSection() {
                       name="name"
                       value={formData.name}
                       onChange={handleChange}
-                      placeholder="Tu nombre completo"
-                      required
+                      placeholder={t.contact.form.namePlaceholder}
+                      disabled={status === "loading"}
+                      className={errors.name ? "border-red-500" : ""}
                     />
+                    {errors.name && (
+                      <p className="text-sm text-red-600 mt-1">{errors.name}</p>
+                    )}
                   </div>
                   <div>
                     <label htmlFor="email" className="block text-sm font-medium mb-2">
@@ -98,9 +176,13 @@ export function ContactSection() {
                       type="email"
                       value={formData.email}
                       onChange={handleChange}
-                      placeholder="tu@email.com"
-                      required
+                      placeholder={t.contact.form.emailPlaceholder}
+                      disabled={status === "loading"}
+                      className={errors.email ? "border-red-500" : ""}
                     />
+                    {errors.email && (
+                      <p className="text-sm text-red-600 mt-1">{errors.email}</p>
+                    )}
                   </div>
                 </div>
 
@@ -113,8 +195,13 @@ export function ContactSection() {
                     name="company"
                     value={formData.company}
                     onChange={handleChange}
-                    placeholder="Nombre de tu empresa"
+                    placeholder={t.contact.form.companyPlaceholder}
+                    disabled={status === "loading"}
+                    className={errors.company ? "border-red-500" : ""}
                   />
+                  {errors.company && (
+                    <p className="text-sm text-red-600 mt-1">{errors.company}</p>
+                  )}
                 </div>
 
                 <div>
@@ -126,63 +213,66 @@ export function ContactSection() {
                     name="message"
                     value={formData.message}
                     onChange={handleChange}
-                    placeholder={t.contact.form.messagePlaceholder}
-                    rows={6}
-                    required
+                    placeholder="Cuéntanos sobre tu proyecto..."
+                    rows={5}
+                    disabled={status === "loading"}
+                    className={errors.message ? "border-red-500" : ""}
                   />
+                  {errors.message && (
+                    <p className="text-sm text-red-600 mt-1">{errors.message}</p>
+                  )}
                 </div>
 
                 <Button
                   type="submit"
-                  className="w-full bg-gradient-to-r from-primary to-secondary hover:from-primary/90 hover:to-secondary/90"
-                  size="lg"
+                  className="w-full bg-gradient-to-r from-primary to-secondary"
+                  disabled={status === "loading"}
                 >
-                  <Send className="w-5 h-5 mr-2" />
-                  {t.contact.form.send}
+                  {status === "loading" ? (
+                    <>
+                      <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                      {t.contact.form.sending}
+                    </>
+                  ) : (
+                    <>
+                      <Send className="w-4 h-4 mr-2" />
+                      {t.contact.form.send}
+                    </>
+                  )}
                 </Button>
               </form>
             </CardContent>
           </Card>
 
-          {/* Contact Info */}
-          <div className="space-y-8">
-            <div>
-              <h3 className="text-2xl font-bold mb-6">{t.contact.info.title}</h3>
-              <p className="text-muted-foreground leading-relaxed mb-8">{t.contact.info.description}</p>
-            </div>
-
+          {/* Contact Information */}
+          {contactInfoItems && (
             <div className="space-y-6">
-              {contactInfo.map((info, index) => (
-                <Card key={index} className="border-border/50 hover:border-primary/30 transition-colors duration-300">
-                  <CardContent className="p-6">
-                    <div className="flex items-center space-x-4">
-                      <div className="p-3 bg-muted rounded-lg">{info.icon}</div>
-                      <div>
-                        <h4 className="font-semibold text-foreground">{info.title}</h4>
-                        <a
-                          href={info.link}
-                          className="text-muted-foreground hover:text-primary transition-colors duration-200"
-                        >
-                          {info.value}
-                        </a>
+              <Card className="border-border/50">
+                <CardHeader>
+                  <CardTitle className="text-2xl">{t.contact.info.title}</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-6">
+                  {contactInfoItems.map((item, index) => (
+                    <a
+                      key={index}
+                      href={item.link}
+                      className="flex items-start space-x-4 p-4 rounded-lg hover:bg-muted/50 transition-colors group"
+                    >
+                      <div className="mt-1">{item.icon}</div>
+                      <div className="flex-1">
+                        <h3 className="font-semibold mb-1 group-hover:text-primary transition-colors">
+                          {item.title}
+                        </h3>
+                        <p className="text-muted-foreground">{item.value}</p>
                       </div>
-                    </div>
-                  </CardContent>
-                </Card>
-              ))}
+                    </a>
+                  ))}
+                </CardContent>
+              </Card>
             </div>
-
-            {/* Dragon Ball inspired power level */}
-            <Card className="border-primary/30 bg-gradient-to-br from-primary/5 to-secondary/5">
-              <CardContent className="p-6 text-center">
-                <div className="text-4xl mb-4">🐉</div>
-                <h4 className="font-bold text-lg mb-2">{t.contact.dragon.title}</h4>
-                <p className="text-sm text-muted-foreground">{t.contact.dragon.description}</p>
-              </CardContent>
-            </Card>
-          </div>
+          )}
         </div>
       </div>
     </section>
-  )
+  );
 }
