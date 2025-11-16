@@ -29,7 +29,7 @@ export const metadata: Metadata = {
   creator: "Capsule Codes",
   publisher: "Capsule Codes",
   icons: {
-    icon: "/logo.svg",
+    icon: "/favicon.ico",
   },
   metadataBase: new URL("https://capsulecodes.com"),
   openGraph: {
