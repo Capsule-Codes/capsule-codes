@@ -2,7 +2,7 @@
 
 import Link from "next/link"
 import Image from "next/image"
-import { Github, Linkedin, Twitter, Mail } from "lucide-react"
+import { Linkedin, Mail } from "lucide-react"
 import { useLanguage } from "@/hooks/use-language"
 
 export function Footer() {
@@ -31,10 +31,8 @@ export function Footer() {
   }
 
   const socialLinks = [
-    { icon: <Github className="w-5 h-5" />, href: "#", label: "GitHub" },
-    { icon: <Linkedin className="w-5 h-5" />, href: "#", label: "LinkedIn" },
-    { icon: <Twitter className="w-5 h-5" />, href: "#", label: "Twitter" },
-    { icon: <Mail className="w-5 h-5" />, href: "mailto:hola@capsulecodes.com", label: "Email" },
+    { icon: <Linkedin className="w-5 h-5" />, href: "https://www.linkedin.com/company/capsulecodes", label: "LinkedIn" },
+    { icon: <Mail className="w-5 h-5" />, href: "mailto:info@capsulecodes.com", label: "Email" },
   ]
 
   return (

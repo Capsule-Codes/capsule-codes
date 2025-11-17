@@ -36,24 +36,24 @@ export function Header() {
 
   return (
     <header className="fixed top-0 w-full bg-background/80 backdrop-blur-md border-b border-border z-40">
-      <div className="container mx-auto px-4 py-4">
-        <div className="flex items-center justify-between gap-8">
+      <div className="container mx-auto px-3 sm:px-4 py-3 sm:py-4">
+        <div className="flex items-center justify-between gap-2 sm:gap-4 md:gap-8">
           {/* Logo */}
-          <Link href="/" className="flex items-center space-x-2">
+          <Link href="/" className="flex items-center space-x-2 shrink-0">
             <Image
               src="/logo.svg"
               alt="Capsule Codes"
-              width={50}
-              height={50}
-              className="animate-pulse"
+              width={40}
+              height={40}
+              className="animate-pulse w-8 h-8 sm:w-10 sm:h-10 md:w-[50px] md:h-[50px]"
             />
-            <span className="text-xl font-bold bg-linear-to-r from-primary to-secondary bg-clip-text text-transparent">
+            <span className="hidden xs:inline text-base sm:text-lg md:text-xl font-bold bg-linear-to-r from-primary to-secondary bg-clip-text text-transparent">
               Capsule Codes
             </span>
           </Link>
 
           {/* Desktop Navigation */}
-          <nav className="hidden md:flex items-center space-x-10">
+          <nav className="hidden lg:flex items-center space-x-10">
             {navItems.map((item) => (
               <button
                 key={item.href}
@@ -66,7 +66,7 @@ export function Header() {
           </nav>
 
           {/* Language Switcher */}
-          <div className="hidden md:flex items-center space-x-6 relative z-50">
+          <div className="hidden lg:flex items-center space-x-6 relative z-50">
             <DebugLanguageSwitcher />
           </div>
 
@@ -74,7 +74,7 @@ export function Header() {
           <Button
             variant="ghost"
             size="icon"
-            className="md:hidden"
+            className="lg:hidden"
             onClick={() => setIsMenuOpen(!isMenuOpen)}
           >
             {isMenuOpen ? (
@@ -87,18 +87,18 @@ export function Header() {
 
         {/* Mobile Navigation */}
         {isMenuOpen && (
-          <nav className="md:hidden mt-4 pb-4 border-t border-border">
-            <div className="flex flex-col space-y-4 pt-4">
+          <nav className="lg:hidden mt-3 pb-3 border-t border-border">
+            <div className="flex flex-col space-y-3 pt-3">
               {navItems.map((item) => (
                 <button
                   key={item.href}
                   onClick={() => handleNavClick(item.href)}
-                  className="text-foreground hover:text-primary transition-colors duration-200 font-medium text-left cursor-pointer"
+                  className="text-foreground hover:text-primary transition-colors duration-200 font-medium text-left cursor-pointer py-1"
                 >
                   {item.label}
                 </button>
               ))}
-              <div className="flex items-center justify-between pt-2 relative z-50">
+              <div className="flex items-center pt-2 border-t border-border/50 relative z-50">
                 <DebugLanguageSwitcher />
               </div>
             </div>
