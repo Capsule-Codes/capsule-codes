@@ -1,15 +1,22 @@
 "use client"
 
-import { useData } from "@/lib/data-context"
 import { useLanguage } from "@/hooks/use-language"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { ExternalLink, Github } from "lucide-react"
+import type { Project } from "@/lib/data-context"
 
-export function ProjectsSection() {
-  const { projects } = useData()
+interface ProjectsSectionProps {
+  projects?: Project[]
+}
+
+export function ProjectsSection({ projects: projectsProp }: ProjectsSectionProps = {}) {
   const { t } = useLanguage()
+  
+  // Use prop if provided, otherwise fall back to context (for backward compatibility)
+  // This allows the component to work both with SSR (props) and client-side (context)
+  const projects = projectsProp || []
 
   const handleViewAllProjects = () => {
     window.location.href = "/projects"

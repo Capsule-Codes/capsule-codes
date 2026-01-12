@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { contactFormSchema } from "@/lib/validations/contact";
+import { supabaseAdmin } from "@/lib/server/supabase-admin";
 
 export async function POST(request: Request) {
   try {
@@ -8,14 +9,31 @@ export async function POST(request: Request) {
     // Validate the request body
     const validatedData = contactFormSchema.parse(body);
 
+    // Save to Supabase using service role key
+    if (supabaseAdmin) {
+      const { error } = await supabaseAdmin
+        .from("contact_messages")
+        .insert([
+          {
+            name: validatedData.name,
+            email: validatedData.email,
+            company: validatedData.company,
+            message: validatedData.message,
+            status: "unread",
+          },
+        ]);
+
+      if (error) {
+        console.error("Error saving contact message:", error);
+        throw error;
+      }
+    }
+
     // Here you can add email sending logic using a service like:
     // - Resend: https://resend.com/docs/send-with-nextjs
     // - SendGrid
     // - Nodemailer
     //
-    // For now, we'll just return success
-    // The message is already saved in Supabase via the client
-
     // Example with Resend (uncomment when you have RESEND_API_KEY):
     /*
     const { Resend } = require('resend');

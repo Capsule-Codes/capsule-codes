@@ -46,58 +46,37 @@ export function SupabaseProvider({ children }: { children: React.ReactNode }) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  // Load data from Supabase
+  // Load data from API routes (using service role key)
   const loadData = async () => {
     try {
       setLoading(true);
       setError(null);
 
-      // Load projects
-      const { data: projectsData, error: projectsError } = await supabase
-        .from("projects")
-        .select("*")
-        .order("created_at", { ascending: false });
+      // Load all data from API routes in parallel
+      // Use cache: 'no-store' to ensure we always get fresh data
+      const [projectsResponse, technologiesResponse, reviewsResponse, contactMessagesResponse, contactInfoResponse] = await Promise.all([
+        fetch("/api/admin/projects", { cache: "no-store" }),
+        fetch("/api/admin/technologies", { cache: "no-store" }),
+        fetch("/api/admin/reviews", { cache: "no-store" }),
+        fetch("/api/admin/contact-messages", { cache: "no-store" }),
+        fetch("/api/admin/contact-info", { cache: "no-store" }),
+      ]);
 
-      if (projectsError) throw projectsError;
+      const projectsData = projectsResponse.ok ? await projectsResponse.json() : [];
+      const technologiesData = technologiesResponse.ok ? await technologiesResponse.json() : [];
+      const reviewsData = reviewsResponse.ok ? await reviewsResponse.json() : [];
+      const contactMessagesData = contactMessagesResponse.ok ? await contactMessagesResponse.json() : [];
+      const contactInfoData = contactInfoResponse.ok ? await contactInfoResponse.json() : null;
 
-      // Load technologies
-      const { data: technologiesData, error: technologiesError } =
-        await supabase
-          .from("technologies")
-          .select("*")
-          .order("created_at", { ascending: false });
-
-      if (technologiesError) throw technologiesError;
-
-      // Load reviews
-      const { data: reviewsData, error: reviewsError } = await supabase
-        .from("reviews")
-        .select("*")
-        .order("created_at", { ascending: false });
-
-      if (reviewsError) throw reviewsError;
-
-      // Load contact messages (only for authenticated users)
-      const { data: contactMessagesData, error: contactMessagesError } = await supabase
-        .from("contact_messages")
-        .select("*")
-        .order("created_at", { ascending: false });
-
-      // Don't throw error if contact_messages table doesn't exist or user isn't authenticated
-
-      // Load contact info
-      const { data: contactInfoData, error: contactInfoError } = await supabase
-        .from("contact_info")
-        .select("*")
-        .single();
-
-      // Don't throw error if contact_info table doesn't exist
-
-      setProjects(projectsData || []);
-      setTechnologies(technologiesData || []);
-      setReviews(reviewsData || []);
-      setContactMessages(contactMessagesData || []);
-      setContactInfo(contactInfoData || null);
+      setProjects(projectsData);
+      setTechnologies(technologiesData);
+      setReviews(reviewsData);
+      setContactMessages(contactMessagesData);
+      
+      // Debug: Log contact info to verify data is loaded correctly
+      console.log("API Response Status:", contactInfoResponse.status);
+      console.log("Loaded contact info from API:", contactInfoData);
+      setContactInfo(contactInfoData);
     } catch (err) {
       setError(err instanceof Error ? err.message : "An error occurred");
     } finally {
@@ -113,26 +92,30 @@ export function SupabaseProvider({ children }: { children: React.ReactNode }) {
   // Project functions
   const addProject = async (project: Omit<Project, "id">) => {
     try {
-      const { data, error } = await supabase
-        .from("projects")
-        .insert([
-          {
-            title: project.title,
-            description: project.description,
-            translations: project.translations,
-            image: project.image,
-            images: project.images || [],
-            technologies: project.technologies,
-            live_url: project.liveUrl,
-            github_url: project.githubUrl,
-            category: project.category,
-          },
-        ])
-        .select()
-        .single();
+      const response = await fetch("/api/admin/projects", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          title: project.title,
+          description: project.description,
+          translations: project.translations,
+          image: project.image,
+          images: project.images || [],
+          technologies: project.technologies,
+          liveUrl: project.liveUrl,
+          githubUrl: project.githubUrl,
+          category: project.category,
+        }),
+      });
 
-      if (error) throw error;
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || "Failed to add project");
+      }
 
+      const data = await response.json();
       setProjects((prev) => [data, ...prev]);
       return data;
     } catch (err) {
@@ -143,78 +126,64 @@ export function SupabaseProvider({ children }: { children: React.ReactNode }) {
 
   const updateProject = async (id: string, project: Partial<Project>) => {
     try {
-      const updateData: any = {
-        updated_at: new Date().toISOString(),
-      };
+      const response = await fetch(`/api/admin/projects/${id}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(project),
+      });
 
-      // Only include fields that are provided
-      if (project.title !== undefined) updateData.title = project.title;
-      if (project.description !== undefined) updateData.description = project.description;
-      if (project.translations !== undefined) updateData.translations = project.translations;
-      if (project.image !== undefined) updateData.image = project.image;
-      if (project.images !== undefined) updateData.images = project.images;
-      if (project.technologies !== undefined) updateData.technologies = project.technologies;
-      if (project.liveUrl !== undefined) updateData.live_url = project.liveUrl;
-      if (project.githubUrl !== undefined) updateData.github_url = project.githubUrl;
-      if (project.category !== undefined) updateData.category = project.category;
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || "Failed to update project");
+      }
 
-      const { data, error } = await supabase
-        .from("projects")
-        .update(updateData)
-        .eq("id", id)
-        .select()
-        .single();
-
-      if (error) throw error;
-
+      const data = await response.json();
       setProjects((prev) => prev.map((p) => (p.id === id ? data : p)));
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to update project");
+      throw err;
     }
   };
 
   const deleteProject = async (id: string) => {
     try {
-      const { error } = await supabase.from("projects").delete().eq("id", id);
+      const response = await fetch(`/api/admin/projects/${id}`, {
+        method: "DELETE",
+      });
 
-      if (error) throw error;
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || "Failed to delete project");
+      }
 
       setProjects((prev) => prev.filter((p) => p.id !== id));
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to delete project");
+      throw err;
     }
   };
 
   // Technology functions
   const addTechnology = async (technology: Omit<Technology, "id">) => {
-    console.log("🔵 [Supabase] addTechnology called with:", technology);
     try {
-      const insertData = {
-        name: technology.name,
-        category: technology.category,
-        icon: technology.icon,
-        translations: technology.translations,
-      };
+      const response = await fetch("/api/admin/technologies", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(technology),
+      });
 
-      console.log("📤 [Supabase] Inserting data:", insertData);
-
-      const { data, error } = await supabase
-        .from("technologies")
-        .insert([insertData])
-        .select()
-        .single();
-
-      console.log("📥 [Supabase] Response:", { data, error });
-
-      if (error) {
-        console.error("❌ [Supabase] Insert error:", error);
-        throw error;
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || "Failed to add technology");
       }
 
-      console.log("✅ [Supabase] Technology added successfully:", data);
+      const data = await response.json();
       setTechnologies((prev) => [data, ...prev]);
     } catch (err) {
-      console.error("❌ [Supabase] addTechnology error:", err);
       setError(err instanceof Error ? err.message : "Failed to add technology");
       throw err;
     }
@@ -225,68 +194,66 @@ export function SupabaseProvider({ children }: { children: React.ReactNode }) {
     technology: Partial<Technology>
   ) => {
     try {
-      const { data, error } = await supabase
-        .from("technologies")
-        .update({
-          name: technology.name,
-          category: technology.category,
-          icon: technology.icon,
-          translations: technology.translations,
-          updated_at: new Date().toISOString(),
-        })
-        .eq("id", id)
-        .select()
-        .single();
+      const response = await fetch(`/api/admin/technologies/${id}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(technology),
+      });
 
-      if (error) throw error;
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || "Failed to update technology");
+      }
 
+      const data = await response.json();
       setTechnologies((prev) => prev.map((t) => (t.id === id ? data : t)));
     } catch (err) {
       setError(
         err instanceof Error ? err.message : "Failed to update technology"
       );
+      throw err;
     }
   };
 
   const deleteTechnology = async (id: string) => {
     try {
-      const { error } = await supabase
-        .from("technologies")
-        .delete()
-        .eq("id", id);
+      const response = await fetch(`/api/admin/technologies/${id}`, {
+        method: "DELETE",
+      });
 
-      if (error) throw error;
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || "Failed to delete technology");
+      }
 
       setTechnologies((prev) => prev.filter((t) => t.id !== id));
     } catch (err) {
       setError(
         err instanceof Error ? err.message : "Failed to delete technology"
       );
+      throw err;
     }
   };
 
   // Review functions
   const addReview = async (review: Omit<Review, "id">) => {
     try {
-      const { data, error } = await supabase
-        .from("reviews")
-        .insert([
-          {
-            text: review.text,
-            author: review.author,
-            company: review.company,
-            position: review.position,
-            translations: review.translations,
-            rating: review.rating,
-            avatar: review.avatar,
-            date: review.date,
-          },
-        ])
-        .select()
-        .single();
+      const response = await fetch("/api/admin/reviews", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(review),
+      });
 
-      if (error) throw error;
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || "Failed to add review");
+      }
 
+      const data = await response.json();
       setReviews((prev) => [data, ...prev]);
       return data;
     } catch (err) {
@@ -297,33 +264,20 @@ export function SupabaseProvider({ children }: { children: React.ReactNode }) {
 
   const updateReview = async (id: string, review: Partial<Review>) => {
     try {
-      const updateData = {
-        text: review.text,
-        author: review.author,
-        company: review.company,
-        position: review.position,
-        translations: review.translations,
-        rating: review.rating,
-        avatar: review.avatar,
-        date: review.date,
-        updated_at: new Date().toISOString(),
-      };
+      const response = await fetch(`/api/admin/reviews/${id}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(review),
+      });
 
-      const { data, error } = await supabase
-        .from("reviews")
-        .update(updateData)
-        .eq("id", id)
-        .select()
-        .single();
-
-      if (error) {
-        throw error;
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || "Failed to update review");
       }
 
-      if (!data) {
-        throw new Error("No data returned from update operation");
-      }
-
+      const data = await response.json();
       setReviews((prev) => prev.map((r) => (r.id === id ? data : r)));
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to update review");
@@ -333,13 +287,19 @@ export function SupabaseProvider({ children }: { children: React.ReactNode }) {
 
   const deleteReview = async (id: string) => {
     try {
-      const { error } = await supabase.from("reviews").delete().eq("id", id);
+      const response = await fetch(`/api/admin/reviews/${id}`, {
+        method: "DELETE",
+      });
 
-      if (error) throw error;
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || "Failed to delete review");
+      }
 
       setReviews((prev) => prev.filter((r) => r.id !== id));
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to delete review");
+      throw err;
     }
   };
 
@@ -374,52 +334,73 @@ export function SupabaseProvider({ children }: { children: React.ReactNode }) {
 
   const updateContactMessageStatus = async (id: string, status: ContactMessage["status"]) => {
     try {
-      const { data, error } = await supabase
-        .from("contact_messages")
-        .update({ status })
-        .eq("id", id)
-        .select()
-        .single();
+      const response = await fetch(`/api/admin/contact-messages/${id}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ status }),
+      });
 
-      if (error) throw error;
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || "Failed to update message status");
+      }
 
+      const data = await response.json();
       setContactMessages((prev) => prev.map((m) => (m.id === id ? data : m)));
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to update message status");
+      throw err;
     }
   };
 
   const deleteContactMessage = async (id: string) => {
     try {
-      const { error } = await supabase.from("contact_messages").delete().eq("id", id);
+      const response = await fetch(`/api/admin/contact-messages/${id}`, {
+        method: "DELETE",
+      });
 
-      if (error) throw error;
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || "Failed to delete message");
+      }
 
       setContactMessages((prev) => prev.filter((m) => m.id !== id));
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to delete message");
+      throw err;
     }
   };
 
   // Contact info functions
   const updateContactInfo = async (info: Partial<ContactInfo>) => {
     try {
-      const { data, error } = await supabase
-        .from("contact_info")
-        .update({
-          email: info.email,
-          phone: info.phone,
-          location: info.location,
-          translations: info.translations,
-        })
-        .eq("id", "00000000-0000-0000-0000-000000000001")
-        .select()
-        .single();
+      console.log("🔄 updateContactInfo - Request payload:", info);
+      // Use API route to bypass RLS policies
+      const response = await fetch("/api/admin/contact-info", {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(info),
+      });
 
-      if (error) throw error;
+      console.log("📡 updateContactInfo - Response status:", response.status, response.statusText);
 
+      if (!response.ok) {
+        const errorData = await response.json();
+        console.error("❌ updateContactInfo - Error response:", errorData);
+        throw new Error(errorData.message || "Failed to update contact info");
+      }
+
+      const data = await response.json();
+      console.log("✅ updateContactInfo - Success, received data:", data);
+      // Update state immediately with the returned data
       setContactInfo(data);
+      return data;
     } catch (err) {
+      console.error("❌ updateContactInfo - Exception:", err);
       setError(err instanceof Error ? err.message : "Failed to update contact info");
       throw err;
     }

@@ -4,12 +4,16 @@ import { useState, useEffect } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { ChevronLeft, ChevronRight, Star } from "lucide-react";
-import { useSupabase } from "@/lib/supabase-context";
 import { useLanguage } from "@/hooks/use-language";
 import type { Review } from "@/lib/data-context";
 
-export function ReviewsCarousel() {
-  const { reviews, loading, error } = useSupabase();
+interface ReviewsCarouselProps {
+  reviews: Review[];
+}
+
+export function ReviewsCarousel({ reviews }: ReviewsCarouselProps) {
+  const loading = false;
+  const error = null;
   const { language } = useLanguage();
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isAutoPlaying, setIsAutoPlaying] = useState(true);

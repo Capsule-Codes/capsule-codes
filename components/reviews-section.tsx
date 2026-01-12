@@ -2,19 +2,14 @@
 
 import { ReviewsCarousel } from "./reviews-carousel";
 import { useLanguage } from "@/hooks/use-language";
+import type { Review } from "@/lib/data-context";
 
-export function ReviewsSection() {
+interface ReviewsSectionProps {
+  reviews: Review[]
+}
+
+export function ReviewsSection({ reviews }: ReviewsSectionProps) {
   const { t } = useLanguage();
-
-  // Check if Supabase is configured
-  const isSupabaseConfigured =
-    process.env.NEXT_PUBLIC_SUPABASE_URL &&
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
-
-  // Don't render the section if Supabase is not configured
-  if (!isSupabaseConfigured) {
-    return null;
-  }
 
   return (
     <section
@@ -31,7 +26,7 @@ export function ReviewsSection() {
           </p>
         </div>
 
-        <ReviewsCarousel />
+        <ReviewsCarousel reviews={reviews} />
       </div>
     </section>
   );

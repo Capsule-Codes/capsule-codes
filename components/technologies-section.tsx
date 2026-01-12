@@ -1,12 +1,16 @@
 "use client"
 
-import { useData } from "@/lib/data-context"
 import { Card, CardContent } from "@/components/ui/card"
 import { useLanguage } from "@/hooks/use-language"
+import type { Technology } from "@/lib/data-context"
 
-export function TechnologiesSection() {
+interface TechnologiesSectionProps {
+  technologies?: Technology[]
+}
+
+export function TechnologiesSection({ technologies: technologiesProp }: TechnologiesSectionProps = {}) {
   const { t } = useLanguage()
-  const { technologies } = useData()
+  const technologies = technologiesProp || []
 
   // Group technologies by category
   const groupedTechnologies = technologies.reduce(

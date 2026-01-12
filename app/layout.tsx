@@ -4,9 +4,6 @@ import { GeistSans } from "geist/font/sans";
 import { GeistMono } from "geist/font/mono";
 import { Analytics } from "@vercel/analytics/next";
 import { LanguageProvider } from "@/hooks/use-language";
-import { DataProvider } from "@/lib/data-context";
-import { SupabaseProvider } from "@/lib/supabase-context";
-import { AuthProvider } from "@/hooks/use-auth";
 import { Suspense } from "react";
 import "./globals.css";
 
@@ -83,13 +80,7 @@ export default function RootLayout({
     <html lang="en">
       <body className={`font-sans ${GeistSans.variable} ${GeistMono.variable}`}>
         <Suspense fallback={null}>
-          <SupabaseProvider>
-            <AuthProvider>
-              <DataProvider>
-                <LanguageProvider>{children}</LanguageProvider>
-              </DataProvider>
-            </AuthProvider>
-          </SupabaseProvider>
+          <LanguageProvider>{children}</LanguageProvider>
         </Suspense>
         <Analytics />
       </body>

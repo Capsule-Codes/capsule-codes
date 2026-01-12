@@ -56,6 +56,20 @@ export default function AdminPage() {
   const [loginError, setLoginError] = useState("");
   const { t, language } = useLanguage();
 
+  // Helper function to extract error message
+  const getErrorMessage = (error: unknown): string => {
+    if (error instanceof Error) {
+      return error.message;
+    }
+    if (typeof error === "string") {
+      return error;
+    }
+    if (error && typeof error === "object" && "message" in error) {
+      return String(error.message);
+    }
+    return String(error) || "Unknown error";
+  };
+
   // Use language context directly for project content display
   const websiteLanguage = language;
 
@@ -293,7 +307,9 @@ export default function AdminPage() {
       setUploadingImages(false);
     } catch (error) {
       console.error("Error saving project:", error);
-      setImageUploadError("Error saving project");
+      const errorMessage = getErrorMessage(error);
+      setImageUploadError(`Error saving project: ${errorMessage}`);
+      alert(`Error saving project: ${errorMessage}`);
       setUploadingImages(false);
     }
   };
@@ -301,8 +317,11 @@ export default function AdminPage() {
   const handleDeleteProject = async (id: string) => {
     try {
       await deleteProject(id);
+      await refreshData();
     } catch (error) {
-      // Error handled silently
+      const errorMessage = getErrorMessage(error);
+      console.error("Error deleting project:", error);
+      alert(`Error deleting project: ${errorMessage}`);
     }
   };
 
@@ -429,7 +448,8 @@ export default function AdminPage() {
       resetTechForm();
     } catch (error) {
       console.error("❌ Error in handleSaveTechnology:", error);
-      alert(`${t.admin.technologies.saveError}: ${error instanceof Error ? error.message : "Error"}`);
+      const errorMessage = getErrorMessage(error);
+      alert(`${t.admin.technologies.saveError}: ${errorMessage}`);
     } finally {
       setIsSavingTech(false);
     }
@@ -444,7 +464,8 @@ export default function AdminPage() {
       await deleteTechnology(id);
       await refreshData();
     } catch (error) {
-      alert(`${t.admin.technologies.deleteError}: ${error instanceof Error ? error.message : "Error"}`);
+      const errorMessage = getErrorMessage(error);
+      alert(`${t.admin.technologies.deleteError}: ${errorMessage}`);
     }
   };
 
@@ -553,7 +574,8 @@ export default function AdminPage() {
       resetReviewForm();
       setIsReviewDialogOpen(false);
     } catch (error) {
-      alert(`${t.admin.reviews.saveError}: ${error instanceof Error ? error.message : "Error"}`);
+      const errorMessage = getErrorMessage(error);
+      alert(`${t.admin.reviews.saveError}: ${errorMessage}`);
     } finally {
       setIsSavingReview(false);
       setUploadingAvatar(false);
@@ -590,7 +612,8 @@ export default function AdminPage() {
       await deleteReview(id);
       await refreshData();
     } catch (error) {
-      alert(`${t.admin.reviews.deleteError}: ${error instanceof Error ? error.message : "Error"}`);
+      const errorMessage = getErrorMessage(error);
+      alert(`${t.admin.reviews.deleteError}: ${errorMessage}`);
     }
   };
 

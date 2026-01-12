@@ -9,15 +9,18 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Mail, Phone, MapPin, Send, CheckCircle2, XCircle, Loader2 } from "lucide-react";
 import { useLanguage } from "@/hooks/use-language";
-import { useSupabase } from "@/lib/supabase-context";
 import { contactFormSchema, type ContactFormData } from "@/lib/validations/contact";
 import { Alert, AlertDescription } from "@/components/ui/alert";
+import type { ContactInfo } from "@/lib/types/contact";
 
 type FormStatus = "idle" | "loading" | "success" | "error";
 
-export function ContactSection() {
+interface ContactSectionProps {
+  contactInfo: ContactInfo | null;
+}
+
+export function ContactSection({ contactInfo }: ContactSectionProps) {
   const { t } = useLanguage();
-  const { addContactMessage, contactInfo } = useSupabase();
 
   const [formData, setFormData] = useState<ContactFormData>({
     name: "",
@@ -38,15 +41,17 @@ export function ContactSection() {
       // Validate with Zod
       const validatedData = contactFormSchema.parse(formData);
 
-      // Save to Supabase
-      await addContactMessage(validatedData);
-
-      // Optionally send email notification
-      await fetch("/api/contact", {
+      // Save to Supabase via API route
+      const response = await fetch("/api/contact", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(validatedData),
       });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || "Failed to send message");
+      }
 
       setStatus("success");
       // Reset form

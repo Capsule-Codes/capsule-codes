@@ -26,9 +26,37 @@ export function ContactInfoSettings() {
   });
   const [isSaving, setIsSaving] = useState(false);
 
+  // Helper function to extract error message
+  const getErrorMessage = (error: unknown): string => {
+    if (error instanceof Error) {
+      return error.message;
+    }
+    if (typeof error === "string") {
+      return error;
+    }
+    if (error && typeof error === "object" && "message" in error) {
+      return String(error.message);
+    }
+    return String(error) || "Unknown error";
+  };
+
   useEffect(() => {
+    console.log("ContactInfo changed in component:", contactInfo);
     if (contactInfo) {
+      console.log("Setting formData to:", contactInfo);
       setFormData(contactInfo);
+    } else {
+      // Reset form data when contactInfo is null/undefined
+      setFormData({
+        email: "",
+        phone: "",
+        location: "",
+        translations: {
+          en: { location: "" },
+          es: { location: "" },
+          it: { location: "" },
+        },
+      });
     }
   }, [contactInfo]);
 
@@ -36,11 +64,16 @@ export function ContactInfoSettings() {
     e.preventDefault();
     setIsSaving(true);
     try {
+      console.log("🔄 handleSubmit - formData before update:", formData);
       await updateContactInfo(formData);
-      await refreshData();
+      console.log("✅ handleSubmit - updateContactInfo completed successfully");
+      // updateContactInfo already updates the state with the returned data from the API
+      // No need to call refreshData() which would fetch old cached data
       alert(t.admin.contactInfo.updated);
     } catch (error) {
-      alert(`${t.admin.contactInfo.updateError}: ${error instanceof Error ? error.message : "Error"}`);
+      const errorMessage = getErrorMessage(error);
+      console.error("❌ Error updating contact info:", error);
+      alert(`${t.admin.contactInfo.updateError}: ${errorMessage}`);
     } finally {
       setIsSaving(false);
     }
