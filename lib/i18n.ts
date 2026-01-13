@@ -63,7 +63,6 @@ export interface Translations {
   technologies: {
     title: string;
     subtitle: string;
-    powerLevel: string;
     categories: {
       frontend: string;
       mobile: string;
@@ -80,6 +79,7 @@ export interface Translations {
     viewDemo: string;
     viewLive: string;
     backToHome: string;
+    backToProjects: string;
     projectTitles: {
       ecommerce: string;
       fitness: string;
@@ -200,6 +200,39 @@ export interface Translations {
     privacyPolicy: string;
     termsOfService: string;
     quote: string;
+  };
+  // Legal Pages
+  legal: {
+    privacyPolicy: {
+      title: string;
+      lastUpdated: string;
+      sections: {
+        introduction: string;
+        dataCollection: string;
+        dataUsage: string;
+        dataProtection: string;
+        cookies: string;
+        thirdParty: string;
+        rights: string;
+        changes: string;
+        contact: string;
+      };
+    };
+    termsOfService: {
+      title: string;
+      lastUpdated: string;
+      sections: {
+        introduction: string;
+        services: string;
+        userObligations: string;
+        intellectualProperty: string;
+        payment: string;
+        liability: string;
+        termination: string;
+        changes: string;
+        contact: string;
+      };
+    };
   };
   // Admin Panel
   admin: {
@@ -349,7 +382,6 @@ export const translations: Record<Language, Translations> = {
       title: "Our Technology Stack",
       subtitle:
         "We use the most modern and proven technologies to ensure your project is scalable, maintainable, and future-ready.",
-      powerLevel: "Technological Power Level: OVER 9000! 🐉",
       categories: {
         frontend: "Frontend",
         mobile: "Mobile",
@@ -366,6 +398,7 @@ export const translations: Record<Language, Translations> = {
       viewDemo: "View Demo",
       viewLive: "View Live",
       backToHome: "Back to Home",
+      backToProjects: "Back to Projects",
       projectTitles: {
         ecommerce: "Futuristic E-Commerce",
         fitness: "Social Fitness App",
@@ -499,6 +532,39 @@ export const translations: Record<Language, Translations> = {
       rights: "All rights reserved.",
       privacyPolicy: "Privacy Policy",
       termsOfService: "Terms of Service",
+    },
+    legal: {
+      privacyPolicy: {
+        title: "Privacy Policy",
+        lastUpdated: "Last updated: January 2024",
+        sections: {
+          introduction: "At Capsule Codes, we are committed to protecting your privacy. This Privacy Policy explains how we collect, use, and safeguard your personal information when you visit our website or use our services.",
+          dataCollection: "We collect information that you provide directly to us, such as when you fill out our contact form, including your name, email address, company name, and any messages you send us.",
+          dataUsage: "We use the information we collect to respond to your inquiries, provide our services, improve our website, and communicate with you about our services and updates.",
+          dataProtection: "We implement appropriate technical and organizational measures to protect your personal information against unauthorized access, alteration, disclosure, or destruction.",
+          cookies: "Our website uses cookies to enhance your browsing experience. You can choose to disable cookies through your browser settings, though this may affect website functionality.",
+          thirdParty: "We do not sell, trade, or rent your personal information to third parties. We may share information with trusted service providers who assist us in operating our website and conducting our business.",
+          rights: "You have the right to access, correct, or delete your personal information at any time. Please contact us if you wish to exercise these rights.",
+          changes: "We may update this Privacy Policy from time to time. We will notify you of any changes by posting the new Privacy Policy on this page.",
+          contact: "If you have any questions about this Privacy Policy, please contact us at info@capsulecodes.com.",
+        },
+      },
+      termsOfService: {
+        title: "Terms of Service",
+        lastUpdated: "Last updated: January 2024",
+        sections: {
+          introduction: "These Terms of Service govern your access to and use of Capsule Codes' website and services. By accessing or using our services, you agree to be bound by these Terms.",
+          services: "Capsule Codes provides web and mobile development services, technical consulting, and related services as described on our website. All services are subject to availability and our acceptance of your project.",
+          userObligations: "You agree to provide accurate information when using our services and to use our services only for lawful purposes. You are responsible for maintaining the confidentiality of any account credentials.",
+          intellectualProperty: "All content on this website, including but not limited to text, graphics, logos, and software, is the property of Capsule Codes and is protected by intellectual property laws.",
+          payment: "Payment terms will be agreed upon in writing before the commencement of any project. All fees are non-refundable unless otherwise stated in your specific service agreement.",
+          liability: "Capsule Codes provides services 'as is' and makes no warranties, expressed or implied. We are not liable for any indirect, incidental, or consequential damages arising from your use of our services.",
+          termination: "We reserve the right to terminate or suspend access to our services at any time, without prior notice, for conduct that we believe violates these Terms or is harmful to other users.",
+          changes: "We reserve the right to modify these Terms at any time. We will notify users of any material changes by posting the updated Terms on this page.",
+          contact: "If you have any questions about these Terms of Service, please contact us at info@capsulecodes.com.",
+        },
+      },
+    },
       quote: "Power comes in response to a need, not a desire. - Goku 🐉",
     },
     admin: {
@@ -646,7 +712,6 @@ export const translations: Record<Language, Translations> = {
       title: "Nuestro Stack Tecnológico",
       subtitle:
         "Utilizamos las tecnologías más modernas y probadas para garantizar que tu proyecto sea escalable, mantenible y esté preparado para el futuro.",
-      powerLevel: "Nivel de Poder Tecnológico: ¡MÁS DE 9000! 🐉",
       categories: {
         frontend: "Frontend",
         mobile: "Mobile",
@@ -663,6 +728,7 @@ export const translations: Record<Language, Translations> = {
       viewDemo: "Ver Demo",
       viewLive: "Ver en Vivo",
       backToHome: "Volver al Inicio",
+      backToProjects: "Volver a Proyectos",
       projectTitles: {
         ecommerce: "E-Commerce Futurista",
         fitness: "App de Fitness Social",
@@ -796,6 +862,39 @@ export const translations: Record<Language, Translations> = {
       rights: "Todos los derechos reservados.",
       privacyPolicy: "Política de Privacidad",
       termsOfService: "Términos de Servicio",
+    },
+    legal: {
+      privacyPolicy: {
+        title: "Política de Privacidad",
+        lastUpdated: "Última actualización: Enero 2024",
+        sections: {
+          introduction: "En Capsule Codes, nos comprometemos a proteger su privacidad. Esta Política de Privacidad explica cómo recopilamos, usamos y protegemos su información personal cuando visita nuestro sitio web o utiliza nuestros servicios.",
+          dataCollection: "Recopilamos información que nos proporciona directamente, como cuando completa nuestro formulario de contacto, incluyendo su nombre, dirección de correo electrónico, nombre de la empresa y cualquier mensaje que nos envíe.",
+          dataUsage: "Utilizamos la información que recopilamos para responder a sus consultas, proporcionar nuestros servicios, mejorar nuestro sitio web y comunicarnos con usted sobre nuestros servicios y actualizaciones.",
+          dataProtection: "Implementamos medidas técnicas y organizativas apropiadas para proteger su información personal contra acceso no autorizado, alteración, divulgación o destrucción.",
+          cookies: "Nuestro sitio web utiliza cookies para mejorar su experiencia de navegación. Puede elegir deshabilitar las cookies a través de la configuración de su navegador, aunque esto puede afectar la funcionalidad del sitio web.",
+          thirdParty: "No vendemos, intercambiamos ni alquilamos su información personal a terceros. Podemos compartir información con proveedores de servicios de confianza que nos ayudan a operar nuestro sitio web y realizar nuestro negocio.",
+          rights: "Usted tiene derecho a acceder, corregir o eliminar su información personal en cualquier momento. Por favor contáctenos si desea ejercer estos derechos.",
+          changes: "Podemos actualizar esta Política de Privacidad de vez en cuando. Le notificaremos cualquier cambio publicando la nueva Política de Privacidad en esta página.",
+          contact: "Si tiene alguna pregunta sobre esta Política de Privacidad, por favor contáctenos en info@capsulecodes.com.",
+        },
+      },
+      termsOfService: {
+        title: "Términos de Servicio",
+        lastUpdated: "Última actualización: Enero 2024",
+        sections: {
+          introduction: "Estos Términos de Servicio rigen su acceso y uso del sitio web y servicios de Capsule Codes. Al acceder o utilizar nuestros servicios, usted acepta estar sujeto a estos Términos.",
+          services: "Capsule Codes proporciona servicios de desarrollo web y móvil, consultoría técnica y servicios relacionados según se describe en nuestro sitio web. Todos los servicios están sujetos a disponibilidad y nuestra aceptación de su proyecto.",
+          userObligations: "Usted acepta proporcionar información precisa al usar nuestros servicios y usar nuestros servicios solo para fines legales. Usted es responsable de mantener la confidencialidad de cualquier credencial de cuenta.",
+          intellectualProperty: "Todo el contenido en este sitio web, incluyendo pero no limitado a texto, gráficos, logotipos y software, es propiedad de Capsule Codes y está protegido por las leyes de propiedad intelectual.",
+          payment: "Los términos de pago se acordarán por escrito antes del inicio de cualquier proyecto. Todas las tarifas no son reembolsables a menos que se indique lo contrario en su acuerdo de servicio específico.",
+          liability: "Capsule Codes proporciona servicios 'tal como están' y no otorga garantías, expresas o implícitas. No somos responsables de ningún daño indirecto, incidental o consecuente que surja del uso de nuestros servicios.",
+          termination: "Nos reservamos el derecho de terminar o suspender el acceso a nuestros servicios en cualquier momento, sin previo aviso, por conducta que creemos que viola estos Términos o es perjudicial para otros usuarios.",
+          changes: "Nos reservamos el derecho de modificar estos Términos en cualquier momento. Notificaremos a los usuarios de cualquier cambio material publicando los Términos actualizados en esta página.",
+          contact: "Si tiene alguna pregunta sobre estos Términos de Servicio, por favor contáctenos en info@capsulecodes.com.",
+        },
+      },
+    },
       quote: "El poder viene en respuesta a una necesidad, no a un deseo. - Goku 🐉",
     },
     admin: {
@@ -943,7 +1042,6 @@ export const translations: Record<Language, Translations> = {
       title: "Il Nostro Stack Tecnologico",
       subtitle:
         "Utilizziamo le tecnologie più moderne e collaudate per garantire che il tuo progetto sia scalabile, manutenibile e pronto per il futuro.",
-      powerLevel: "Livello di Potenza Tecnologica: OLTRE 9000! 🐉",
       categories: {
         frontend: "Frontend",
         mobile: "Mobile",
@@ -960,6 +1058,7 @@ export const translations: Record<Language, Translations> = {
       viewDemo: "Vedi Demo",
       viewLive: "Vedi Live",
       backToHome: "Torna alla Home",
+      backToProjects: "Torna ai Progetti",
       projectTitles: {
         ecommerce: "E-Commerce Futuristico",
         fitness: "App Fitness Sociale",
@@ -1092,6 +1191,39 @@ export const translations: Record<Language, Translations> = {
       rights: "Tutti i diritti riservati.",
       privacyPolicy: "Informativa sulla Privacy",
       termsOfService: "Termini di Servizio",
+    },
+    legal: {
+      privacyPolicy: {
+        title: "Informativa sulla Privacy",
+        lastUpdated: "Ultimo aggiornamento: Gennaio 2024",
+        sections: {
+          introduction: "In Capsule Codes, ci impegniamo a proteggere la tua privacy. Questa Informativa sulla Privacy spiega come raccogliamo, utilizziamo e proteggiamo le tue informazioni personali quando visiti il nostro sito web o utilizzi i nostri servizi.",
+          dataCollection: "Raccogliamo informazioni che ci fornisci direttamente, come quando compili il nostro modulo di contatto, incluso il tuo nome, indirizzo email, nome dell'azienda e qualsiasi messaggio che ci invii.",
+          dataUsage: "Utilizziamo le informazioni che raccogliamo per rispondere alle tue richieste, fornire i nostri servizi, migliorare il nostro sito web e comunicare con te riguardo ai nostri servizi e aggiornamenti.",
+          dataProtection: "Implementiamo misure tecniche e organizzative appropriate per proteggere le tue informazioni personali da accesso non autorizzato, alterazione, divulgazione o distruzione.",
+          cookies: "Il nostro sito web utilizza cookie per migliorare la tua esperienza di navigazione. Puoi scegliere di disabilitare i cookie attraverso le impostazioni del tuo browser, sebbene ciò possa influenzare la funzionalità del sito web.",
+          thirdParty: "Non vendiamo, scambiamo o affittiamo le tue informazioni personali a terze parti. Potremmo condividere informazioni con fornitori di servizi fidati che ci assistono nell'operare il nostro sito web e condurre la nostra attività.",
+          rights: "Hai il diritto di accedere, correggere o eliminare le tue informazioni personali in qualsiasi momento. Per favore contattaci se desideri esercitare questi diritti.",
+          changes: "Potremmo aggiornare questa Informativa sulla Privacy di tanto in tanto. Ti notificheremo eventuali modifiche pubblicando la nuova Informativa sulla Privacy su questa pagina.",
+          contact: "Se hai domande su questa Informativa sulla Privacy, per favore contattaci a info@capsulecodes.com.",
+        },
+      },
+      termsOfService: {
+        title: "Termini di Servizio",
+        lastUpdated: "Ultimo aggiornamento: Gennaio 2024",
+        sections: {
+          introduction: "Questi Termini di Servizio disciplinano il tuo accesso e utilizzo del sito web e dei servizi di Capsule Codes. Accedendo o utilizzando i nostri servizi, accetti di essere vincolato da questi Termini.",
+          services: "Capsule Codes fornisce servizi di sviluppo web e mobile, consulenza tecnica e servizi correlati come descritto sul nostro sito web. Tutti i servizi sono soggetti a disponibilità e alla nostra accettazione del tuo progetto.",
+          userObligations: "Accetti di fornire informazioni accurate quando utilizzi i nostri servizi e di utilizzare i nostri servizi solo per scopi legali. Sei responsabile di mantenere la riservatezza di eventuali credenziali dell'account.",
+          intellectualProperty: "Tutto il contenuto su questo sito web, inclusi ma non limitati a testo, grafica, loghi e software, è di proprietà di Capsule Codes ed è protetto dalle leggi sulla proprietà intellettuale.",
+          payment: "I termini di pagamento saranno concordati per iscritto prima dell'inizio di qualsiasi progetto. Tutte le tariffe non sono rimborsabili a meno che non sia diversamente indicato nel tuo accordo di servizio specifico.",
+          liability: "Capsule Codes fornisce servizi 'così come sono' e non fornisce garanzie, espresse o implicite. Non siamo responsabili per eventuali danni indiretti, incidentali o consequenziali derivanti dal tuo utilizzo dei nostri servizi.",
+          termination: "Ci riserviamo il diritto di terminare o sospendere l'accesso ai nostri servizi in qualsiasi momento, senza preavviso, per condotta che riteniamo violi questi Termini o sia dannosa per altri utenti.",
+          changes: "Ci riserviamo il diritto di modificare questi Termini in qualsiasi momento. Notificheremo gli utenti di eventuali modifiche materiali pubblicando i Termini aggiornati su questa pagina.",
+          contact: "Se hai domande su questi Termini di Servizio, per favore contattaci a info@capsulecodes.com.",
+        },
+      },
+    },
       quote: "Il potere viene in risposta a un bisogno, non a un desiderio. - Goku 🐉",
     },
     admin: {

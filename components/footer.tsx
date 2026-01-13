@@ -10,23 +10,10 @@ export function Footer() {
   const currentYear = new Date().getFullYear()
 
   const footerLinks = {
-    servicios: [
-      { name: t.services.web.title, href: "#services" },
-      { name: t.services.mobile.title, href: "#services" },
-      { name: t.services.backend.title, href: "#services" },
-      { name: t.services.consulting.title, href: "#services" },
-    ],
-    tecnologias: [
-      { name: "React & Next.js", href: "#technologies" },
-      { name: "React Native", href: "#technologies" },
-      { name: "Node.js", href: "#technologies" },
-      { name: "Supabase", href: "#technologies" },
-    ],
     empresa: [
       { name: t.nav.about, href: "#about" },
       { name: t.nav.projects, href: "#projects" },
       { name: t.nav.contact, href: "#contact" },
-      { name: t.footer.blog, href: "#" },
     ],
   }
 
@@ -38,7 +25,7 @@ export function Footer() {
   return (
     <footer className="bg-card border-t border-border">
       <div className="container mx-auto px-4 py-16">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {/* Brand Section */}
           <div className="lg:col-span-2">
             <Link href="/" className="flex items-center space-x-3 mb-6">
@@ -60,40 +47,6 @@ export function Footer() {
                 </Link>
               ))}
             </div>
-          </div>
-
-          {/* Services */}
-          <div>
-            <h3 className="font-semibold text-foreground mb-4">{t.footer.services}</h3>
-            <ul className="space-y-3">
-              {footerLinks.servicios.map((link, index) => (
-                <li key={index}>
-                  <Link
-                    href={link.href}
-                    className="text-muted-foreground hover:text-primary transition-colors duration-200"
-                  >
-                    {link.name}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          {/* Technologies */}
-          <div>
-            <h3 className="font-semibold text-foreground mb-4">{t.footer.technologies}</h3>
-            <ul className="space-y-3">
-              {footerLinks.tecnologias.map((link, index) => (
-                <li key={index}>
-                  <Link
-                    href={link.href}
-                    className="text-muted-foreground hover:text-primary transition-colors duration-200"
-                  >
-                    {link.name}
-                  </Link>
-                </li>
-              ))}
-            </ul>
           </div>
 
           {/* Company */}
@@ -121,10 +74,10 @@ export function Footer() {
               © {currentYear} Capsule Codes. {t.footer.rights}
             </p>
             <div className="flex items-center space-x-6 text-sm text-muted-foreground">
-              <Link href="#" className="hover:text-primary transition-colors duration-200">
+              <Link href="/privacy" className="hover:text-primary transition-colors duration-200">
                 {t.footer.privacyPolicy}
               </Link>
-              <Link href="#" className="hover:text-primary transition-colors duration-200">
+              <Link href="/terms" className="hover:text-primary transition-colors duration-200">
                 {t.footer.termsOfService}
               </Link>
             </div>

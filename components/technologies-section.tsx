@@ -35,7 +35,7 @@ export function TechnologiesSection({ technologies: technologiesProp }: Technolo
   const categoryOrder = ["frontend", "mobile", "backend", "database", "deployment"]
 
   return (
-    <section id="technologies" className="py-20 bg-muted/30">
+    <section id="technologies" className="py-20 bg-muted/30 scroll-mt-24">
       <div className="container mx-auto px-4">
         <div className="text-center mb-16">
           <h2 className="text-3xl md:text-4xl font-bold mb-4">
@@ -77,15 +77,6 @@ export function TechnologiesSection({ technologies: technologiesProp }: Technolo
               </Card>
             )
           })}
-        </div>
-
-        <div className="mt-16 text-center">
-          <div className="inline-flex items-center px-6 py-3 bg-gradient-to-r from-primary/10 to-secondary/10 border border-primary/20 rounded-full">
-            <span className="text-sm font-medium text-primary mr-2">{t.technologies.powerLevel.split(":")[0]}:</span>
-            <span className="text-lg font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
-              {t.technologies.powerLevel.split(":")[1]}
-            </span>
-          </div>
         </div>
       </div>
     </section>

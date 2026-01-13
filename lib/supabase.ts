@@ -15,9 +15,9 @@ export interface Database {
           title: string;
           description: string;
           translations: {
-            en: { title: string; description: string };
-            es: { title: string; description: string };
-            it: { title: string; description: string };
+            en: { title: string; subtitle?: string; description: string };
+            es: { title: string; subtitle?: string; description: string };
+            it: { title: string; subtitle?: string; description: string };
           };
           image: string;
           technologies: string[];
@@ -32,9 +32,9 @@ export interface Database {
           title: string;
           description: string;
           translations: {
-            en: { title: string; description: string };
-            es: { title: string; description: string };
-            it: { title: string; description: string };
+            en: { title: string; subtitle?: string; description: string };
+            es: { title: string; subtitle?: string; description: string };
+            it: { title: string; subtitle?: string; description: string };
           };
           image: string;
           technologies: string[];
@@ -49,9 +49,9 @@ export interface Database {
           title?: string;
           description?: string;
           translations?: {
-            en: { title: string; description: string };
-            es: { title: string; description: string };
-            it: { title: string; description: string };
+            en: { title: string; subtitle?: string; description: string };
+            es: { title: string; subtitle?: string; description: string };
+            it: { title: string; subtitle?: string; description: string };
           };
           image?: string;
           technologies?: string[];

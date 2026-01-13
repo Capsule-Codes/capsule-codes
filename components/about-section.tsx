@@ -31,7 +31,7 @@ export function AboutSection() {
   ]
 
   return (
-    <section id="about" className="py-20 bg-muted/30">
+    <section id="about" className="py-20 bg-muted/30 scroll-mt-24">
       <div className="container mx-auto px-4">
         <div className="text-center mb-16">
           <h2 className="text-3xl md:text-4xl font-bold mb-4">
@@ -50,8 +50,47 @@ export function AboutSection() {
             <p className="text-lg text-muted-foreground leading-relaxed">{t.about.mission.paragraph2}</p>
           </div>
           <div className="relative">
-            <div className="w-full h-80 bg-gradient-to-br from-primary/20 to-secondary/20 rounded-2xl flex items-center justify-center">
-              <div className="text-6xl animate-float">🐉</div>
+            <div className="w-full h-80 bg-gradient-to-br from-primary/20 to-secondary/20 rounded-2xl flex items-center justify-center overflow-hidden">
+              {/* Dragon */}
+              <div className="text-6xl animate-float z-10 relative">🐉</div>
+              
+              {/* Code lines coming from dragon */}
+              <div className="absolute inset-0 pointer-events-none">
+                {/* Line 1 */}
+                <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 animate-code-flow-1">
+                  <div className="text-xs font-mono text-primary/80 whitespace-nowrap">
+                    const code = {"{"}...{"}"};
+                  </div>
+                </div>
+                
+                {/* Line 2 */}
+                <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 animate-code-flow-2">
+                  <div className="text-xs font-mono text-secondary/80 whitespace-nowrap">
+                    {"<"}Component {"/>"}
+                  </div>
+                </div>
+                
+                {/* Line 3 */}
+                <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 animate-code-flow-3">
+                  <div className="text-xs font-mono text-accent/80 whitespace-nowrap">
+                    function() {"{"}...{"}"}
+                  </div>
+                </div>
+                
+                {/* Line 4 */}
+                <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 animate-code-flow-4">
+                  <div className="text-xs font-mono text-primary/80 whitespace-nowrap">
+                    export default
+                  </div>
+                </div>
+                
+                {/* Line 5 */}
+                <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 animate-code-flow-5">
+                  <div className="text-xs font-mono text-secondary/80 whitespace-nowrap">
+                    import React
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>

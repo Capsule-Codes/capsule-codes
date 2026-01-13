@@ -222,18 +222,6 @@ export function ReviewsCarousel({ reviews }: ReviewsCarouselProps) {
             <ChevronRight className="w-5 h-5" />
           </Button>
         </div>
-
-        {/* Auto-play Toggle */}
-        <div className="flex justify-center mt-4">
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => setIsAutoPlaying(!isAutoPlaying)}
-            className="text-muted-foreground hover:text-foreground"
-          >
-            {isAutoPlaying ? "⏸️ Pause" : "▶️ Auto-play"}
-          </Button>
-        </div>
       </div>
     </div>
   );

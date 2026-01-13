@@ -1,8 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Menu, X } from "lucide-react";
 import { DebugLanguageSwitcher } from "@/components/debug-language-switcher";
@@ -10,16 +11,57 @@ import { useLanguage } from "@/hooks/use-language";
 
 export function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [activeSection, setActiveSection] = useState<string>("");
+  const pathname = usePathname();
   const { t } = useLanguage();
 
   const navItems = [
-    { href: "#about", label: t.nav.about },
-    { href: "#services", label: t.nav.services },
-    { href: "#technologies", label: t.nav.technologies },
-    { href: "#projects", label: t.nav.projects },
-    { href: "#reviews", label: t.nav.reviews },
-    { href: "#contact", label: t.nav.contact },
+    { href: "#about", label: t.nav.about, id: "about" },
+    { href: "#services", label: t.nav.services, id: "services" },
+    { href: "#technologies", label: t.nav.technologies, id: "technologies" },
+    { href: "#projects", label: t.nav.projects, id: "projects" },
+    { href: "#reviews", label: t.nav.reviews, id: "reviews" },
+    { href: "#contact", label: t.nav.contact, id: "contact" },
   ];
+
+  // Detect active section based on scroll position
+  useEffect(() => {
+    if (pathname !== "/") return;
+
+    const handleScroll = () => {
+      const sections = navItems.map((item) => item.id);
+      const scrollPosition = window.scrollY + 150; // Offset for header
+
+      for (let i = sections.length - 1; i >= 0; i--) {
+        const section = document.getElementById(sections[i]);
+        if (section) {
+          const sectionTop = section.offsetTop;
+          const sectionHeight = section.offsetHeight;
+
+          if (scrollPosition >= sectionTop && scrollPosition < sectionTop + sectionHeight) {
+            setActiveSection(sections[i]);
+            return;
+          }
+        }
+      }
+      setActiveSection("");
+    };
+
+    handleScroll(); // Check on mount
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, [pathname]);
+
+  // Set active section based on pathname
+  useEffect(() => {
+    if (pathname === "/projects") {
+      setActiveSection("projects");
+    } else if (pathname.startsWith("/projects/")) {
+      setActiveSection("projects");
+    } else {
+      setActiveSection("");
+    }
+  }, [pathname]);
 
   const handleNavClick = (href: string) => {
     if (window.location.pathname !== "/") {
@@ -32,6 +74,10 @@ export function Header() {
       element.scrollIntoView({ behavior: "smooth" });
     }
     setIsMenuOpen(false);
+  };
+
+  const isActive = (itemId: string) => {
+    return activeSection === itemId;
   };
 
   return (
@@ -58,7 +104,11 @@ export function Header() {
               <button
                 key={item.href}
                 onClick={() => handleNavClick(item.href)}
-                className="text-foreground hover:text-primary transition-colors duration-200 font-medium cursor-pointer"
+                className={`transition-colors duration-200 font-medium cursor-pointer ${
+                  isActive(item.id)
+                    ? "text-primary"
+                    : "text-foreground hover:text-primary"
+                }`}
               >
                 {item.label}
               </button>
@@ -93,7 +143,11 @@ export function Header() {
                 <button
                   key={item.href}
                   onClick={() => handleNavClick(item.href)}
-                  className="text-foreground hover:text-primary transition-colors duration-200 font-medium text-left cursor-pointer py-1"
+                  className={`transition-colors duration-200 font-medium text-left cursor-pointer py-1 ${
+                    isActive(item.id)
+                      ? "text-primary"
+                      : "text-foreground hover:text-primary"
+                  }`}
                 >
                   {item.label}
                 </button>

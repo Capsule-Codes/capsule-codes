@@ -154,3 +154,113 @@
 .animate-pulse-glow {
   animation: pulse-glow 2s ease-in-out infinite;
 }
+
+/* Code flow animations for dragon */
+@keyframes code-flow-1 {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, -50%) translateX(0) translateY(0) scale(0.8);
+  }
+  10% {
+    opacity: 1;
+  }
+  90% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    transform: translate(-50%, -50%) translateX(-120px) translateY(-80px) scale(1.2);
+  }
+}
+
+@keyframes code-flow-2 {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, -50%) translateX(0) translateY(0) scale(0.8);
+  }
+  15% {
+    opacity: 1;
+  }
+  90% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    transform: translate(-50%, -50%) translateX(120px) translateY(-100px) scale(1.2);
+  }
+}
+
+@keyframes code-flow-3 {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, -50%) translateX(0) translateY(0) scale(0.8);
+  }
+  20% {
+    opacity: 1;
+  }
+  90% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    transform: translate(-50%, -50%) translateX(-100px) translateY(100px) scale(1.2);
+  }
+}
+
+@keyframes code-flow-4 {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, -50%) translateX(0) translateY(0) scale(0.8);
+  }
+  25% {
+    opacity: 1;
+  }
+  90% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    transform: translate(-50%, -50%) translateX(100px) translateY(80px) scale(1.2);
+  }
+}
+
+@keyframes code-flow-5 {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, -50%) translateX(0) translateY(0) scale(0.8);
+  }
+  30% {
+    opacity: 1;
+  }
+  90% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    transform: translate(-50%, -50%) translateX(-80px) translateY(-120px) scale(1.2);
+  }
+}
+
+.animate-code-flow-1 {
+  animation: code-flow-1 4s ease-out infinite;
+}
+
+.animate-code-flow-2 {
+  animation: code-flow-2 4s ease-out infinite;
+  animation-delay: 0.5s;
+}
+
+.animate-code-flow-3 {
+  animation: code-flow-3 4s ease-out infinite;
+  animation-delay: 1s;
+}
+
+.animate-code-flow-4 {
+  animation: code-flow-4 4s ease-out infinite;
+  animation-delay: 1.5s;
+}
+
+.animate-code-flow-5 {
+  animation: code-flow-5 4s ease-out infinite;
+  animation-delay: 2s;
+}

@@ -29,7 +29,7 @@ export function HeroSection() {
       <div className="container mx-auto px-4 py-20 text-center relative z-10">
         <div className="max-w-4xl mx-auto">
           {/* Badge */}
-          <div className="inline-flex items-center px-4 py-2 bg-primary/10 border border-primary/20 rounded-full text-primary text-sm font-medium mb-8">
+          <div className="inline-flex items-center px-4 py-2 bg-primary/10 border border-primary/20 rounded-full text-primary text-sm font-medium mt-12 mb-8">
             <Zap className="w-4 h-4 mr-2" />
             {t.hero.badge}
           </div>
@@ -79,14 +79,6 @@ export function HeroSection() {
             >
               {t.hero.cta.viewProjects}
               <ArrowRight className="ml-2 h-5 w-5" />
-            </Button>
-            <Button
-              size="lg"
-              variant="outline"
-              className="border-primary text-primary hover:bg-primary hover:text-primary-foreground text-lg px-8 py-6 bg-transparent"
-              onClick={() => document.getElementById("about")?.scrollIntoView({ behavior: "smooth" })}
-            >
-              {t.hero.cta.learnMore}
             </Button>
           </div>
         </div>

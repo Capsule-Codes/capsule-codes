@@ -83,7 +83,7 @@ export default function AdminPage() {
         websiteLanguage as keyof typeof project.translations
       ];
     }
-    return { title: project.title, description: project.description };
+    return { title: project.title, subtitle: "", description: project.description };
   };
 
   const handleLogin = async (e: React.FormEvent) => {
@@ -148,9 +148,9 @@ export default function AdminPage() {
     title: "",
     description: "",
     translations: {
-      en: { title: "", description: "" },
-      es: { title: "", description: "" },
-      it: { title: "", description: "" },
+      en: { title: "", subtitle: "", description: "" },
+      es: { title: "", subtitle: "", description: "" },
+      it: { title: "", subtitle: "", description: "" },
     },
     image: "",
     technologies: "",
@@ -203,9 +203,9 @@ export default function AdminPage() {
       title: project.title,
       description: project.description,
       translations: project.translations || {
-        en: { title: project.title, description: project.description },
-        es: { title: project.title, description: project.description },
-        it: { title: project.title, description: project.description },
+        en: { title: project.title, subtitle: "", description: project.description },
+        es: { title: project.title, subtitle: "", description: project.description },
+        it: { title: project.title, subtitle: "", description: project.description },
       },
       image: project.image,
       technologies: project.technologies.join(", "),
@@ -330,9 +330,9 @@ export default function AdminPage() {
       title: "",
       description: "",
       translations: {
-        en: { title: "", description: "" },
-        es: { title: "", description: "" },
-        it: { title: "", description: "" },
+        en: { title: "", subtitle: "", description: "" },
+        es: { title: "", subtitle: "", description: "" },
+        it: { title: "", subtitle: "", description: "" },
       },
       image: "",
       technologies: "",
@@ -977,6 +977,26 @@ export default function AdminPage() {
                             />
                           </div>
                           <div>
+                            <Label htmlFor="subtitle-en">Subtitle (English)</Label>
+                            <Input
+                              id="subtitle-en"
+                              value={projectForm.translations.en.subtitle || ""}
+                              onChange={(e) =>
+                                setProjectForm({
+                                  ...projectForm,
+                                  translations: {
+                                    ...projectForm.translations,
+                                    en: {
+                                      ...projectForm.translations.en,
+                                      subtitle: e.target.value,
+                                    },
+                                  },
+                                })
+                              }
+                              placeholder="Project subtitle in English (optional)"
+                            />
+                          </div>
+                          <div>
                             <Label htmlFor="description-en">
                               Description (English)
                             </Label>
@@ -1023,6 +1043,26 @@ export default function AdminPage() {
                             />
                           </div>
                           <div>
+                            <Label htmlFor="subtitle-es">Subtítulo (Español)</Label>
+                            <Input
+                              id="subtitle-es"
+                              value={projectForm.translations.es.subtitle || ""}
+                              onChange={(e) =>
+                                setProjectForm({
+                                  ...projectForm,
+                                  translations: {
+                                    ...projectForm.translations,
+                                    es: {
+                                      ...projectForm.translations.es,
+                                      subtitle: e.target.value,
+                                    },
+                                  },
+                                })
+                              }
+                              placeholder="Subtítulo del proyecto en español (opcional)"
+                            />
+                          </div>
+                          <div>
                             <Label htmlFor="description-es">
                               Descripción (Español)
                             </Label>
@@ -1066,6 +1106,26 @@ export default function AdminPage() {
                                 })
                               }
                               placeholder="Titolo del progetto in italiano"
+                            />
+                          </div>
+                          <div>
+                            <Label htmlFor="subtitle-it">Sottotitolo (Italiano)</Label>
+                            <Input
+                              id="subtitle-it"
+                              value={projectForm.translations.it.subtitle || ""}
+                              onChange={(e) =>
+                                setProjectForm({
+                                  ...projectForm,
+                                  translations: {
+                                    ...projectForm.translations,
+                                    it: {
+                                      ...projectForm.translations.it,
+                                      subtitle: e.target.value,
+                                    },
+                                  },
+                                })
+                              }
+                              placeholder="Sottotitolo del progetto in italiano (opzionale)"
                             />
                           </div>
                           <div>

@@ -14,14 +14,17 @@ export function ReviewsSection({ reviews }: ReviewsSectionProps) {
   return (
     <section
       id="reviews"
-      className="py-20 bg-gradient-to-br from-background via-muted/20 to-background"
+      className="py-20 bg-gradient-to-br from-background via-muted/20 to-background scroll-mt-24"
     >
       <div className="container mx-auto px-4">
         <div className="text-center mb-16">
-          <h2 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent mb-6">
-            {t.reviews.title}
+          <h2 className="text-3xl md:text-4xl font-bold mb-4">
+            {t.reviews.title.split(" ")[0]}{" "}
+            <span className="bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
+              {t.reviews.title.split(" ").slice(1).join(" ")}
+            </span>
           </h2>
-          <p className="text-xl text-muted-foreground max-w-3xl mx-auto leading-relaxed">
+          <p className="text-xl text-muted-foreground max-w-3xl mx-auto text-pretty">
             {t.reviews.subtitle}
           </p>
         </div>

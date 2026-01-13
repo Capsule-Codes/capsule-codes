@@ -6,6 +6,7 @@ import { useSupabase } from "./supabase-context";
 // Project interfaces
 export interface ProjectTranslations {
   title: string;
+  subtitle?: string;
   description: string;
 }
 

@@ -98,15 +98,15 @@ export function SupabaseProvider({ children }: { children: React.ReactNode }) {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          title: project.title,
-          description: project.description,
-          translations: project.translations,
-          image: project.image,
-          images: project.images || [],
-          technologies: project.technologies,
+            title: project.title,
+            description: project.description,
+            translations: project.translations,
+            image: project.image,
+            images: project.images || [],
+            technologies: project.technologies,
           liveUrl: project.liveUrl,
           githubUrl: project.githubUrl,
-          category: project.category,
+            category: project.category,
         }),
       });
 

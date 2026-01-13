@@ -31,6 +31,38 @@ export async function getProjects(): Promise<Project[]> {
 }
 
 /**
+ * Fetch a single project by ID from the database
+ */
+export async function getProject(id: string): Promise<Project | null> {
+  if (!supabaseAdmin) {
+    console.error("Supabase admin client not configured");
+    return null;
+  }
+
+  try {
+    const { data, error } = await supabaseAdmin
+      .from("projects")
+      .select("*")
+      .eq("id", id)
+      .single();
+
+    if (error) {
+      // If record doesn't exist, return null
+      if (error.code === "PGRST116") {
+        return null;
+      }
+      console.error("Error fetching project:", error);
+      return null;
+    }
+
+    return data;
+  } catch (error) {
+    console.error("Error fetching project:", error);
+    return null;
+  }
+}
+
+/**
  * Fetch all technologies from the database
  */
 export async function getTechnologies(): Promise<Technology[]> {

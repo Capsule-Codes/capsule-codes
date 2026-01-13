@@ -80,7 +80,7 @@ export default function RootLayout({
     <html lang="en">
       <body className={`font-sans ${GeistSans.variable} ${GeistMono.variable}`}>
         <Suspense fallback={null}>
-          <LanguageProvider>{children}</LanguageProvider>
+                <LanguageProvider>{children}</LanguageProvider>
         </Suspense>
         <Analytics />
       </body>

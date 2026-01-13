@@ -54,7 +54,7 @@ export function ServicesSection() {
   ]
 
   return (
-    <section id="services" className="py-20">
+    <section id="services" className="py-20 scroll-mt-24">
       <div className="container mx-auto px-4">
         <div className="text-center mb-16">
           <h2 className="text-3xl md:text-4xl font-bold mb-4">
@@ -66,7 +66,7 @@ export function ServicesSection() {
           <p className="text-xl text-muted-foreground max-w-3xl mx-auto text-pretty">{t.services.subtitle}</p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
           {services.map((service, index) => (
             <Card
               key={index}
@@ -93,21 +93,25 @@ export function ServicesSection() {
                     </div>
                   ))}
                 </div>
-                <Button
-                  variant="outline"
-                  className="w-full group-hover:bg-primary group-hover:text-primary-foreground group-hover:border-primary transition-all duration-300 bg-transparent"
-                  onClick={() => {
-                    const contactElement = document.querySelector("#contact")
-                    if (contactElement) {
-                      contactElement.scrollIntoView({ behavior: "smooth" })
-                    }
-                  }}
-                >
-                  {t.services.learnMore}
-                </Button>
               </CardContent>
             </Card>
           ))}
+        </div>
+
+        {/* Single Button */}
+        <div className="text-center">
+          <Button
+            size="lg"
+            className="bg-gradient-to-r from-primary to-secondary hover:from-primary/90 hover:to-secondary/90 text-lg px-8 py-6 hover:scale-105 transition-transform duration-300"
+            onClick={() => {
+              const contactElement = document.querySelector("#contact")
+              if (contactElement) {
+                contactElement.scrollIntoView({ behavior: "smooth" })
+              }
+            }}
+          >
+            {t.services.startProject}
+          </Button>
         </div>
       </div>
     </section>
