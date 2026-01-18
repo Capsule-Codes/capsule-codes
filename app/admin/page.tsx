@@ -198,15 +198,29 @@ export default function AdminPage() {
 
   // Project handlers
   const handleEditProject = (project: Project) => {
+    const normalizedTranslations = {
+      en: {
+        title: project.translations?.en?.title ?? project.title,
+        subtitle: project.translations?.en?.subtitle ?? "",
+        description: project.translations?.en?.description ?? project.description,
+      },
+      es: {
+        title: project.translations?.es?.title ?? project.title,
+        subtitle: project.translations?.es?.subtitle ?? "",
+        description: project.translations?.es?.description ?? project.description,
+      },
+      it: {
+        title: project.translations?.it?.title ?? project.title,
+        subtitle: project.translations?.it?.subtitle ?? "",
+        description: project.translations?.it?.description ?? project.description,
+      },
+    };
+
     setEditingProject(project);
     setProjectForm({
       title: project.title,
       description: project.description,
-      translations: project.translations || {
-        en: { title: project.title, subtitle: "", description: project.description },
-        es: { title: project.title, subtitle: "", description: project.description },
-        it: { title: project.title, subtitle: "", description: project.description },
-      },
+      translations: normalizedTranslations,
       image: project.image,
       technologies: project.technologies.join(", "),
       category: project.category,

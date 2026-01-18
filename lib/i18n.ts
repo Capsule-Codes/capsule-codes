@@ -532,6 +532,7 @@ export const translations: Record<Language, Translations> = {
       rights: "All rights reserved.",
       privacyPolicy: "Privacy Policy",
       termsOfService: "Terms of Service",
+      quote: "Power comes in response to a need, not a desire. - Goku 🐉",
     },
     legal: {
       privacyPolicy: {
@@ -564,8 +565,6 @@ export const translations: Record<Language, Translations> = {
           contact: "If you have any questions about these Terms of Service, please contact us at info@capsulecodes.com.",
         },
       },
-    },
-      quote: "Power comes in response to a need, not a desire. - Goku 🐉",
     },
     admin: {
       common: {
@@ -862,6 +861,7 @@ export const translations: Record<Language, Translations> = {
       rights: "Todos los derechos reservados.",
       privacyPolicy: "Política de Privacidad",
       termsOfService: "Términos de Servicio",
+      quote: "El poder viene en respuesta a una necesidad, no a un deseo. - Goku 🐉",
     },
     legal: {
       privacyPolicy: {
@@ -894,8 +894,6 @@ export const translations: Record<Language, Translations> = {
           contact: "Si tiene alguna pregunta sobre estos Términos de Servicio, por favor contáctenos en info@capsulecodes.com.",
         },
       },
-    },
-      quote: "El poder viene en respuesta a una necesidad, no a un deseo. - Goku 🐉",
     },
     admin: {
       common: {
@@ -1191,6 +1189,7 @@ export const translations: Record<Language, Translations> = {
       rights: "Tutti i diritti riservati.",
       privacyPolicy: "Informativa sulla Privacy",
       termsOfService: "Termini di Servizio",
+      quote: "Il potere viene in risposta a un bisogno, non a un desiderio. - Goku 🐉",
     },
     legal: {
       privacyPolicy: {
@@ -1223,8 +1222,6 @@ export const translations: Record<Language, Translations> = {
           contact: "Se hai domande su questi Termini di Servizio, per favore contattaci a info@capsulecodes.com.",
         },
       },
-    },
-      quote: "Il potere viene in risposta a un bisogno, non a un desiderio. - Goku 🐉",
     },
     admin: {
       common: {
