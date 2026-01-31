@@ -6,7 +6,7 @@ import { useSupabase } from "./supabase-context";
 // Project interfaces
 export interface ProjectTranslations {
   title: string;
-  subtitle: string; // Now required for carousel display
+  subtitle: string;
   description: string;
 }
 
