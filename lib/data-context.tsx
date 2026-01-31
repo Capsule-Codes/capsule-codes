@@ -6,7 +6,7 @@ import { useSupabase } from "./supabase-context";
 // Project interfaces
 export interface ProjectTranslations {
   title: string;
-  subtitle?: string;
+  subtitle: string; // Now required for carousel display
   description: string;
 }
 
@@ -37,6 +37,8 @@ export interface Project {
   liveUrl?: string;
   githubUrl?: string;
   category: "web" | "mobile" | "fullstack";
+  featured?: boolean;
+  published?: boolean;
 }
 
 // Technology interfaces

@@ -7,6 +7,7 @@ export interface Translations {
     about: string;
     services: string;
     technologies: string;
+    team: string;
     projects: string;
     reviews: string;
     contact: string;
@@ -15,20 +16,22 @@ export interface Translations {
   hero: {
     badge: string;
     title: {
-      transform: string;
-      ideas: string;
-      into: string;
-      reality: string;
+      firstCommonText: string;
+      secondCommonText: string;
+      thirdCommonText: string;
+      firstKeyword: string;
+      secondKeyword: string;
+      thirdKeyword: string;
     };
     subtitle: string;
     stats: {
       projects: string;
-      satisfaction: string;
-      support: string;
+      countries: string;
+      apps: string;
     };
     cta: {
       viewProjects: string;
-      learnMore: string;
+      contact: string;
     };
   };
   // About Section
@@ -39,6 +42,7 @@ export interface Translations {
       title: string;
       paragraph1: string;
       paragraph2: string;
+      paragraph3: string;
     };
     values: {
       precision: {
@@ -69,6 +73,45 @@ export interface Translations {
       backend: string;
       database: string;
       deployment: string;
+    };
+  };
+  // Team Section
+  team: {
+    title: {
+      firstPart: string;
+      secondPart: string;
+    };
+    subtitle: string;
+    coFoundersTitle: string;
+    developersTitle: string;
+    coFounders: {
+      miguel: {
+        name: string;
+        role: string;
+        description: string;
+      };
+      facundo: {
+        name: string;
+        role: string;
+        description: string;
+      };
+    };
+    developers: {
+      marco: {
+        name: string;
+        role: string;
+        description: string;
+      };
+      lucas: {
+        name: string;
+        role: string;
+        description: string;
+      };
+      juan: {
+        name: string;
+        role: string;
+        description: string;
+      };
     };
   };
   // Projects Section
@@ -320,6 +363,7 @@ export const translations: Record<Language, Translations> = {
       about: "About",
       services: "Services",
       technologies: "Technologies",
+      team: "Team",
       projects: "Projects",
       reviews: "Reviews",
       contact: "Contact",
@@ -327,21 +371,23 @@ export const translations: Record<Language, Translations> = {
     hero: {
       badge: "Next-Generation Software Development",
       title: {
-        transform: "We Transform",
-        ideas: "Ideas",
-        into: "into",
-        reality: "Digital Reality",
+        firstCommonText: "Development of",
+        secondCommonText: "and",
+        thirdCommonText: "for",
+        firstKeyword: "Mobile Apps",
+        secondKeyword: "Web Platforms",
+        thirdKeyword: "Growing Startups",
       },
       subtitle:
-        "We are Capsule Codes, specialists in web and mobile development with cutting-edge technologies. We create solutions that drive your business future.",
+        "We've built mobile apps and web platforms for startups in 6 countries, from fintech apps in Puerto Rico to entertainment platforms in the UK. From concept to App Store in 8-12 weeks.",
       stats: {
         projects: "Completed Projects",
-        satisfaction: "Client Satisfaction",
-        support: "Technical Support",
+        countries: "Countries Served",
+        apps: "Apps in Stores",
       },
       cta: {
         viewProjects: "View Our Projects",
-        learnMore: "Learn More",
+        contact: "Schedule a Call",
       },
     },
     about: {
@@ -349,32 +395,34 @@ export const translations: Record<Language, Translations> = {
       subtitle:
         "Inspired by the innovation and excellence of Capsule Corporation, we are a team of developers passionate about creating technology that transforms businesses and improves lives.",
       mission: {
-        title: "Our Mission",
+        title: "Who We Are",
         paragraph1:
-          "At Capsule Codes, we believe technology should be accessible, powerful, and transformative. We specialize in web and mobile development, using the most advanced tools from the React and Node.js ecosystem to create exceptional digital experiences.",
+          "We are Miguel and Facundo, co-founders of Capsule Codes, a development agency based between Argentina and Italy, working with startups and growing companies in the Americas, Europe and beyond.",
         paragraph2:
-          "Each project is a new adventure where we combine creativity, technique, and passion to deliver solutions that not only meet but exceed our clients' expectations.",
+          "We specialize in taking ideas from concept to launch using React Native, Next.js and Node.js. Facundo is our tech lead and principal architect, with over 5 years of experience building production systems. He leads full technical development, defines the architecture of each project, and ensures the highest code quality standards. Miguel handles client relationships, project management and business strategy, being your main point of contact.",
+        paragraph3:
+          "Together, we've built products across six industries: from educational platforms teaching thousands of students in Spain, to fintech apps managing investments in Puerto Rico, to payroll systems handling compliance across multiple countries.",
       },
       values: {
         precision: {
-          title: "Precision",
+          title: "Experienced Team",
           description:
-            "Like Capsule Corporation capsules, each project is designed with millimetric precision.",
+            "15+ years of combined technical experience. Every developer on our team is senior-level with proven track records building production applications.",
         },
         innovation: {
-          title: "Innovation",
+          title: "Clear Communication",
           description:
-            "We use the most advanced technologies to create solutions that exceed expectations.",
+            "Weekly demos, honest timelines, transparent pricing. Miguel keeps you informed at every step while our dev team focuses on building.",
         },
         speed: {
-          title: "Speed",
+          title: "Production-Ready Code",
           description:
-            "Agile development and fast deliveries without compromising the quality of the final product.",
+            "Typescript for type safety. Complete testing. Clean architecture. Documentation. We build software that's maintainable long after launch.",
         },
         collaboration: {
-          title: "Collaboration",
+          title: "Full-Stack Expertise",
           description:
-            "We work as a united team, combining our skills to achieve extraordinary results.",
+            "From mobile apps with offline sync to web platforms with complex business logic, we handle frontend, backend, databases, APIs and deployment.",
         },
       },
     },
@@ -388,6 +436,50 @@ export const translations: Record<Language, Translations> = {
         backend: "Backend",
         database: "Database",
         deployment: "Deployment",
+      },
+    },
+    team: {
+      title: {
+        firstPart: "Meet The",
+        secondPart: "Team",
+      },
+      subtitle:
+        "Our team is led by Facundo and composed of specialized senior developers",
+      coFoundersTitle: "Co-Founders",
+      developersTitle: "Developers",
+      coFounders: {
+        miguel: {
+          name: "Miguel Scala",
+          role: "Co-founder & Business Lead",
+          description:
+            "Handles all client relationships, project management, and business strategy. Your main point of contact who ensures your vision becomes reality on time and on budget.",
+        },
+        facundo: {
+          name: "Facundo Pascale",
+          role: "Co-founder & Tech Lead",
+          description:
+            "Principal technical architect with 5+ years building production systems. Leads all technical architecture, defines code standards, and oversees quality on every project. Senior specialist in React, React Native, Next.js, Node.js and Typescript. He makes all technical decisions and ensures every line of code meets the highest standards.",
+        },
+      },
+      developers: {
+        marco: {
+          name: "Marco Galván",
+          role: "Senior Full Stack Developer",
+          description:
+            "Full-stack developer specialized in modern web and mobile applications. Expert in building high-quality user interfaces and scalable systems with the latest Javascript ecosystem technologies. Stack: Typescript, React, React Native, Next.js, Node.js.",
+        },
+        lucas: {
+          name: "Lucas Mansilla",
+          role: "Senior Full Stack Developer",
+          description:
+            "Computer engineer specialized in full-stack web development. Focused on building applications with clean and scalable architecture. Strong experience in agile methodologies and collaborative teamwork. Stack: Next.js, React, Angular, Typescript",
+        },
+        juan: {
+          name: "Juan Segundo Sosa",
+          role: "Senior Full Stack Developer",
+          description:
+            "Full-stack developer specialized in robust API development and user interface design. Computer Science student with extensive experience in the complete Javascript/Typescript ecosystem. Stack: Next.js, React.js, Node.js, Nest.js, Angular",
+        },
       },
     },
     projects: {
@@ -448,8 +540,10 @@ export const translations: Record<Language, Translations> = {
         messagePlaceholder: "Tell us about your project...",
         send: "Send Message",
         sending: "Sending...",
-        successMessage: "Message sent successfully! We'll get back to you soon.",
-        errorMessage: "There was an error sending the message. Please try again.",
+        successMessage:
+          "Message sent successfully! We'll get back to you soon.",
+        errorMessage:
+          "There was an error sending the message. Please try again.",
       },
       info: {
         title: "Contact Information",
@@ -484,7 +578,12 @@ export const translations: Record<Language, Translations> = {
         title: "Mobile Development",
         description:
           "Native and cross-platform mobile apps for iOS and Android.",
-        features: ["React Native", "Expo", "Cross-platform", "Native Performance"],
+        features: [
+          "React Native",
+          "Expo",
+          "Cross-platform",
+          "Native Performance",
+        ],
       },
       backend: {
         title: "Backend & APIs",
@@ -502,19 +601,34 @@ export const translations: Record<Language, Translations> = {
         title: "UI/UX Design",
         description:
           "Intuitive and attractive designs that enhance user experience.",
-        features: ["Figma", "Responsive Design", "User Research", "Prototyping"],
+        features: [
+          "Figma",
+          "Responsive Design",
+          "User Research",
+          "Prototyping",
+        ],
       },
       consulting: {
         title: "Technical Consulting",
         description:
           "Strategic advice to optimize your technological infrastructure.",
-        features: ["Architecture Review", "Performance Audit", "Tech Strategy", "Code Review"],
+        features: [
+          "Architecture Review",
+          "Performance Audit",
+          "Tech Strategy",
+          "Code Review",
+        ],
       },
       maintenance: {
         title: "Maintenance & Support",
         description:
           "Continuous support to keep your applications running optimally.",
-        features: ["24/7 Monitoring", "Bug Fixes", "Updates", "Performance Optimization"],
+        features: [
+          "24/7 Monitoring",
+          "Bug Fixes",
+          "Updates",
+          "Performance Optimization",
+        ],
       },
       startProject: "Start Project",
       learnMore: "Learn More",
@@ -532,37 +646,55 @@ export const translations: Record<Language, Translations> = {
       rights: "All rights reserved.",
       privacyPolicy: "Privacy Policy",
       termsOfService: "Terms of Service",
-      quote: "Power comes in response to a need, not a desire. - Goku 🐉",
+      quote: "Building digital products that scale.",
     },
     legal: {
       privacyPolicy: {
         title: "Privacy Policy",
         lastUpdated: "Last updated: January 2024",
         sections: {
-          introduction: "At Capsule Codes, we are committed to protecting your privacy. This Privacy Policy explains how we collect, use, and safeguard your personal information when you visit our website or use our services.",
-          dataCollection: "We collect information that you provide directly to us, such as when you fill out our contact form, including your name, email address, company name, and any messages you send us.",
-          dataUsage: "We use the information we collect to respond to your inquiries, provide our services, improve our website, and communicate with you about our services and updates.",
-          dataProtection: "We implement appropriate technical and organizational measures to protect your personal information against unauthorized access, alteration, disclosure, or destruction.",
-          cookies: "Our website uses cookies to enhance your browsing experience. You can choose to disable cookies through your browser settings, though this may affect website functionality.",
-          thirdParty: "We do not sell, trade, or rent your personal information to third parties. We may share information with trusted service providers who assist us in operating our website and conducting our business.",
-          rights: "You have the right to access, correct, or delete your personal information at any time. Please contact us if you wish to exercise these rights.",
-          changes: "We may update this Privacy Policy from time to time. We will notify you of any changes by posting the new Privacy Policy on this page.",
-          contact: "If you have any questions about this Privacy Policy, please contact us at info@capsulecodes.com.",
+          introduction:
+            "At Capsule Codes, we are committed to protecting your privacy. This Privacy Policy explains how we collect, use, and safeguard your personal information when you visit our website or use our services.",
+          dataCollection:
+            "We collect information that you provide directly to us, such as when you fill out our contact form, including your name, email address, company name, and any messages you send us.",
+          dataUsage:
+            "We use the information we collect to respond to your inquiries, provide our services, improve our website, and communicate with you about our services and updates.",
+          dataProtection:
+            "We implement appropriate technical and organizational measures to protect your personal information against unauthorized access, alteration, disclosure, or destruction.",
+          cookies:
+            "Our website uses cookies to enhance your browsing experience. You can choose to disable cookies through your browser settings, though this may affect website functionality.",
+          thirdParty:
+            "We do not sell, trade, or rent your personal information to third parties. We may share information with trusted service providers who assist us in operating our website and conducting our business.",
+          rights:
+            "You have the right to access, correct, or delete your personal information at any time. Please contact us if you wish to exercise these rights.",
+          changes:
+            "We may update this Privacy Policy from time to time. We will notify you of any changes by posting the new Privacy Policy on this page.",
+          contact:
+            "If you have any questions about this Privacy Policy, please contact us at info@capsulecodes.com.",
         },
       },
       termsOfService: {
         title: "Terms of Service",
         lastUpdated: "Last updated: January 2024",
         sections: {
-          introduction: "These Terms of Service govern your access to and use of Capsule Codes' website and services. By accessing or using our services, you agree to be bound by these Terms.",
-          services: "Capsule Codes provides web and mobile development services, technical consulting, and related services as described on our website. All services are subject to availability and our acceptance of your project.",
-          userObligations: "You agree to provide accurate information when using our services and to use our services only for lawful purposes. You are responsible for maintaining the confidentiality of any account credentials.",
-          intellectualProperty: "All content on this website, including but not limited to text, graphics, logos, and software, is the property of Capsule Codes and is protected by intellectual property laws.",
-          payment: "Payment terms will be agreed upon in writing before the commencement of any project. All fees are non-refundable unless otherwise stated in your specific service agreement.",
-          liability: "Capsule Codes provides services 'as is' and makes no warranties, expressed or implied. We are not liable for any indirect, incidental, or consequential damages arising from your use of our services.",
-          termination: "We reserve the right to terminate or suspend access to our services at any time, without prior notice, for conduct that we believe violates these Terms or is harmful to other users.",
-          changes: "We reserve the right to modify these Terms at any time. We will notify users of any material changes by posting the updated Terms on this page.",
-          contact: "If you have any questions about these Terms of Service, please contact us at info@capsulecodes.com.",
+          introduction:
+            "These Terms of Service govern your access to and use of Capsule Codes' website and services. By accessing or using our services, you agree to be bound by these Terms.",
+          services:
+            "Capsule Codes provides web and mobile development services, technical consulting, and related services as described on our website. All services are subject to availability and our acceptance of your project.",
+          userObligations:
+            "You agree to provide accurate information when using our services and to use our services only for lawful purposes. You are responsible for maintaining the confidentiality of any account credentials.",
+          intellectualProperty:
+            "All content on this website, including but not limited to text, graphics, logos, and software, is the property of Capsule Codes and is protected by intellectual property laws.",
+          payment:
+            "Payment terms will be agreed upon in writing before the commencement of any project. All fees are non-refundable unless otherwise stated in your specific service agreement.",
+          liability:
+            "Capsule Codes provides services 'as is' and makes no warranties, expressed or implied. We are not liable for any indirect, incidental, or consequential damages arising from your use of our services.",
+          termination:
+            "We reserve the right to terminate or suspend access to our services at any time, without prior notice, for conduct that we believe violates these Terms or is harmful to other users.",
+          changes:
+            "We reserve the right to modify these Terms at any time. We will notify users of any material changes by posting the updated Terms on this page.",
+          contact:
+            "If you have any questions about these Terms of Service, please contact us at info@capsulecodes.com.",
         },
       },
     },
@@ -636,7 +768,8 @@ export const translations: Record<Language, Translations> = {
       },
       projects: {
         images: "Project Images (Azure)",
-        imageDescription: "Max 10 images. Will be automatically converted to WebP.",
+        imageDescription:
+          "Max 10 images. Will be automatically converted to WebP.",
         selectedImages: "selected",
         currentImages: "Current Images",
         maxImages: "Maximum 10 images allowed",
@@ -649,6 +782,7 @@ export const translations: Record<Language, Translations> = {
       about: "Nosotros",
       services: "Servicios",
       technologies: "Tecnologías",
+      team: "Equipo",
       projects: "Proyectos",
       reviews: "Reseñas",
       contact: "Contacto",
@@ -656,21 +790,23 @@ export const translations: Record<Language, Translations> = {
     hero: {
       badge: "Desarrollo de Software de Próxima Generación",
       title: {
-        transform: "Transformamos",
-        ideas: "Ideas",
-        into: "en",
-        reality: "Realidad Digital",
+        firstCommonText: "Desarrollo de",
+        secondCommonText: "y",
+        thirdCommonText: "para",
+        firstKeyword: "Apps Móviles",
+        secondKeyword: "Plataformas Web",
+        thirdKeyword: "Startups en Crecimiento",
       },
       subtitle:
-        "Somos Capsule Codes, especialistas en desarrollo web y móvil con tecnologías de vanguardia. Creamos soluciones que impulsan el futuro de tu negocio.",
+        "Hemos construido apps móviles y plataformas web para startups en 6 países, desde apps fintech en Puerto Rico hasta plataformas de entretenimiento en UK. De concepto a App Store en 8-12 semanas.",
       stats: {
         projects: "Proyectos Completados",
-        satisfaction: "Satisfacción del Cliente",
-        support: "Soporte Técnico",
+        countries: "Países Servidos",
+        apps: "Apps en las Tiendas",
       },
       cta: {
         viewProjects: "Ver Nuestros Proyectos",
-        learnMore: "Conocer Más",
+        contact: "Agenda una llamada",
       },
     },
     about: {
@@ -678,32 +814,34 @@ export const translations: Record<Language, Translations> = {
       subtitle:
         "Inspirados en la innovación y la excelencia de la Corporación Cápsula, somos un equipo de desarrolladores apasionados por crear tecnología que transforma negocios y mejora vidas.",
       mission: {
-        title: "Nuestra Misión",
+        title: "Quiénes Somos",
         paragraph1:
-          "En Capsule Codes, creemos que la tecnología debe ser accesible, potente y transformadora. Nos especializamos en desarrollo web y móvil, utilizando las herramientas más avanzadas del ecosistema React y Node.js para crear experiencias digitales excepcionales.",
+          "Somos Miguel y Facundo, co-fundadores de Capsule Codes, una agencia de desarrollo basada entre Argentina e Italia, trabajando con startups y empresas en crecimiento en las Américas, Europa y más allá.",
         paragraph2:
-          "Cada proyecto es una nueva aventura donde combinamos creatividad, técnica y pasión para entregar soluciones que no solo cumplen, sino que superan las expectativas de nuestros clientes.",
+          "Nos especializamos en llevar ideas desde el concepto hasta el lanzamiento usando React Native, Next.js y Node.js. Facundo es nuestro líder técnico y arquitecto principal, con más de 5 años de experiencia construyendo sistemas en producción. Él lidera el desarrollo técnico completo, define la arquitectura de cada proyecto, y asegura los más altos estándares de calidad de código. Miguel maneja las relaciones con clientes, gestión de proyectos y estrategia de negocio, siendo tu punto de contacto principal.",
+        paragraph3:
+          "Juntos, hemos construido productos de seis industrias: desde plataformas educativas enseñando a miles de estudiantes en España, hasta apps fintech gestionando inversiones en Puerto Rico, hasta sistemas de nómina manejando compliance en múltiples países.",
       },
       values: {
         precision: {
-          title: "Precisión",
+          title: "Equipo experimentado",
           description:
-            "Como las cápsulas de la Corporación Cápsula, cada proyecto es diseñado con precisión milimétrica.",
+            "15+ años de experiencia técnica combinada. Cada desarrollador en nuestro equipo es nivel senior con track records probados construyendo aplicaciones en producción.",
         },
         innovation: {
-          title: "Innovación",
+          title: "Comunicación clara",
           description:
-            "Utilizamos las tecnologías más avanzadas para crear soluciones que superan las expectativas.",
+            "Demos semanales, timelines honestos, precios transparentes. Miguel te mantiene informado en cada paso mientras nuestro equipo de desarrollo se enfoca en construir.",
         },
         speed: {
-          title: "Velocidad",
+          title: "Código listo para producción",
           description:
-            "Desarrollo ágil y entregas rápidas sin comprometer la calidad del producto final.",
+            "Typescript para type safety. Testing completo. Arquitectura limpia. Documentación. Construimos software que es mantenible mucho despúes del lanzamiento.",
         },
         collaboration: {
-          title: "Colaboración",
+          title: "Experiencia Full-Stack",
           description:
-            "Trabajamos como un equipo unido, combinando nuestras habilidades para lograr resultados extraordinarios.",
+            "Desde apps móviles con sync offline hasta plataformas web con lógica de negocio compleja, manejamos frontend, backend, bases de datos, APIs y deployment.",
         },
       },
     },
@@ -717,6 +855,50 @@ export const translations: Record<Language, Translations> = {
         backend: "Backend",
         database: "Base de Datos",
         deployment: "Despliegue",
+      },
+    },
+    team: {
+      title: {
+        firstPart: "Conoce al",
+        secondPart: "Equipo",
+      },
+      subtitle:
+        "Nuestro equipo está liderado por Facundo y compuesto por desarrolladores senior especializados",
+      coFoundersTitle: "Co-Fundadores",
+      developersTitle: "Desarrolladores",
+      coFounders: {
+        miguel: {
+          name: "Miguel Scala",
+          role: "Co-founder y Líder de Negocios",
+          description:
+            "Maneja todas las relaciones con los clientes, gestión de proyectos y estrategia de negocio. Tu punto de contacto principal que asegura que tu visión se convierta en realidad a tiempo y dentro del presupuesto.",
+        },
+        facundo: {
+          name: "Facundo Pascale",
+          role: "Co-founder y Tech Lead",
+          description:
+            "Arquitecto técnico principal con más de 5 años construyendo sistemas en producción. Lidera toda la arquitectura técnica, define estándares de código, y supervisa la calidad de cada proyecto. Especialista senior en React, React Native, Next.js, Node.js y Typescript. Es quien toma todas las decisiones técnicas y asegura que cada línea de código cumpla con los más altos estándares.",
+        },
+      },
+      developers: {
+        marco: {
+          name: "Marco Galván",
+          role: "Senior Full Stack Developer",
+          description:
+            "Desarrollador full-stack especializado en aplicaciones web y móviles modernas. Experto en construir interfaces de usuario de alta calidad y sistemas escalables con las últimas tecnologías del ecosistema Javascript. Stack: Typescript, React, React Native, Next.js, Node.js.",
+        },
+        lucas: {
+          name: "Lucas Mansilla",
+          role: "Senior Full Stack Developer",
+          description:
+            "Ingeniero en informática especializado en desarrollo web full-stack. Enfocado en construir aplicaciones con arquitectura limpia y escalable. Fuerte experiencia en metodologías ágiles y trabajo colaborativo en equipo. Stack: Next.js, React, Angular, Typescript",
+        },
+        juan: {
+          name: "Juan Segundo Sosa",
+          role: "Senior Full Stack Developer",
+          description:
+            "Desarrollador full-stack especializado en desarrollo de APIs robustas y diseño de interfaces de usuario. Estudiante de Licenciatura en Informática con amplia experiencia en el ecosistema completo de Javascript/Typescript. Stack: Next.js, React.js, Node.js, Nest.js, Angular",
+        },
       },
     },
     projects: {
@@ -777,8 +959,10 @@ export const translations: Record<Language, Translations> = {
         messagePlaceholder: "Cuéntanos sobre tu proyecto...",
         send: "Enviar Mensaje",
         sending: "Enviando...",
-        successMessage: "¡Mensaje enviado exitosamente! Nos pondremos en contacto pronto.",
-        errorMessage: "Hubo un error al enviar el mensaje. Por favor intenta nuevamente.",
+        successMessage:
+          "¡Mensaje enviado exitosamente! Nos pondremos en contacto pronto.",
+        errorMessage:
+          "Hubo un error al enviar el mensaje. Por favor intenta nuevamente.",
       },
       info: {
         title: "Información de Contacto",
@@ -813,7 +997,12 @@ export const translations: Record<Language, Translations> = {
         title: "Desarrollo Móvil",
         description:
           "Apps móviles nativas y multiplataforma para iOS y Android.",
-        features: ["React Native", "Expo", "Multiplataforma", "Rendimiento Nativo"],
+        features: [
+          "React Native",
+          "Expo",
+          "Multiplataforma",
+          "Rendimiento Nativo",
+        ],
       },
       backend: {
         title: "Backend y APIs",
@@ -831,19 +1020,34 @@ export const translations: Record<Language, Translations> = {
         title: "Diseño UI/UX",
         description:
           "Diseños intuitivos y atractivos que mejoran la experiencia del usuario.",
-        features: ["Figma", "Diseño Responsivo", "Investigación de Usuarios", "Prototipado"],
+        features: [
+          "Figma",
+          "Diseño Responsivo",
+          "Investigación de Usuarios",
+          "Prototipado",
+        ],
       },
       consulting: {
         title: "Consultoría Técnica",
         description:
           "Asesoramiento estratégico para optimizar tu infraestructura tecnológica.",
-        features: ["Revisión de Arquitectura", "Auditoría de Rendimiento", "Estrategia Tech", "Revisión de Código"],
+        features: [
+          "Revisión de Arquitectura",
+          "Auditoría de Rendimiento",
+          "Estrategia Tech",
+          "Revisión de Código",
+        ],
       },
       maintenance: {
         title: "Mantenimiento y Soporte",
         description:
           "Soporte continuo para mantener tus aplicaciones funcionando de manera óptima.",
-        features: ["Monitoreo 24/7", "Corrección de Bugs", "Actualizaciones", "Optimización de Rendimiento"],
+        features: [
+          "Monitoreo 24/7",
+          "Corrección de Bugs",
+          "Actualizaciones",
+          "Optimización de Rendimiento",
+        ],
       },
       startProject: "Comenzar Proyecto",
       learnMore: "Saber Más",
@@ -861,37 +1065,55 @@ export const translations: Record<Language, Translations> = {
       rights: "Todos los derechos reservados.",
       privacyPolicy: "Política de Privacidad",
       termsOfService: "Términos de Servicio",
-      quote: "El poder viene en respuesta a una necesidad, no a un deseo. - Goku 🐉",
+      quote: "Construyendo productos digitales que escalan.",
     },
     legal: {
       privacyPolicy: {
         title: "Política de Privacidad",
         lastUpdated: "Última actualización: Enero 2024",
         sections: {
-          introduction: "En Capsule Codes, nos comprometemos a proteger su privacidad. Esta Política de Privacidad explica cómo recopilamos, usamos y protegemos su información personal cuando visita nuestro sitio web o utiliza nuestros servicios.",
-          dataCollection: "Recopilamos información que nos proporciona directamente, como cuando completa nuestro formulario de contacto, incluyendo su nombre, dirección de correo electrónico, nombre de la empresa y cualquier mensaje que nos envíe.",
-          dataUsage: "Utilizamos la información que recopilamos para responder a sus consultas, proporcionar nuestros servicios, mejorar nuestro sitio web y comunicarnos con usted sobre nuestros servicios y actualizaciones.",
-          dataProtection: "Implementamos medidas técnicas y organizativas apropiadas para proteger su información personal contra acceso no autorizado, alteración, divulgación o destrucción.",
-          cookies: "Nuestro sitio web utiliza cookies para mejorar su experiencia de navegación. Puede elegir deshabilitar las cookies a través de la configuración de su navegador, aunque esto puede afectar la funcionalidad del sitio web.",
-          thirdParty: "No vendemos, intercambiamos ni alquilamos su información personal a terceros. Podemos compartir información con proveedores de servicios de confianza que nos ayudan a operar nuestro sitio web y realizar nuestro negocio.",
-          rights: "Usted tiene derecho a acceder, corregir o eliminar su información personal en cualquier momento. Por favor contáctenos si desea ejercer estos derechos.",
-          changes: "Podemos actualizar esta Política de Privacidad de vez en cuando. Le notificaremos cualquier cambio publicando la nueva Política de Privacidad en esta página.",
-          contact: "Si tiene alguna pregunta sobre esta Política de Privacidad, por favor contáctenos en info@capsulecodes.com.",
+          introduction:
+            "En Capsule Codes, nos comprometemos a proteger su privacidad. Esta Política de Privacidad explica cómo recopilamos, usamos y protegemos su información personal cuando visita nuestro sitio web o utiliza nuestros servicios.",
+          dataCollection:
+            "Recopilamos información que nos proporciona directamente, como cuando completa nuestro formulario de contacto, incluyendo su nombre, dirección de correo electrónico, nombre de la empresa y cualquier mensaje que nos envíe.",
+          dataUsage:
+            "Utilizamos la información que recopilamos para responder a sus consultas, proporcionar nuestros servicios, mejorar nuestro sitio web y comunicarnos con usted sobre nuestros servicios y actualizaciones.",
+          dataProtection:
+            "Implementamos medidas técnicas y organizativas apropiadas para proteger su información personal contra acceso no autorizado, alteración, divulgación o destrucción.",
+          cookies:
+            "Nuestro sitio web utiliza cookies para mejorar su experiencia de navegación. Puede elegir deshabilitar las cookies a través de la configuración de su navegador, aunque esto puede afectar la funcionalidad del sitio web.",
+          thirdParty:
+            "No vendemos, intercambiamos ni alquilamos su información personal a terceros. Podemos compartir información con proveedores de servicios de confianza que nos ayudan a operar nuestro sitio web y realizar nuestro negocio.",
+          rights:
+            "Usted tiene derecho a acceder, corregir o eliminar su información personal en cualquier momento. Por favor contáctenos si desea ejercer estos derechos.",
+          changes:
+            "Podemos actualizar esta Política de Privacidad de vez en cuando. Le notificaremos cualquier cambio publicando la nueva Política de Privacidad en esta página.",
+          contact:
+            "Si tiene alguna pregunta sobre esta Política de Privacidad, por favor contáctenos en info@capsulecodes.com.",
         },
       },
       termsOfService: {
         title: "Términos de Servicio",
         lastUpdated: "Última actualización: Enero 2024",
         sections: {
-          introduction: "Estos Términos de Servicio rigen su acceso y uso del sitio web y servicios de Capsule Codes. Al acceder o utilizar nuestros servicios, usted acepta estar sujeto a estos Términos.",
-          services: "Capsule Codes proporciona servicios de desarrollo web y móvil, consultoría técnica y servicios relacionados según se describe en nuestro sitio web. Todos los servicios están sujetos a disponibilidad y nuestra aceptación de su proyecto.",
-          userObligations: "Usted acepta proporcionar información precisa al usar nuestros servicios y usar nuestros servicios solo para fines legales. Usted es responsable de mantener la confidencialidad de cualquier credencial de cuenta.",
-          intellectualProperty: "Todo el contenido en este sitio web, incluyendo pero no limitado a texto, gráficos, logotipos y software, es propiedad de Capsule Codes y está protegido por las leyes de propiedad intelectual.",
-          payment: "Los términos de pago se acordarán por escrito antes del inicio de cualquier proyecto. Todas las tarifas no son reembolsables a menos que se indique lo contrario en su acuerdo de servicio específico.",
-          liability: "Capsule Codes proporciona servicios 'tal como están' y no otorga garantías, expresas o implícitas. No somos responsables de ningún daño indirecto, incidental o consecuente que surja del uso de nuestros servicios.",
-          termination: "Nos reservamos el derecho de terminar o suspender el acceso a nuestros servicios en cualquier momento, sin previo aviso, por conducta que creemos que viola estos Términos o es perjudicial para otros usuarios.",
-          changes: "Nos reservamos el derecho de modificar estos Términos en cualquier momento. Notificaremos a los usuarios de cualquier cambio material publicando los Términos actualizados en esta página.",
-          contact: "Si tiene alguna pregunta sobre estos Términos de Servicio, por favor contáctenos en info@capsulecodes.com.",
+          introduction:
+            "Estos Términos de Servicio rigen su acceso y uso del sitio web y servicios de Capsule Codes. Al acceder o utilizar nuestros servicios, usted acepta estar sujeto a estos Términos.",
+          services:
+            "Capsule Codes proporciona servicios de desarrollo web y móvil, consultoría técnica y servicios relacionados según se describe en nuestro sitio web. Todos los servicios están sujetos a disponibilidad y nuestra aceptación de su proyecto.",
+          userObligations:
+            "Usted acepta proporcionar información precisa al usar nuestros servicios y usar nuestros servicios solo para fines legales. Usted es responsable de mantener la confidencialidad de cualquier credencial de cuenta.",
+          intellectualProperty:
+            "Todo el contenido en este sitio web, incluyendo pero no limitado a texto, gráficos, logotipos y software, es propiedad de Capsule Codes y está protegido por las leyes de propiedad intelectual.",
+          payment:
+            "Los términos de pago se acordarán por escrito antes del inicio de cualquier proyecto. Todas las tarifas no son reembolsables a menos que se indique lo contrario en su acuerdo de servicio específico.",
+          liability:
+            "Capsule Codes proporciona servicios 'tal como están' y no otorga garantías, expresas o implícitas. No somos responsables de ningún daño indirecto, incidental o consecuente que surja del uso de nuestros servicios.",
+          termination:
+            "Nos reservamos el derecho de terminar o suspender el acceso a nuestros servicios en cualquier momento, sin previo aviso, por conducta que creemos que viola estos Términos o es perjudicial para otros usuarios.",
+          changes:
+            "Nos reservamos el derecho de modificar estos Términos en cualquier momento. Notificaremos a los usuarios de cualquier cambio material publicando los Términos actualizados en esta página.",
+          contact:
+            "Si tiene alguna pregunta sobre estos Términos de Servicio, por favor contáctenos en info@capsulecodes.com.",
         },
       },
     },
@@ -965,7 +1187,8 @@ export const translations: Record<Language, Translations> = {
       },
       projects: {
         images: "Imágenes del Proyecto (Azure)",
-        imageDescription: "Máximo 10 imágenes. Se convertirán a WebP automáticamente.",
+        imageDescription:
+          "Máximo 10 imágenes. Se convertirán a WebP automáticamente.",
         selectedImages: "seleccionadas",
         currentImages: "Imágenes Actuales",
         maxImages: "Máximo 10 imágenes permitidas",
@@ -978,6 +1201,7 @@ export const translations: Record<Language, Translations> = {
       about: "Chi Siamo",
       services: "Servizi",
       technologies: "Tecnologie",
+      team: "Team",
       projects: "Progetti",
       reviews: "Recensioni",
       contact: "Contatti",
@@ -985,21 +1209,23 @@ export const translations: Record<Language, Translations> = {
     hero: {
       badge: "Sviluppo Software di Nuova Generazione",
       title: {
-        transform: "Trasformiamo",
-        ideas: "Idee",
-        into: "in",
-        reality: "Realtà Digitale",
+        firstCommonText: "Sviluppo di",
+        secondCommonText: "e",
+        thirdCommonText: "per",
+        firstKeyword: "App Mobili",
+        secondKeyword: "Piattaforme Web",
+        thirdKeyword: "Startup in Crescita",
       },
       subtitle:
-        "Siamo Capsule Codes, specialisti nello sviluppo web e mobile con tecnologie all'avanguardia. Creiamo soluzioni che guidano il futuro del tuo business.",
+        "Abbiamo costruito app mobili e piattaforme web per startup in 6 paesi, dalle app fintech a Porto Rico alle piattaforme di intrattenimento nel Regno Unito. Dal concetto all'App Store in 8-12 settimane.",
       stats: {
         projects: "Progetti Completati",
-        satisfaction: "Soddisfazione Cliente",
-        support: "Supporto Tecnico",
+        countries: "Paesi Serviti",
+        apps: "App nei Store",
       },
       cta: {
         viewProjects: "Vedi i Nostri Progetti",
-        learnMore: "Scopri di Più",
+        contact: "Prenota una Chiamata",
       },
     },
     about: {
@@ -1007,32 +1233,34 @@ export const translations: Record<Language, Translations> = {
       subtitle:
         "Ispirati dall'innovazione e dall'eccellenza della Capsule Corporation, siamo un team di sviluppatori appassionati nel creare tecnologia che trasforma i business e migliora le vite.",
       mission: {
-        title: "La Nostra Missione",
+        title: "Chi Siamo",
         paragraph1:
-          "In Capsule Codes, crediamo che la tecnologia debba essere accessibile, potente e trasformativa. Ci specializziamo nello sviluppo web e mobile, utilizzando gli strumenti più avanzati dell'ecosistema React e Node.js per creare esperienze digitali eccezionali.",
+          "Siamo Miguel e Facundo, co-fondatori di Capsule Codes, un'agenzia di sviluppo basata tra Argentina e Italia, che lavora con startup e aziende in crescita nelle Americhe, Europa e oltre.",
         paragraph2:
-          "Ogni progetto è una nuova avventura dove combiniamo creatività, tecnica e passione per consegnare soluzioni che non solo soddisfano, ma superano le aspettative dei nostri clienti.",
+          "Ci specializziamo nel portare idee dal concetto al lancio usando React Native, Next.js e Node.js. Facundo è il nostro tech lead e architetto principale, con oltre 5 anni di esperienza nella costruzione di sistemi in produzione. Guida lo sviluppo tecnico completo, definisce l'architettura di ogni progetto e garantisce i più alti standard di qualità del codice. Miguel gestisce le relazioni con i clienti, la gestione dei progetti e la strategia di business, essendo il tuo punto di contatto principale.",
+        paragraph3:
+          "Insieme, abbiamo costruito prodotti in sei industrie: da piattaforme educative che insegnano a migliaia di studenti in Spagna, ad app fintech che gestiscono investimenti a Porto Rico, a sistemi di gestione stipendi che gestiscono la conformità in più paesi.",
       },
       values: {
         precision: {
-          title: "Precisione",
+          title: "Team Esperto",
           description:
-            "Come le capsule della Capsule Corporation, ogni progetto è progettato con precisione millimetrica.",
+            "Oltre 15 anni di esperienza tecnica combinata. Ogni sviluppatore nel nostro team è di livello senior con track record comprovati nella costruzione di applicazioni in produzione.",
         },
         innovation: {
-          title: "Innovazione",
+          title: "Comunicazione Chiara",
           description:
-            "Utilizziamo le tecnologie più avanzate per creare soluzioni che superano le aspettative.",
+            "Demo settimanali, tempistiche oneste, prezzi trasparenti. Miguel ti tiene informato ad ogni passo mentre il nostro team di sviluppo si concentra sulla costruzione.",
         },
         speed: {
-          title: "Velocità",
+          title: "Codice Pronto per la Produzione",
           description:
-            "Sviluppo agile e consegne rapide senza compromettere la qualità del prodotto finale.",
+            "Typescript per la sicurezza dei tipi. Test completo. Architettura pulita. Documentazione. Costruiamo software che è mantenibile molto dopo il lancio.",
         },
         collaboration: {
-          title: "Collaborazione",
+          title: "Esperienza Full-Stack",
           description:
-            "Lavoriamo come un team unito, combinando le nostre competenze per raggiungere risultati straordinari.",
+            "Da app mobili con sincronizzazione offline a piattaforme web con logica di business complessa, gestiamo frontend, backend, database, API e deployment.",
         },
       },
     },
@@ -1046,6 +1274,50 @@ export const translations: Record<Language, Translations> = {
         backend: "Backend",
         database: "Database",
         deployment: "Deployment",
+      },
+    },
+    team: {
+      title: {
+        firstPart: "Incontra il",
+        secondPart: "Team",
+      },
+      subtitle:
+        "Il nostro team è guidato da Facundo e composto da sviluppatori senior specializzati",
+      coFoundersTitle: "Co-Fondatori",
+      developersTitle: "Sviluppatori",
+      coFounders: {
+        miguel: {
+          name: "Miguel Scala",
+          role: "Co-founder e Leader di Business",
+          description:
+            "Gestisce tutte le relazioni con i clienti, la gestione dei progetti e la strategia di business. Il tuo punto di contatto principale che assicura che la tua visione diventi realtà nei tempi e nel budget.",
+        },
+        facundo: {
+          name: "Facundo Pascale",
+          role: "Co-founder e Tech Lead",
+          description:
+            "Architetto tecnico principale con oltre 5 anni di esperienza nella costruzione di sistemi in produzione. Guida tutta l'architettura tecnica, definisce gli standard del codice e supervisiona la qualità di ogni progetto. Specialista senior in React, React Native, Next.js, Node.js e Typescript. Prende tutte le decisioni tecniche e assicura che ogni riga di codice rispetti i più alti standard.",
+        },
+      },
+      developers: {
+        marco: {
+          name: "Marco Galván",
+          role: "Senior Full Stack Developer",
+          description:
+            "Sviluppatore full-stack specializzato in applicazioni web e mobili moderne. Esperto nella costruzione di interfacce utente di alta qualità e sistemi scalabili con le ultime tecnologie dell'ecosistema Javascript. Stack: Typescript, React, React Native, Next.js, Node.js.",
+        },
+        lucas: {
+          name: "Lucas Mansilla",
+          role: "Senior Full Stack Developer",
+          description:
+            "Ingegnere informatico specializzato nello sviluppo web full-stack. Focalizzato sulla costruzione di applicazioni con architettura pulita e scalabile. Forte esperienza in metodologie agili e lavoro collaborativo in team. Stack: Next.js, React, Angular, Typescript",
+        },
+        juan: {
+          name: "Juan Segundo Sosa",
+          role: "Senior Full Stack Developer",
+          description:
+            "Sviluppatore full-stack specializzato nello sviluppo di API robuste e design di interfacce utente. Studente di Laurea in Informatica con ampia esperienza nell'ecosistema completo Javascript/Typescript. Stack: Next.js, React.js, Node.js, Nest.js, Angular",
+        },
       },
     },
     projects: {
@@ -1106,8 +1378,10 @@ export const translations: Record<Language, Translations> = {
         messagePlaceholder: "Raccontaci del tuo progetto...",
         send: "Invia Messaggio",
         sending: "Invio in corso...",
-        successMessage: "Messaggio inviato con successo! Ti ricontatteremo presto.",
-        errorMessage: "Si è verificato un errore nell'invio del messaggio. Riprova per favore.",
+        successMessage:
+          "Messaggio inviato con successo! Ti ricontatteremo presto.",
+        errorMessage:
+          "Si è verificato un errore nell'invio del messaggio. Riprova per favore.",
       },
       info: {
         title: "Informazioni di Contatto",
@@ -1141,7 +1415,12 @@ export const translations: Record<Language, Translations> = {
       mobile: {
         title: "Sviluppo Mobile",
         description: "App mobile native e cross-platform per iOS e Android.",
-        features: ["React Native", "Expo", "Cross-platform", "Performance Nativa"],
+        features: [
+          "React Native",
+          "Expo",
+          "Cross-platform",
+          "Performance Nativa",
+        ],
       },
       backend: {
         title: "Backend e API",
@@ -1159,19 +1438,34 @@ export const translations: Record<Language, Translations> = {
         title: "Design UI/UX",
         description:
           "Design intuitivi e attraenti che migliorano l'esperienza utente.",
-        features: ["Figma", "Design Responsive", "Ricerca Utenti", "Prototipazione"],
+        features: [
+          "Figma",
+          "Design Responsive",
+          "Ricerca Utenti",
+          "Prototipazione",
+        ],
       },
       consulting: {
         title: "Consulenza Tecnica",
         description:
           "Consulenza strategica per ottimizzare la tua infrastruttura tecnologica.",
-        features: ["Revisione Architettura", "Audit Performance", "Strategia Tech", "Revisione Codice"],
+        features: [
+          "Revisione Architettura",
+          "Audit Performance",
+          "Strategia Tech",
+          "Revisione Codice",
+        ],
       },
       maintenance: {
         title: "Manutenzione e Supporto",
         description:
           "Supporto continuo per mantenere le tue applicazioni funzionanti in modo ottimale.",
-        features: ["Monitoraggio 24/7", "Correzione Bug", "Aggiornamenti", "Ottimizzazione Performance"],
+        features: [
+          "Monitoraggio 24/7",
+          "Correzione Bug",
+          "Aggiornamenti",
+          "Ottimizzazione Performance",
+        ],
       },
       startProject: "Inizia Progetto",
       learnMore: "Scopri di Più",
@@ -1189,37 +1483,55 @@ export const translations: Record<Language, Translations> = {
       rights: "Tutti i diritti riservati.",
       privacyPolicy: "Informativa sulla Privacy",
       termsOfService: "Termini di Servizio",
-      quote: "Il potere viene in risposta a un bisogno, non a un desiderio. - Goku 🐉",
+      quote: "Costruendo prodotti digitali che scalano.",
     },
     legal: {
       privacyPolicy: {
         title: "Informativa sulla Privacy",
         lastUpdated: "Ultimo aggiornamento: Gennaio 2024",
         sections: {
-          introduction: "In Capsule Codes, ci impegniamo a proteggere la tua privacy. Questa Informativa sulla Privacy spiega come raccogliamo, utilizziamo e proteggiamo le tue informazioni personali quando visiti il nostro sito web o utilizzi i nostri servizi.",
-          dataCollection: "Raccogliamo informazioni che ci fornisci direttamente, come quando compili il nostro modulo di contatto, incluso il tuo nome, indirizzo email, nome dell'azienda e qualsiasi messaggio che ci invii.",
-          dataUsage: "Utilizziamo le informazioni che raccogliamo per rispondere alle tue richieste, fornire i nostri servizi, migliorare il nostro sito web e comunicare con te riguardo ai nostri servizi e aggiornamenti.",
-          dataProtection: "Implementiamo misure tecniche e organizzative appropriate per proteggere le tue informazioni personali da accesso non autorizzato, alterazione, divulgazione o distruzione.",
-          cookies: "Il nostro sito web utilizza cookie per migliorare la tua esperienza di navigazione. Puoi scegliere di disabilitare i cookie attraverso le impostazioni del tuo browser, sebbene ciò possa influenzare la funzionalità del sito web.",
-          thirdParty: "Non vendiamo, scambiamo o affittiamo le tue informazioni personali a terze parti. Potremmo condividere informazioni con fornitori di servizi fidati che ci assistono nell'operare il nostro sito web e condurre la nostra attività.",
-          rights: "Hai il diritto di accedere, correggere o eliminare le tue informazioni personali in qualsiasi momento. Per favore contattaci se desideri esercitare questi diritti.",
-          changes: "Potremmo aggiornare questa Informativa sulla Privacy di tanto in tanto. Ti notificheremo eventuali modifiche pubblicando la nuova Informativa sulla Privacy su questa pagina.",
-          contact: "Se hai domande su questa Informativa sulla Privacy, per favore contattaci a info@capsulecodes.com.",
+          introduction:
+            "In Capsule Codes, ci impegniamo a proteggere la tua privacy. Questa Informativa sulla Privacy spiega come raccogliamo, utilizziamo e proteggiamo le tue informazioni personali quando visiti il nostro sito web o utilizzi i nostri servizi.",
+          dataCollection:
+            "Raccogliamo informazioni che ci fornisci direttamente, come quando compili il nostro modulo di contatto, incluso il tuo nome, indirizzo email, nome dell'azienda e qualsiasi messaggio che ci invii.",
+          dataUsage:
+            "Utilizziamo le informazioni che raccogliamo per rispondere alle tue richieste, fornire i nostri servizi, migliorare il nostro sito web e comunicare con te riguardo ai nostri servizi e aggiornamenti.",
+          dataProtection:
+            "Implementiamo misure tecniche e organizzative appropriate per proteggere le tue informazioni personali da accesso non autorizzato, alterazione, divulgazione o distruzione.",
+          cookies:
+            "Il nostro sito web utilizza cookie per migliorare la tua esperienza di navigazione. Puoi scegliere di disabilitare i cookie attraverso le impostazioni del tuo browser, sebbene ciò possa influenzare la funzionalità del sito web.",
+          thirdParty:
+            "Non vendiamo, scambiamo o affittiamo le tue informazioni personali a terze parti. Potremmo condividere informazioni con fornitori di servizi fidati che ci assistono nell'operare il nostro sito web e condurre la nostra attività.",
+          rights:
+            "Hai il diritto di accedere, correggere o eliminare le tue informazioni personali in qualsiasi momento. Per favore contattaci se desideri esercitare questi diritti.",
+          changes:
+            "Potremmo aggiornare questa Informativa sulla Privacy di tanto in tanto. Ti notificheremo eventuali modifiche pubblicando la nuova Informativa sulla Privacy su questa pagina.",
+          contact:
+            "Se hai domande su questa Informativa sulla Privacy, per favore contattaci a info@capsulecodes.com.",
         },
       },
       termsOfService: {
         title: "Termini di Servizio",
         lastUpdated: "Ultimo aggiornamento: Gennaio 2024",
         sections: {
-          introduction: "Questi Termini di Servizio disciplinano il tuo accesso e utilizzo del sito web e dei servizi di Capsule Codes. Accedendo o utilizzando i nostri servizi, accetti di essere vincolato da questi Termini.",
-          services: "Capsule Codes fornisce servizi di sviluppo web e mobile, consulenza tecnica e servizi correlati come descritto sul nostro sito web. Tutti i servizi sono soggetti a disponibilità e alla nostra accettazione del tuo progetto.",
-          userObligations: "Accetti di fornire informazioni accurate quando utilizzi i nostri servizi e di utilizzare i nostri servizi solo per scopi legali. Sei responsabile di mantenere la riservatezza di eventuali credenziali dell'account.",
-          intellectualProperty: "Tutto il contenuto su questo sito web, inclusi ma non limitati a testo, grafica, loghi e software, è di proprietà di Capsule Codes ed è protetto dalle leggi sulla proprietà intellettuale.",
-          payment: "I termini di pagamento saranno concordati per iscritto prima dell'inizio di qualsiasi progetto. Tutte le tariffe non sono rimborsabili a meno che non sia diversamente indicato nel tuo accordo di servizio specifico.",
-          liability: "Capsule Codes fornisce servizi 'così come sono' e non fornisce garanzie, espresse o implicite. Non siamo responsabili per eventuali danni indiretti, incidentali o consequenziali derivanti dal tuo utilizzo dei nostri servizi.",
-          termination: "Ci riserviamo il diritto di terminare o sospendere l'accesso ai nostri servizi in qualsiasi momento, senza preavviso, per condotta che riteniamo violi questi Termini o sia dannosa per altri utenti.",
-          changes: "Ci riserviamo il diritto di modificare questi Termini in qualsiasi momento. Notificheremo gli utenti di eventuali modifiche materiali pubblicando i Termini aggiornati su questa pagina.",
-          contact: "Se hai domande su questi Termini di Servizio, per favore contattaci a info@capsulecodes.com.",
+          introduction:
+            "Questi Termini di Servizio disciplinano il tuo accesso e utilizzo del sito web e dei servizi di Capsule Codes. Accedendo o utilizzando i nostri servizi, accetti di essere vincolato da questi Termini.",
+          services:
+            "Capsule Codes fornisce servizi di sviluppo web e mobile, consulenza tecnica e servizi correlati come descritto sul nostro sito web. Tutti i servizi sono soggetti a disponibilità e alla nostra accettazione del tuo progetto.",
+          userObligations:
+            "Accetti di fornire informazioni accurate quando utilizzi i nostri servizi e di utilizzare i nostri servizi solo per scopi legali. Sei responsabile di mantenere la riservatezza di eventuali credenziali dell'account.",
+          intellectualProperty:
+            "Tutto il contenuto su questo sito web, inclusi ma non limitati a testo, grafica, loghi e software, è di proprietà di Capsule Codes ed è protetto dalle leggi sulla proprietà intellettuale.",
+          payment:
+            "I termini di pagamento saranno concordati per iscritto prima dell'inizio di qualsiasi progetto. Tutte le tariffe non sono rimborsabili a meno che non sia diversamente indicato nel tuo accordo di servizio specifico.",
+          liability:
+            "Capsule Codes fornisce servizi 'così come sono' e non fornisce garanzie, espresse o implicite. Non siamo responsabili per eventuali danni indiretti, incidentali o consequenziali derivanti dal tuo utilizzo dei nostri servizi.",
+          termination:
+            "Ci riserviamo il diritto di terminare o sospendere l'accesso ai nostri servizi in qualsiasi momento, senza preavviso, per condotta che riteniamo violi questi Termini o sia dannosa per altri utenti.",
+          changes:
+            "Ci riserviamo il diritto di modificare questi Termini in qualsiasi momento. Notificheremo gli utenti di eventuali modifiche materiali pubblicando i Termini aggiornati su questa pagina.",
+          contact:
+            "Se hai domande su questi Termini di Servizio, per favore contattaci a info@capsulecodes.com.",
         },
       },
     },
@@ -1293,7 +1605,8 @@ export const translations: Record<Language, Translations> = {
       },
       projects: {
         images: "Immagini del Progetto (Azure)",
-        imageDescription: "Massimo 10 immagini. Saranno convertite in WebP automaticamente.",
+        imageDescription:
+          "Massimo 10 immagini. Saranno convertite in WebP automaticamente.",
         selectedImages: "selezionate",
         currentImages: "Immagini Attuali",
         maxImages: "Massimo 10 immagini consentite",

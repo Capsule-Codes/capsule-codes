@@ -52,13 +52,25 @@ export function ProjectsPageClient({ projects }: ProjectsPageClientProps) {
                       fill
                       className="object-cover group-hover:scale-105 transition-transform duration-300"
                     />
+                    <Badge className="absolute top-2 left-2 capitalize">
+                      {project.category}
+                    </Badge>
+                    {project.published && (
+                      <Badge className="absolute top-2 right-2 bg-green-500 text-white hover:bg-green-600">
+                        {language === "es"
+                          ? "Publicado"
+                          : language === "it"
+                          ? "Pubblicato"
+                          : "Published"}
+                      </Badge>
+                    )}
                   </div>
                 </CardHeader>
                 <CardContent className="p-6 flex-1 flex flex-col">
                   <CardTitle className="text-xl mb-2 group-hover:text-primary transition-colors">
                     {content.title}
                   </CardTitle>
-                  <CardDescription className="text-muted-foreground mb-4 flex-1">{content.description}</CardDescription>
+                  <CardDescription className="text-muted-foreground mb-4 flex-1">{content.subtitle}</CardDescription>
 
                   {/* Technologies */}
                   <div className="flex flex-wrap gap-2 mb-4">

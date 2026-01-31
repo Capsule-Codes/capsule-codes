@@ -51,6 +51,8 @@ export async function POST(request: Request) {
           live_url: body.liveUrl || body.live_url,
           github_url: body.githubUrl || body.github_url,
           category: body.category,
+          featured: body.featured || false,
+          published: body.published || false,
         },
       ])
       .select()

@@ -107,6 +107,8 @@ export function SupabaseProvider({ children }: { children: React.ReactNode }) {
           liveUrl: project.liveUrl,
           githubUrl: project.githubUrl,
             category: project.category,
+            featured: project.featured,
+            published: project.published,
         }),
       });
 

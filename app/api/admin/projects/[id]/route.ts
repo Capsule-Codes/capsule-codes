@@ -64,6 +64,8 @@ export async function PUT(
     if (body.githubUrl !== undefined) updateData.github_url = body.githubUrl;
     if (body.github_url !== undefined) updateData.github_url = body.github_url;
     if (body.category !== undefined) updateData.category = body.category;
+    if (body.featured !== undefined) updateData.featured = body.featured;
+    if (body.published !== undefined) updateData.published = body.published;
 
     const { data, error } = await supabaseAdmin
       .from("projects")

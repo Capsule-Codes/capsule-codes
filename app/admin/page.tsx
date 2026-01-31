@@ -11,6 +11,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   Dialog,
@@ -157,6 +158,8 @@ export default function AdminPage() {
     category: "web" as "web" | "mobile" | "fullstack",
     liveUrl: "",
     githubUrl: "",
+    featured: false,
+    published: false,
   });
 
   // Technology form state
@@ -226,6 +229,8 @@ export default function AdminPage() {
       category: project.category,
       liveUrl: project.liveUrl || "",
       githubUrl: project.githubUrl || "",
+      featured: project.featured || false,
+      published: project.published || false,
     });
     setProjectImages(project.images || []);
     setSelectedImages([]);
@@ -237,6 +242,18 @@ export default function AdminPage() {
     try {
       setUploadingImages(true);
       setImageUploadError("");
+
+      if (!projectForm.translations.en.subtitle || !projectForm.translations.es.subtitle || !projectForm.translations.it.subtitle) {
+        setImageUploadError(
+          language === "es"
+            ? "El subtítulo es obligatorio en todos los idiomas"
+            : language === "it"
+            ? "Il sottotitolo è obbligatorio in tutte le lingue"
+            : "Subtitle is required in all languages"
+        );
+        setUploadingImages(false);
+        return;
+      }
 
       // Use first Azure image as primary image for backward compatibility
       const primaryImage = projectImages.length > 0
@@ -256,6 +273,8 @@ export default function AdminPage() {
         category: projectForm.category,
         liveUrl: projectForm.liveUrl,
         githubUrl: projectForm.githubUrl,
+        featured: projectForm.featured,
+        published: projectForm.published,
       };
 
       let projectId: string;
@@ -353,12 +372,38 @@ export default function AdminPage() {
       category: "web",
       liveUrl: "",
       githubUrl: "",
+      featured: false,
+      published: false,
     });
     setEditingProject(null);
     setSelectedImages([]);
     setProjectImages([]);
     setImageUploadError("");
     setIsProjectDialogOpen(false);
+  };
+
+  const handleNewProject = () => {
+    setEditingProject(null);
+    setProjectForm({
+      title: "",
+      description: "",
+      translations: {
+        en: { title: "", subtitle: "", description: "" },
+        es: { title: "", subtitle: "", description: "" },
+        it: { title: "", subtitle: "", description: "" },
+      },
+      image: "",
+      technologies: "",
+      category: "web",
+      liveUrl: "",
+      githubUrl: "",
+      featured: false,
+      published: false,
+    });
+    setSelectedImages([]);
+    setProjectImages([]);
+    setImageUploadError("");
+    setIsProjectDialogOpen(true);
   };
 
   // Image handlers
@@ -925,7 +970,7 @@ export default function AdminPage() {
               >
                 <DialogTrigger asChild>
                   <Button
-                    onClick={() => setEditingProject(null)}
+                    onClick={handleNewProject}
                     className="bg-gradient-to-r from-primary to-secondary"
                   >
                     <Plus className="w-4 h-4 mr-2" />
@@ -991,7 +1036,9 @@ export default function AdminPage() {
                             />
                           </div>
                           <div>
-                            <Label htmlFor="subtitle-en">Subtitle (English)</Label>
+                            <Label htmlFor="subtitle-en">
+                              Subtitle (English) <span className="text-destructive">*</span>
+                            </Label>
                             <Input
                               id="subtitle-en"
                               value={projectForm.translations.en.subtitle || ""}
@@ -1007,7 +1054,8 @@ export default function AdminPage() {
                                   },
                                 })
                               }
-                              placeholder="Project subtitle in English (optional)"
+                              placeholder="Short description for carousel"
+                              required
                             />
                           </div>
                           <div>
@@ -1057,7 +1105,9 @@ export default function AdminPage() {
                             />
                           </div>
                           <div>
-                            <Label htmlFor="subtitle-es">Subtítulo (Español)</Label>
+                            <Label htmlFor="subtitle-es">
+                              Subtítulo (Español) <span className="text-destructive">*</span>
+                            </Label>
                             <Input
                               id="subtitle-es"
                               value={projectForm.translations.es.subtitle || ""}
@@ -1073,7 +1123,8 @@ export default function AdminPage() {
                                   },
                                 })
                               }
-                              placeholder="Subtítulo del proyecto en español (opcional)"
+                              placeholder="Descripción breve para el carousel"
+                              required
                             />
                           </div>
                           <div>
@@ -1123,7 +1174,9 @@ export default function AdminPage() {
                             />
                           </div>
                           <div>
-                            <Label htmlFor="subtitle-it">Sottotitolo (Italiano)</Label>
+                            <Label htmlFor="subtitle-it">
+                              Sottotitolo (Italiano) <span className="text-destructive">*</span>
+                            </Label>
                             <Input
                               id="subtitle-it"
                               value={projectForm.translations.it.subtitle || ""}
@@ -1139,7 +1192,8 @@ export default function AdminPage() {
                                   },
                                 })
                               }
-                              placeholder="Sottotitolo del progetto in italiano (opzionale)"
+                              placeholder="Breve descrizione per il carosello"
+                              required
                             />
                           </div>
                           <div>
@@ -1329,6 +1383,52 @@ export default function AdminPage() {
                           placeholder="https://github.com/user/repo"
                         />
                       </div>
+
+                      <div className="flex items-center space-x-2">
+                        <Checkbox
+                          id="featured"
+                          checked={projectForm.featured}
+                          onCheckedChange={(checked) =>
+                            setProjectForm({
+                              ...projectForm,
+                              featured: checked === true,
+                            })
+                          }
+                        />
+                        <Label
+                          htmlFor="featured"
+                          className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 cursor-pointer"
+                        >
+                          {language === "es"
+                            ? "Destacar en página principal"
+                            : language === "it"
+                            ? "In evidenza sulla pagina principale"
+                            : "Feature on homepage"}
+                        </Label>
+                      </div>
+
+                      <div className="flex items-center space-x-2">
+                        <Checkbox
+                          id="published"
+                          checked={projectForm.published}
+                          onCheckedChange={(checked) =>
+                            setProjectForm({
+                              ...projectForm,
+                              published: checked === true,
+                            })
+                          }
+                        />
+                        <Label
+                          htmlFor="published"
+                          className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 cursor-pointer"
+                        >
+                          {language === "es"
+                            ? "Publicado (visible al público)"
+                            : language === "it"
+                            ? "Pubblicato (visibile al pubblico)"
+                            : "Published (visible to public)"}
+                        </Label>
+                      </div>
                     </div>
                     <div className="flex justify-end space-x-2">
                       <Button variant="outline" onClick={resetProjectForm}>
@@ -1379,9 +1479,19 @@ export default function AdminPage() {
                       alt={project.title}
                       className="w-full h-32 object-cover"
                     />
-                    <Badge className="absolute top-2 left-2 bg-background/90 capitalize">
+                    <Badge className="absolute top-2 left-2 capitalize">
                       {project.category}
                     </Badge>
+                    {project.featured && (
+                      <Badge className="absolute top-2 right-2 bg-yellow-500 text-yellow-950 hover:bg-yellow-600 hover:text-yellow-950">
+                        <Star className="w-3 h-3 mr-1 fill-current" />
+                        {language === "es"
+                          ? "Destacado"
+                          : language === "it"
+                          ? "In evidenza"
+                          : "Featured"}
+                      </Badge>
+                    )}
                   </div>
                   <CardHeader className="pb-2">
                     <CardTitle className="text-lg">

@@ -1,11 +1,11 @@
-"use client"
+"use client";
 
-import { Button } from "@/components/ui/button"
-import { ArrowRight, Zap, Code, Smartphone } from "lucide-react"
-import { useLanguage } from "@/hooks/use-language"
+import { Button } from "@/components/ui/button";
+import { ArrowRight, Zap, Code, Smartphone, Globe } from "lucide-react";
+import { useLanguage } from "@/hooks/use-language";
 
 export function HeroSection() {
-  const { t } = useLanguage()
+  const { t } = useLanguage();
 
   return (
     <section className="relative min-h-screen flex items-center justify-center overflow-hidden bg-gradient-to-br from-background via-muted/30 to-background">
@@ -36,13 +36,17 @@ export function HeroSection() {
 
           {/* Main Heading */}
           <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold mb-6 text-balance">
-            {t.hero.title.transform}{" "}
+            {t.hero.title.firstCommonText}{" "}
             <span className="bg-gradient-to-r from-primary via-secondary to-accent bg-clip-text text-transparent">
-              {t.hero.title.ideas}
+              {t.hero.title.firstKeyword}
             </span>{" "}
-            {t.hero.title.into}{" "}
+            {t.hero.title.secondCommonText}{" "}
             <span className="bg-gradient-to-r from-secondary via-accent to-primary bg-clip-text text-transparent">
-              {t.hero.title.reality}
+              {t.hero.title.secondKeyword}{" "}
+            </span>
+            {t.hero.title.thirdCommonText}{" "}
+            <span className="bg-gradient-to-r from-secondary via-accent to-primary bg-clip-text text-transparent">
+              {t.hero.title.thirdKeyword}
             </span>
           </h1>
 
@@ -55,18 +59,24 @@ export function HeroSection() {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
             <div className="flex flex-col items-center">
               <Code className="w-8 h-8 text-primary mb-2" />
-              <div className="text-2xl font-bold text-foreground">50+</div>
-              <div className="text-muted-foreground">{t.hero.stats.projects}</div>
+              <div className="text-2xl font-bold text-foreground">10+</div>
+              <div className="text-muted-foreground">
+                {t.hero.stats.projects}
+              </div>
+            </div>
+            <div className="flex flex-col items-center">
+              <Globe className="w-8 h-8 text-secondary mb-2" />
+              <div className="text-2xl font-bold text-foreground">8</div>
+              <div className="text-muted-foreground">
+                {t.hero.stats.countries}
+              </div>
             </div>
             <div className="flex flex-col items-center">
               <Smartphone className="w-8 h-8 text-secondary mb-2" />
-              <div className="text-2xl font-bold text-foreground">100%</div>
-              <div className="text-muted-foreground">{t.hero.stats.satisfaction}</div>
-            </div>
-            <div className="flex flex-col items-center">
-              <Zap className="w-8 h-8 text-accent mb-2" />
-              <div className="text-2xl font-bold text-foreground">24/7</div>
-              <div className="text-muted-foreground">{t.hero.stats.support}</div>
+              <div className="text-2xl font-bold text-foreground">2</div>
+              <div className="text-muted-foreground">
+                {t.hero.stats.apps}
+              </div>
             </div>
           </div>
 
@@ -75,14 +85,30 @@ export function HeroSection() {
             <Button
               size="lg"
               className="bg-gradient-to-r from-primary to-secondary hover:from-primary/90 hover:to-secondary/90 text-lg px-8 py-6"
-              onClick={() => document.getElementById("projects")?.scrollIntoView({ behavior: "smooth" })}
+              onClick={() =>
+                document
+                  .getElementById("projects")
+                  ?.scrollIntoView({ behavior: "smooth" })
+              }
             >
               {t.hero.cta.viewProjects}
+              <ArrowRight className="ml-2 h-5 w-5" />
+            </Button>
+            <Button
+              size="lg"
+              className="bg-gradient-to-r from-primary to-secondary hover:from-primary/90 hover:to-secondary/90 text-lg px-8 py-6"
+              onClick={() =>
+                document
+                  .getElementById("contact")
+                  ?.scrollIntoView({ behavior: "smooth" })
+              }
+            >
+              {t.hero.cta.contact}
               <ArrowRight className="ml-2 h-5 w-5" />
             </Button>
           </div>
         </div>
       </div>
     </section>
-  )
+  );
 }
