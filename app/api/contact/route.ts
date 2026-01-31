@@ -46,7 +46,7 @@ export async function POST(request: Request) {
         }
 
         await resend.emails.send({
-          from: "messages-noreply@capsulecodes.com",
+          from: "noreply@capsulecodes.com",
           to: recipientEmail,
           subject: `New Contact Message from ${validatedData.name}`,
           html: `
