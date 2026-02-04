@@ -3,8 +3,9 @@ import { HeroSection } from "@/components/hero-section";
 import { AboutSection } from "@/components/about-section";
 import { ServicesSection } from "@/components/services-section";
 import { TechnologiesSection } from "@/components/technologies-section";
+import { TeamSection } from "@/components/team-section";
 import { ProjectsSection } from "@/components/projects-section";
-import { ReviewsSection } from "@/components/reviews-section";
+// import { ReviewsSection } from "@/components/reviews-section";
 import { ContactSection } from "@/components/contact-section";
 import { Footer } from "@/components/footer";
 import { getHomePageData } from "@/lib/server/data";
@@ -24,8 +25,9 @@ export default async function HomePage() {
       <AboutSection />
       <ServicesSection />
       <TechnologiesSection technologies={technologies} />
+      <TeamSection />
       <ProjectsSection projects={projects} />
-      <ReviewsSection reviews={reviews} />
+      {/*<ReviewsSection reviews={reviews} />*/}
       <ContactSection contactInfo={contactInfo} />
       <Footer />
     </main>

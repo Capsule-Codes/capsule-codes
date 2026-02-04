@@ -46,7 +46,18 @@ export function ProjectDetailClient({ project }: ProjectDetailClientProps) {
 
       {/* Header Section - Título y Subtítulo */}
       <div className="mb-12">
-        <Badge className="mb-4 capitalize">{project.category}</Badge>
+        <div className="flex gap-2 mb-4">
+          <Badge className="capitalize">{project.category}</Badge>
+          {project.published && (
+            <Badge className="bg-green-500 text-white hover:bg-green-600">
+              {language === "es"
+                ? "Publicado"
+                : language === "it"
+                ? "Pubblicato"
+                : "Published"}
+            </Badge>
+          )}
+        </div>
         <h1 className="text-3xl md:text-4xl font-bold mb-4">
           {content.title.split(" ")[0]}{" "}
           <span className="bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">

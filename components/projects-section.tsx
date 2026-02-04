@@ -1,27 +1,28 @@
-"use client"
+"use client";
 
-import { useLanguage } from "@/hooks/use-language"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import { Badge } from "@/components/ui/badge"
-import { ExternalLink, Github } from "lucide-react"
-import Link from "next/link"
-import type { Project } from "@/lib/data-context"
+import { useLanguage } from "@/hooks/use-language";
+import { Button } from "@/components/ui/button";
+import { ProjectsCarousel } from "./projects-carousel";
+import type { Project } from "@/lib/data-context";
 
 interface ProjectsSectionProps {
-  projects?: Project[]
+  projects?: Project[];
 }
 
-export function ProjectsSection({ projects: projectsProp }: ProjectsSectionProps = {}) {
-  const { t } = useLanguage()
-  
+export function ProjectsSection({
+  projects: projectsProp,
+}: ProjectsSectionProps = {}) {
+  const { t } = useLanguage();
+
   // Use prop if provided, otherwise fall back to context (for backward compatibility)
   // This allows the component to work both with SSR (props) and client-side (context)
-  const projects = projectsProp || []
+  const projects = projectsProp || [];
+
+  const featuredProjects = projects.filter((project) => project.featured);
 
   const handleViewAllProjects = () => {
-    window.location.href = "/projects"
-  }
+    window.location.href = "/projects";
+  };
 
   return (
     <section id="projects" className="py-20 scroll-mt-24">
@@ -33,75 +34,12 @@ export function ProjectsSection({ projects: projectsProp }: ProjectsSectionProps
               {t.projects.title.split(" ").slice(1).join(" ")}
             </span>
           </h2>
-          <p className="text-xl text-muted-foreground max-w-3xl mx-auto text-pretty">{t.projects.subtitle}</p>
+          <p className="text-xl text-muted-foreground max-w-3xl mx-auto text-pretty">
+            {t.projects.subtitle}
+          </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {projects.map((project) => (
-            <Link key={project.id} href={`/projects/${project.id}`}>
-              <Card className="group overflow-hidden border-border/50 hover:border-primary/30 hover:shadow-xl transition-all duration-300 cursor-pointer h-full flex flex-col">
-                <div className="relative overflow-hidden">
-                  <img
-                    src={project.image || "/placeholder.svg"}
-                    alt={project.title}
-                    className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-primary/20 via-secondary/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                  <Badge className="absolute top-4 left-4 bg-background/90 text-foreground capitalize">
-                    {project.category}
-                  </Badge>
-                </div>
-
-                <CardHeader className="pb-4">
-                  <CardTitle className="group-hover:text-primary transition-colors duration-300">
-                    {project.title}
-                  </CardTitle>
-                </CardHeader>
-
-                <CardContent className="flex-1 flex flex-col">
-                  <p className="text-muted-foreground mb-4 leading-relaxed flex-1">{project.description}</p>
-
-                  <div className="flex flex-wrap gap-2 mb-6">
-                    {project.technologies.map((tech, tagIndex) => (
-                      <Badge key={tagIndex} variant="secondary" className="text-xs">
-                        {tech}
-                      </Badge>
-                    ))}
-                  </div>
-
-                  <div className="flex gap-2" onClick={(e) => e.stopPropagation()}>
-                    {project.liveUrl && (
-                      <Button
-                        size="sm"
-                        className="flex-1 bg-gradient-to-r from-primary to-secondary hover:from-primary/90 hover:to-secondary/90"
-                        asChild
-                        onClick={(e) => e.stopPropagation()}
-                      >
-                        <a href={project.liveUrl} target="_blank" rel="noopener noreferrer" onClick={(e) => e.stopPropagation()}>
-                          <ExternalLink className="w-4 h-4 mr-2" />
-                          {t.projects.viewDemo}
-                        </a>
-                      </Button>
-                    )}
-                    {project.githubUrl && (
-                      <Button
-                        size="sm"
-                        variant="outline"
-                        className="hover:bg-muted bg-transparent"
-                        asChild
-                        onClick={(e) => e.stopPropagation()}
-                      >
-                        <a href={project.githubUrl} target="_blank" rel="noopener noreferrer" onClick={(e) => e.stopPropagation()}>
-                          <Github className="w-4 h-4" />
-                        </a>
-                      </Button>
-                    )}
-                  </div>
-                </CardContent>
-              </Card>
-            </Link>
-          ))}
-        </div>
+        <ProjectsCarousel projects={featuredProjects} />
 
         <div className="text-center mt-12">
           <Button
@@ -114,5 +52,5 @@ export function ProjectsSection({ projects: projectsProp }: ProjectsSectionProps
         </div>
       </div>
     </section>
-  )
+  );
 }
