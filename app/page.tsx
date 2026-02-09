@@ -16,7 +16,7 @@ export const revalidate = 0;
 
 export default async function HomePage() {
   // Fetch data on the server
-  const { projects, technologies, reviews, contactInfo } = await getHomePageData();
+  const { projects, technologies, reviews, teamMembers, contactInfo } = await getHomePageData();
 
   return (
     <main className="min-h-screen">
@@ -25,7 +25,7 @@ export default async function HomePage() {
       <AboutSection />
       <ServicesSection />
       <TechnologiesSection technologies={technologies} />
-      <TeamSection />
+      <TeamSection teamMembers={teamMembers} />
       <ProjectsSection projects={projects} />
       {/*<ReviewsSection reviews={reviews} />*/}
       <ContactSection contactInfo={contactInfo} />

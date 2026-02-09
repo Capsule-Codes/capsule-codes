@@ -2,46 +2,34 @@
 
 import { Card, CardContent } from "@/components/ui/card";
 import { useLanguage } from "@/hooks/use-language";
+import type { TeamMember } from "@/lib/data-context";
 import Image from "next/image";
 
-export function TeamSection() {
-  const { t } = useLanguage();
+interface TeamSectionProps {
+  teamMembers: TeamMember[];
+}
 
-  const coFounders = [
-    {
-      name: t.team.coFounders.miguel.name,
-      role: t.team.coFounders.miguel.role,
-      description: t.team.coFounders.miguel.description,
-      image: "/images/team/placeholder-1.jpg",
-    },
-    {
-      name: t.team.coFounders.facundo.name,
-      role: t.team.coFounders.facundo.role,
-      description: t.team.coFounders.facundo.description,
-      image: "/images/team/placeholder-2.jpg",
-    },
-  ];
+export function TeamSection({ teamMembers }: TeamSectionProps) {
+  const { t, language } = useLanguage();
 
-  const developers = [
-    {
-      name: t.team.developers.marco.name,
-      role: t.team.developers.marco.role,
-      description: t.team.developers.marco.description,
-      image: "/images/team/placeholder-3.jpg",
-    },
-    {
-      name: t.team.developers.lucas.name,
-      role: t.team.developers.lucas.role,
-      description: t.team.developers.lucas.description,
-      image: "/images/team/placeholder-4.jpg",
-    },
-    {
-      name: t.team.developers.juan.name,
-      role: t.team.developers.juan.role,
-      description: t.team.developers.juan.description,
-      image: "/images/team/placeholder-5.jpg",
-    },
-  ];
+  const coFounders = teamMembers
+    .filter((member) => member.category === "cofounder" && member.published)
+    .sort((a, b) => a.order - b.order);
+
+  const developers = teamMembers
+    .filter((member) => member.category === "developer" && member.published)
+    .sort((a, b) => a.order - b.order);
+
+  const getMemberContent = (member: TeamMember) => {
+    const translation =
+      member.translations[language as keyof typeof member.translations];
+    return {
+      name: translation?.name || member.translations.en.name,
+      role: translation?.role || member.translations.en.role,
+      description:
+        translation?.description || member.translations.en.description,
+    };
+  };
 
   return (
     <section id="team" className="py-20 scroll-mt-24">
@@ -63,38 +51,44 @@ export function TeamSection() {
             {t.team.coFoundersTitle}
           </h3>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
-            {coFounders.map((member, index) => (
-              <Card
-                key={index}
-                className="group hover:shadow-xl transition-all duration-300 border-border/50 hover:border-primary/30 overflow-hidden"
-              >
-                <div className="h-2 bg-gradient-to-r from-primary to-secondary" />
-                <CardContent className="p-6">
-                  <div className="w-32 h-32 mx-auto mb-6 rounded-full bg-gradient-to-br from-primary/20 to-secondary/20 flex items-center justify-center overflow-hidden group-hover:scale-105 transition-transform duration-300">
-                    <div className="text-5xl">👤</div>
-                    {/* <Image
-                      src={member.image}
-                      alt={member.name}
-                      width={128}
-                      height={128}
-                      className="w-full h-full object-cover"
-                    /> */}
-                  </div>
+            {coFounders.map((member) => {
+              const content = getMemberContent(member);
+              return (
+                <Card
+                  key={member.id}
+                  className="group hover:shadow-xl transition-all duration-300 border-border/50 hover:border-primary/30 overflow-hidden"
+                >
+                  <div className="h-2 bg-gradient-to-r from-primary to-secondary" />
+                  <CardContent className="p-6">
+                    <div className="w-32 h-32 mx-auto mb-6 rounded-full bg-gradient-to-br from-primary/20 to-secondary/20 flex items-center justify-center overflow-hidden group-hover:scale-105 transition-transform duration-300">
+                      {member.avatar ? (
+                        <Image
+                          src={member.avatar}
+                          alt={content.name}
+                          width={128}
+                          height={128}
+                          className="w-full h-full object-cover"
+                        />
+                      ) : (
+                        <div className="text-5xl">👤</div>
+                      )}
+                    </div>
 
-                  <div className="text-center">
-                    <h4 className="text-xl font-bold mb-2 group-hover:text-primary transition-colors duration-300">
-                      {member.name}
-                    </h4>
-                    <p className="text-sm text-muted-foreground font-medium mb-4">
-                      {member.role}
-                    </p>
-                    <p className="text-muted-foreground leading-relaxed">
-                      {member.description}
-                    </p>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
+                    <div className="text-center">
+                      <h4 className="text-xl font-bold mb-2 group-hover:text-primary transition-colors duration-300">
+                        {content.name}
+                      </h4>
+                      <p className="text-sm text-muted-foreground font-medium mb-4">
+                        {content.role}
+                      </p>
+                      <p className="text-muted-foreground leading-relaxed">
+                        {content.description}
+                      </p>
+                    </div>
+                  </CardContent>
+                </Card>
+              );
+            })}
           </div>
         </div>
 
@@ -103,38 +97,44 @@ export function TeamSection() {
             {t.team.developersTitle}
           </h3>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {developers.map((member, index) => (
-              <Card
-                key={index}
-                className="group hover:shadow-xl transition-all duration-300 border-border/50 hover:border-primary/30 overflow-hidden"
-              >
-                <div className="h-2 bg-gradient-to-r from-accent to-primary" />
-                <CardContent className="p-6">
-                  <div className="w-24 h-24 mx-auto mb-6 rounded-full bg-gradient-to-br from-accent/20 to-primary/20 flex items-center justify-center overflow-hidden group-hover:scale-105 transition-transform duration-300">
-                    <div className="text-4xl">👤</div>
-                    {/* <Image
-                      src={member.image}
-                      alt={member.name}
-                      width={96}
-                      height={96}
-                      className="w-full h-full object-cover"
-                    /> */}
-                  </div>
+            {developers.map((member) => {
+              const content = getMemberContent(member);
+              return (
+                <Card
+                  key={member.id}
+                  className="group hover:shadow-xl transition-all duration-300 border-border/50 hover:border-primary/30 overflow-hidden"
+                >
+                  <div className="h-2 bg-gradient-to-r from-accent to-primary" />
+                  <CardContent className="p-6">
+                    <div className="w-24 h-24 mx-auto mb-6 rounded-full bg-gradient-to-br from-accent/20 to-primary/20 flex items-center justify-center overflow-hidden group-hover:scale-105 transition-transform duration-300">
+                      {member.avatar ? (
+                        <Image
+                          src={member.avatar}
+                          alt={content.name}
+                          width={96}
+                          height={96}
+                          className="w-full h-full object-cover"
+                        />
+                      ) : (
+                        <div className="text-4xl">👤</div>
+                      )}
+                    </div>
 
-                  <div className="text-center">
-                    <h4 className="text-lg font-bold mb-2 group-hover:text-primary transition-colors duration-300">
-                      {member.name}
-                    </h4>
-                    <p className="text-sm text-muted-foreground font-medium mb-4">
-                      {member.role}
-                    </p>
-                    <p className="text-sm text-muted-foreground leading-relaxed">
-                      {member.description}
-                    </p>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
+                    <div className="text-center">
+                      <h4 className="text-lg font-bold mb-2 group-hover:text-primary transition-colors duration-300">
+                        {content.name}
+                      </h4>
+                      <p className="text-sm text-muted-foreground font-medium mb-4">
+                        {content.role}
+                      </p>
+                      <p className="text-sm text-muted-foreground leading-relaxed">
+                        {content.description}
+                      </p>
+                    </div>
+                  </CardContent>
+                </Card>
+              );
+            })}
           </div>
         </div>
       </div>

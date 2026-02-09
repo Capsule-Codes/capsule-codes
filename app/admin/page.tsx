@@ -44,7 +44,7 @@ import {
   Upload,
   Image as ImageIcon,
 } from "lucide-react";
-import type { Project, Technology, Review, ProjectImage } from "@/lib/data-context";
+import type { Project, Technology, Review, ProjectImage, TeamMember } from "@/lib/data-context";
 import { SimpleLanguageSwitcher } from "@/components/simple-language-switcher";
 import { ContactMessages } from "@/components/admin/contact-messages";
 import { ContactInfoSettings } from "@/components/admin/contact-info-settings";
@@ -108,6 +108,7 @@ export default function AdminPage() {
     projects,
     technologies,
     reviews,
+    teamMembers,
     loading,
     error,
     addProject,
@@ -119,6 +120,9 @@ export default function AdminPage() {
     addReview,
     updateReview,
     deleteReview,
+    addTeamMember,
+    updateTeamMember,
+    deleteTeamMember,
     refreshData,
   } = useSupabase();
 
@@ -190,6 +194,24 @@ export default function AdminPage() {
     date: new Date().toISOString().split("T")[0],
   });
 
+  // Team member states
+  const [editingTeamMember, setEditingTeamMember] = useState<TeamMember | null>(null);
+  const [isTeamMemberDialogOpen, setIsTeamMemberDialogOpen] = useState(false);
+  const [isSavingTeamMember, setIsSavingTeamMember] = useState(false);
+  
+  // Team member form state
+  const [teamMemberForm, setTeamMemberForm] = useState({
+    translations: {
+      en: { name: "", role: "", description: "" },
+      es: { name: "", role: "", description: "" },
+      it: { name: "", role: "", description: "" },
+    },
+    avatar: "",
+    category: "developer" as "cofounder" | "developer",
+    order: 0,
+    published: true,
+  });
+
   const categories = ["web", "mobile", "fullstack"];
   const techCategories = [
     "frontend",
@@ -198,6 +220,7 @@ export default function AdminPage() {
     "database",
     "deployment",
   ];
+  const teamMemberCategories = ["cofounder", "developer"];
 
   // Project handlers
   const handleEditProject = (project: Project) => {
@@ -676,6 +699,98 @@ export default function AdminPage() {
     }
   };
 
+  // Team Member handlers
+  const handleEditTeamMember = (member: TeamMember) => {
+    setEditingTeamMember(member);
+    setTeamMemberForm({
+      translations: member.translations,
+      avatar: member.avatar,
+      category: member.category,
+      order: member.order,
+      published: member.published,
+    });
+    setIsTeamMemberDialogOpen(true);
+  };
+
+  const handleSaveTeamMember = async () => {
+    try {
+      setIsSavingTeamMember(true);
+
+      if (!teamMemberForm.translations.en.name || !teamMemberForm.translations.en.role) {
+        alert(t.admin.teamMembers.requiredFields);
+        return;
+      }
+
+      const memberData = {
+        translations: teamMemberForm.translations,
+        avatar: teamMemberForm.avatar,
+        category: teamMemberForm.category,
+        order: teamMemberForm.order,
+        published: teamMemberForm.published,
+      };
+
+      if (editingTeamMember) {
+        await updateTeamMember(editingTeamMember.id!, memberData);
+      } else {
+        await addTeamMember(memberData);
+      }
+
+      await refreshData();
+      resetTeamMemberForm();
+    } catch (error) {
+      const errorMessage = getErrorMessage(error);
+      alert(`${t.admin.teamMembers.saveError}: ${errorMessage}`);
+    } finally {
+      setIsSavingTeamMember(false);
+    }
+  };
+
+  const resetTeamMemberForm = () => {
+    setTeamMemberForm({
+      translations: {
+        en: { name: "", role: "", description: "" },
+        es: { name: "", role: "", description: "" },
+        it: { name: "", role: "", description: "" },
+      },
+      avatar: "",
+      category: "developer",
+      order: 0,
+      published: true,
+    });
+    setEditingTeamMember(null);
+    setIsTeamMemberDialogOpen(false);
+  };
+
+  const handleNewTeamMember = () => {
+    setTeamMemberForm({
+      translations: {
+        en: { name: "", role: "", description: "" },
+        es: { name: "", role: "", description: "" },
+        it: { name: "", role: "", description: "" },
+      },
+      avatar: "",
+      category: "developer",
+      order: teamMembers.length,
+      published: true,
+    });
+    setEditingTeamMember(null);
+    setIsTeamMemberDialogOpen(true);
+  };
+
+  const handleDeleteTeamMember = async (id: string) => {
+    if (!confirm(t.admin.teamMembers.deleteConfirm)) {
+      return;
+    }
+
+    try {
+      await deleteTeamMember(id);
+      await refreshData();
+    } catch (error) {
+      const errorMessage = getErrorMessage(error);
+      alert(`${t.admin.teamMembers.deleteError}: ${errorMessage}`);
+    }
+  };
+
   if (authLoading) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
@@ -908,7 +1023,7 @@ export default function AdminPage() {
         )}
 
         <Tabs defaultValue="projects" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-5">
+          <TabsList className="grid w-full grid-cols-6">
             <TabsTrigger value="projects" className="flex items-center gap-2">
               <FolderOpen className="w-4 h-4" />
               {language === "es"
@@ -935,6 +1050,14 @@ export default function AdminPage() {
                 : language === "it"
                 ? "Recensioni"
                 : "Reviews"}
+            </TabsTrigger>
+            <TabsTrigger value="team" className="flex items-center gap-2">
+              <Star className="w-4 h-4" />
+              {language === "es"
+                ? "Equipo"
+                : language === "it"
+                ? "Team"
+                : "Team"}
             </TabsTrigger>
             <TabsTrigger value="messages" className="flex items-center gap-2">
               <Mail className="w-4 h-4" />
@@ -2066,6 +2189,393 @@ export default function AdminPage() {
                   </CardContent>
                 </Card>
               ))}
+            </div>
+          </TabsContent>
+
+          {/* Team Tab */}
+          <TabsContent value="team" className="space-y-6">
+            <div className="flex justify-between items-center">
+              <h2 className="text-2xl font-bold">{t.admin.teamMembers.title}</h2>
+              <Dialog
+                open={isTeamMemberDialogOpen}
+                onOpenChange={setIsTeamMemberDialogOpen}
+              >
+                <DialogTrigger asChild>
+                  <Button onClick={handleNewTeamMember}>
+                    <Plus className="w-4 h-4 mr-2" />
+                    {t.admin.teamMembers.newMember}
+                  </Button>
+                </DialogTrigger>
+                <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
+                  <DialogHeader>
+                    <DialogTitle>
+                      {editingTeamMember
+                        ? t.admin.teamMembers.editMember
+                        : t.admin.teamMembers.newMember}
+                    </DialogTitle>
+                  </DialogHeader>
+
+                  <div className="space-y-4">
+                    {/* Translations */}
+                    <div>
+                      <Label>Translations</Label>
+                      <Tabs defaultValue="en" className="w-full">
+                        <TabsList className="grid w-full grid-cols-3">
+                          <TabsTrigger value="en">🇺🇸 English</TabsTrigger>
+                          <TabsTrigger value="es">🇪🇸 Español</TabsTrigger>
+                          <TabsTrigger value="it">🇮🇹 Italiano</TabsTrigger>
+                        </TabsList>
+
+                        {/* English */}
+                        <TabsContent value="en" className="space-y-4">
+                          <div>
+                            <Label>{t.admin.teamMembers.name} (EN)</Label>
+                            <Input
+                              value={teamMemberForm.translations.en.name}
+                              onChange={(e) =>
+                                setTeamMemberForm({
+                                  ...teamMemberForm,
+                                  translations: {
+                                    ...teamMemberForm.translations,
+                                    en: {
+                                      ...teamMemberForm.translations.en,
+                                      name: e.target.value,
+                                    },
+                                  },
+                                })
+                              }
+                            />
+                          </div>
+                          <div>
+                            <Label>{t.admin.teamMembers.role} (EN)</Label>
+                            <Input
+                              value={teamMemberForm.translations.en.role}
+                              onChange={(e) =>
+                                setTeamMemberForm({
+                                  ...teamMemberForm,
+                                  translations: {
+                                    ...teamMemberForm.translations,
+                                    en: {
+                                      ...teamMemberForm.translations.en,
+                                      role: e.target.value,
+                                    },
+                                  },
+                                })
+                              }
+                            />
+                          </div>
+                          <div>
+                            <Label>{t.admin.teamMembers.description} (EN)</Label>
+                            <Textarea
+                              value={teamMemberForm.translations.en.description}
+                              onChange={(e) =>
+                                setTeamMemberForm({
+                                  ...teamMemberForm,
+                                  translations: {
+                                    ...teamMemberForm.translations,
+                                    en: {
+                                      ...teamMemberForm.translations.en,
+                                      description: e.target.value,
+                                    },
+                                  },
+                                })
+                              }
+                              rows={3}
+                            />
+                          </div>
+                        </TabsContent>
+
+                        {/* Spanish */}
+                        <TabsContent value="es" className="space-y-4">
+                          <div>
+                            <Label>{t.admin.teamMembers.name} (ES)</Label>
+                            <Input
+                              value={teamMemberForm.translations.es.name}
+                              onChange={(e) =>
+                                setTeamMemberForm({
+                                  ...teamMemberForm,
+                                  translations: {
+                                    ...teamMemberForm.translations,
+                                    es: {
+                                      ...teamMemberForm.translations.es,
+                                      name: e.target.value,
+                                    },
+                                  },
+                                })
+                              }
+                            />
+                          </div>
+                          <div>
+                            <Label>{t.admin.teamMembers.role} (ES)</Label>
+                            <Input
+                              value={teamMemberForm.translations.es.role}
+                              onChange={(e) =>
+                                setTeamMemberForm({
+                                  ...teamMemberForm,
+                                  translations: {
+                                    ...teamMemberForm.translations,
+                                    es: {
+                                      ...teamMemberForm.translations.es,
+                                      role: e.target.value,
+                                    },
+                                  },
+                                })
+                              }
+                            />
+                          </div>
+                          <div>
+                            <Label>{t.admin.teamMembers.description} (ES)</Label>
+                            <Textarea
+                              value={teamMemberForm.translations.es.description}
+                              onChange={(e) =>
+                                setTeamMemberForm({
+                                  ...teamMemberForm,
+                                  translations: {
+                                    ...teamMemberForm.translations,
+                                    es: {
+                                      ...teamMemberForm.translations.es,
+                                      description: e.target.value,
+                                    },
+                                  },
+                                })
+                              }
+                              rows={3}
+                            />
+                          </div>
+                        </TabsContent>
+
+                        {/* Italian */}
+                        <TabsContent value="it" className="space-y-4">
+                          <div>
+                            <Label>{t.admin.teamMembers.name} (IT)</Label>
+                            <Input
+                              value={teamMemberForm.translations.it.name}
+                              onChange={(e) =>
+                                setTeamMemberForm({
+                                  ...teamMemberForm,
+                                  translations: {
+                                    ...teamMemberForm.translations,
+                                    it: {
+                                      ...teamMemberForm.translations.it,
+                                      name: e.target.value,
+                                    },
+                                  },
+                                })
+                              }
+                            />
+                          </div>
+                          <div>
+                            <Label>{t.admin.teamMembers.role} (IT)</Label>
+                            <Input
+                              value={teamMemberForm.translations.it.role}
+                              onChange={(e) =>
+                                setTeamMemberForm({
+                                  ...teamMemberForm,
+                                  translations: {
+                                    ...teamMemberForm.translations,
+                                    it: {
+                                      ...teamMemberForm.translations.it,
+                                      role: e.target.value,
+                                    },
+                                  },
+                                })
+                              }
+                            />
+                          </div>
+                          <div>
+                            <Label>{t.admin.teamMembers.description} (IT)</Label>
+                            <Textarea
+                              value={teamMemberForm.translations.it.description}
+                              onChange={(e) =>
+                                setTeamMemberForm({
+                                  ...teamMemberForm,
+                                  translations: {
+                                    ...teamMemberForm.translations,
+                                    it: {
+                                      ...teamMemberForm.translations.it,
+                                      description: e.target.value,
+                                    },
+                                  },
+                                })
+                              }
+                              rows={3}
+                            />
+                          </div>
+                        </TabsContent>
+                      </Tabs>
+                    </div>
+
+                    {/* Avatar */}
+                    <div>
+                      <Label htmlFor="member-avatar">
+                        {t.admin.teamMembers.avatar}
+                      </Label>
+                      <Input
+                        id="member-avatar"
+                        value={teamMemberForm.avatar}
+                        onChange={(e) =>
+                          setTeamMemberForm({
+                            ...teamMemberForm,
+                            avatar: e.target.value,
+                          })
+                        }
+                        placeholder="https://example.com/avatar.jpg"
+                      />
+                    </div>
+
+                    {/* Category */}
+                    <div>
+                      <Label htmlFor="member-category">
+                        {t.admin.teamMembers.category}
+                      </Label>
+                      <Select
+                        value={teamMemberForm.category}
+                        onValueChange={(value: "cofounder" | "developer") =>
+                          setTeamMemberForm({
+                            ...teamMemberForm,
+                            category: value,
+                          })
+                        }
+                      >
+                        <SelectTrigger>
+                          <SelectValue
+                            placeholder={t.admin.teamMembers.selectCategory}
+                          />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {teamMemberCategories.map((cat) => (
+                            <SelectItem key={cat} value={cat}>
+                              {t.admin.teamMembers.categories[
+                                cat as "cofounder" | "developer"
+                              ]}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+
+                    {/* Order */}
+                    <div>
+                      <Label htmlFor="member-order">
+                        {t.admin.teamMembers.order}
+                      </Label>
+                      <Input
+                        id="member-order"
+                        type="number"
+                        value={teamMemberForm.order}
+                        onChange={(e) =>
+                          setTeamMemberForm({
+                            ...teamMemberForm,
+                            order: parseInt(e.target.value) || 0,
+                          })
+                        }
+                      />
+                    </div>
+
+                    {/* Published */}
+                    <div className="flex items-center space-x-2">
+                      <Checkbox
+                        id="member-published"
+                        checked={teamMemberForm.published}
+                        onCheckedChange={(checked) =>
+                          setTeamMemberForm({
+                            ...teamMemberForm,
+                            published: checked as boolean,
+                          })
+                        }
+                      />
+                      <Label htmlFor="member-published">
+                        {t.admin.teamMembers.published}
+                      </Label>
+                    </div>
+
+                    {/* Actions */}
+                    <div className="flex justify-end gap-2 pt-4">
+                      <Button
+                        variant="outline"
+                        onClick={() => {
+                          resetTeamMemberForm();
+                          setIsTeamMemberDialogOpen(false);
+                        }}
+                      >
+                        <X className="w-4 h-4 mr-2" />
+                        {t.admin.common.cancel}
+                      </Button>
+                      <Button
+                        onClick={handleSaveTeamMember}
+                        disabled={isSavingTeamMember}
+                      >
+                        {isSavingTeamMember ? (
+                          <>
+                            <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                            {t.admin.common.saving}
+                          </>
+                        ) : (
+                          <>
+                            <Save className="w-4 h-4 mr-2" />
+                            {t.admin.common.save}
+                          </>
+                        )}
+                      </Button>
+                    </div>
+                  </div>
+                </DialogContent>
+              </Dialog>
+            </div>
+
+            {/* Team Members List */}
+            <div className="grid gap-4">
+              {teamMembers.map((member) => {
+                const memberName = member.translations[language as keyof typeof member.translations]?.name || member.translations.en.name;
+                const memberRole = member.translations[language as keyof typeof member.translations]?.role || member.translations.en.role;
+                
+                return (
+                  <Card key={member.id}>
+                    <CardContent className="flex items-center justify-between p-6">
+                      <div className="flex items-center gap-4">
+                        {member.avatar && (
+                          <img
+                            src={member.avatar}
+                            alt={memberName}
+                            className="w-12 h-12 rounded-full object-cover"
+                          />
+                        )}
+                        <div>
+                          <h3 className="font-semibold">{memberName}</h3>
+                          <p className="text-sm text-muted-foreground">
+                            {memberRole}
+                          </p>
+                          <div className="flex gap-2 mt-2">
+                            <Badge variant="outline">
+                              {t.admin.teamMembers.categories[member.category]}
+                            </Badge>
+                            <Badge variant={member.published ? "default" : "secondary"}>
+                              {member.published ? "Published" : "Draft"}
+                            </Badge>
+                            <Badge variant="outline">Order: {member.order}</Badge>
+                          </div>
+                        </div>
+                      </div>
+                      <div className="flex gap-2">
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => handleEditTeamMember(member)}
+                        >
+                          <Edit className="w-4 h-4" />
+                        </Button>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => handleDeleteTeamMember(member.id!)}
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </Button>
+                      </div>
+                    </CardContent>
+                  </Card>
+                );
+              })}
             </div>
           </TabsContent>
 
