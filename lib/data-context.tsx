@@ -97,6 +97,7 @@ export interface TeamMember {
     it: TeamMemberTranslations;
   };
   avatar: string;
+  avatar_blob_key?: string;
   category: "cofounder" | "developer";
   order: number;
   published: boolean;
