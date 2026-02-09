@@ -44,7 +44,13 @@ import {
   Upload,
   Image as ImageIcon,
 } from "lucide-react";
-import type { Project, Technology, Review, ProjectImage } from "@/lib/data-context";
+import type {
+  Project,
+  Technology,
+  Review,
+  ProjectImage,
+  TeamMember,
+} from "@/lib/data-context";
 import { SimpleLanguageSwitcher } from "@/components/simple-language-switcher";
 import { ContactMessages } from "@/components/admin/contact-messages";
 import { ContactInfoSettings } from "@/components/admin/contact-info-settings";
@@ -84,7 +90,11 @@ export default function AdminPage() {
         websiteLanguage as keyof typeof project.translations
       ];
     }
-    return { title: project.title, subtitle: "", description: project.description };
+    return {
+      title: project.title,
+      subtitle: "",
+      description: project.description,
+    };
   };
 
   const handleLogin = async (e: React.FormEvent) => {
@@ -108,6 +118,7 @@ export default function AdminPage() {
     projects,
     technologies,
     reviews,
+    teamMembers,
     loading,
     error,
     addProject,
@@ -119,12 +130,15 @@ export default function AdminPage() {
     addReview,
     updateReview,
     deleteReview,
+    addTeamMember,
+    updateTeamMember,
+    deleteTeamMember,
     refreshData,
   } = useSupabase();
 
   const [editingProject, setEditingProject] = useState<Project | null>(null);
   const [editingTechnology, setEditingTechnology] = useState<Technology | null>(
-    null
+    null,
   );
   const [isProjectDialogOpen, setIsProjectDialogOpen] = useState(false);
   const [isTechDialogOpen, setIsTechDialogOpen] = useState(false);
@@ -190,6 +204,32 @@ export default function AdminPage() {
     date: new Date().toISOString().split("T")[0],
   });
 
+  // Team member states
+  const [editingTeamMember, setEditingTeamMember] = useState<TeamMember | null>(
+    null,
+  );
+  const [isTeamMemberDialogOpen, setIsTeamMemberDialogOpen] = useState(false);
+  const [isSavingTeamMember, setIsSavingTeamMember] = useState(false);
+  const [selectedTeamAvatar, setSelectedTeamAvatar] = useState<File | null>(
+    null,
+  );
+  const [uploadingTeamAvatar, setUploadingTeamAvatar] = useState(false);
+  const [teamAvatarPreview, setTeamAvatarPreview] = useState<string>("");
+
+  // Team member form state
+  const [teamMemberForm, setTeamMemberForm] = useState({
+    translations: {
+      en: { name: "", role: "", description: "" },
+      es: { name: "", role: "", description: "" },
+      it: { name: "", role: "", description: "" },
+    },
+    avatar: "",
+    avatar_blob_key: "",
+    category: "developer" as "cofounder" | "developer",
+    order: 0,
+    published: true,
+  });
+
   const categories = ["web", "mobile", "fullstack"];
   const techCategories = [
     "frontend",
@@ -198,6 +238,7 @@ export default function AdminPage() {
     "database",
     "deployment",
   ];
+  const teamMemberCategories = ["cofounder", "developer"];
 
   // Project handlers
   const handleEditProject = (project: Project) => {
@@ -205,17 +246,20 @@ export default function AdminPage() {
       en: {
         title: project.translations?.en?.title ?? project.title,
         subtitle: project.translations?.en?.subtitle ?? "",
-        description: project.translations?.en?.description ?? project.description,
+        description:
+          project.translations?.en?.description ?? project.description,
       },
       es: {
         title: project.translations?.es?.title ?? project.title,
         subtitle: project.translations?.es?.subtitle ?? "",
-        description: project.translations?.es?.description ?? project.description,
+        description:
+          project.translations?.es?.description ?? project.description,
       },
       it: {
         title: project.translations?.it?.title ?? project.title,
         subtitle: project.translations?.it?.subtitle ?? "",
-        description: project.translations?.it?.description ?? project.description,
+        description:
+          project.translations?.it?.description ?? project.description,
       },
     };
 
@@ -243,22 +287,27 @@ export default function AdminPage() {
       setUploadingImages(true);
       setImageUploadError("");
 
-      if (!projectForm.translations.en.subtitle || !projectForm.translations.es.subtitle || !projectForm.translations.it.subtitle) {
+      if (
+        !projectForm.translations.en.subtitle ||
+        !projectForm.translations.es.subtitle ||
+        !projectForm.translations.it.subtitle
+      ) {
         setImageUploadError(
           language === "es"
             ? "El subtítulo es obligatorio en todos los idiomas"
             : language === "it"
-            ? "Il sottotitolo è obbligatorio in tutte le lingue"
-            : "Subtitle is required in all languages"
+              ? "Il sottotitolo è obbligatorio in tutte le lingue"
+              : "Subtitle is required in all languages",
         );
         setUploadingImages(false);
         return;
       }
 
       // Use first Azure image as primary image for backward compatibility
-      const primaryImage = projectImages.length > 0
-        ? `/api/images/${projectImages[0].blobKey}`
-        : projectForm.image;
+      const primaryImage =
+        projectImages.length > 0
+          ? `/api/images/${projectImages[0].blobKey}`
+          : projectForm.image;
 
       const projectData = {
         title: projectForm.translations.en.title || projectForm.title,
@@ -293,7 +342,7 @@ export default function AdminPage() {
         const validation = validateImageFiles(selectedImages);
         if (!validation.valid) {
           setImageUploadError(
-            `Invalid image formats: ${validation.invalidFiles.join(", ")}`
+            `Invalid image formats: ${validation.invalidFiles.join(", ")}`,
           );
           setUploadingImages(false);
           return;
@@ -309,10 +358,13 @@ export default function AdminPage() {
         }
         formData.append("altText", projectForm.translations.en.title);
 
-        const response = await fetch(`/api/admin/projects/${projectId}/images`, {
-          method: "POST",
-          body: formData,
-        });
+        const response = await fetch(
+          `/api/admin/projects/${projectId}/images`,
+          {
+            method: "POST",
+            body: formData,
+          },
+        );
 
         if (!response.ok) {
           const errorData = await response.json();
@@ -325,9 +377,10 @@ export default function AdminPage() {
 
         // Update project with images and set primary image
         const updatedImages = [...projectImages, ...result.images];
-        const newPrimaryImage = updatedImages.length > 0
-          ? `/api/images/${updatedImages[0].blobKey}`
-          : projectForm.image;
+        const newPrimaryImage =
+          updatedImages.length > 0
+            ? `/api/images/${updatedImages[0].blobKey}`
+            : projectForm.image;
 
         await updateProject(projectId, {
           images: updatedImages,
@@ -424,7 +477,7 @@ export default function AdminPage() {
         `/api/admin/projects/${editingProject.id}/images?blobKey=${encodeURIComponent(image.blobKey)}&mediaId=${image.mediaId}`,
         {
           method: "DELETE",
-        }
+        },
       );
 
       if (!response.ok) {
@@ -433,14 +486,15 @@ export default function AdminPage() {
 
       // Update local state
       const updatedImages = projectImages.filter(
-        (img) => img.mediaId !== image.mediaId
+        (img) => img.mediaId !== image.mediaId,
       );
       setProjectImages(updatedImages);
 
       // Update primary image for backward compatibility
-      const newPrimaryImage = updatedImages.length > 0
-        ? `/api/images/${updatedImages[0].blobKey}`
-        : "";
+      const newPrimaryImage =
+        updatedImages.length > 0
+          ? `/api/images/${updatedImages[0].blobKey}`
+          : "";
 
       // Update project in database
       await updateProject(editingProject.id, {
@@ -547,9 +601,24 @@ export default function AdminPage() {
       company: review.company,
       position: review.position,
       translations: review.translations || {
-        en: { text: review.text, author: review.author, company: review.company, position: review.position },
-        es: { text: review.text, author: review.author, company: review.company, position: review.position },
-        it: { text: review.text, author: review.author, company: review.company, position: review.position },
+        en: {
+          text: review.text,
+          author: review.author,
+          company: review.company,
+          position: review.position,
+        },
+        es: {
+          text: review.text,
+          author: review.author,
+          company: review.company,
+          position: review.position,
+        },
+        it: {
+          text: review.text,
+          author: review.author,
+          company: review.company,
+          position: review.position,
+        },
       },
       rating: review.rating,
       avatar: review.avatar || "",
@@ -576,7 +645,11 @@ export default function AdminPage() {
   const handleSaveReview = async () => {
     try {
       // Validate rating
-      if (reviewForm.rating < 1 || reviewForm.rating > 5 || isNaN(reviewForm.rating)) {
+      if (
+        reviewForm.rating < 1 ||
+        reviewForm.rating > 5 ||
+        isNaN(reviewForm.rating)
+      ) {
         alert(t.admin.reviews.invalidRating);
         return;
       }
@@ -676,6 +749,160 @@ export default function AdminPage() {
     }
   };
 
+  // Team Member handlers
+  const handleEditTeamMember = (member: TeamMember) => {
+    setEditingTeamMember(member);
+    setTeamMemberForm({
+      translations: member.translations,
+      avatar: member.avatar,
+      avatar_blob_key: member.avatar_blob_key || "",
+      category: member.category,
+      order: member.order,
+      published: member.published,
+    });
+    setIsTeamMemberDialogOpen(true);
+  };
+
+  const handleSaveTeamMember = async () => {
+    try {
+      setIsSavingTeamMember(true);
+      setUploadingTeamAvatar(true);
+
+      if (
+        !teamMemberForm.translations.en.name ||
+        !teamMemberForm.translations.en.role
+      ) {
+        alert(t.admin.teamMembers.requiredFields);
+        return;
+      }
+
+      let avatarUrl = teamMemberForm.avatar;
+      let avatarBlobKey = teamMemberForm.avatar_blob_key;
+      let memberId = editingTeamMember?.id || "";
+
+      const memberData = {
+        translations: teamMemberForm.translations,
+        avatar: avatarUrl,
+        avatar_blob_key: avatarBlobKey,
+        category: teamMemberForm.category,
+        order: teamMemberForm.order,
+        published: teamMemberForm.published,
+      };
+
+      if (editingTeamMember) {
+        await updateTeamMember(editingTeamMember.id!, memberData);
+        memberId = editingTeamMember.id!;
+      } else {
+        const newMember = await addTeamMember(memberData);
+        memberId = newMember?.id || "";
+      }
+
+      if (selectedTeamAvatar && memberId) {
+        const formData = new FormData();
+        formData.append("avatar", selectedTeamAvatar);
+
+        const response = await fetch(
+          `/api/admin/team-members/${memberId}/avatar`,
+          {
+            method: "POST",
+            body: formData,
+          },
+        );
+
+        if (!response.ok) {
+          const errorData = await response.json();
+          throw new Error(errorData.message || "Error uploading avatar");
+        }
+
+        const result = await response.json();
+        avatarUrl = result.avatarUrl;
+        avatarBlobKey = result.blobKey;
+
+        await updateTeamMember(memberId, {
+          avatar: avatarUrl,
+          avatar_blob_key: avatarBlobKey,
+        } as any);
+      } else if (avatarUrl === "" && memberId) {
+        await updateTeamMember(memberId, {
+          avatar: "",
+          avatar_blob_key: "",
+        } as any);
+      }
+
+      await refreshData();
+      resetTeamMemberForm();
+    } catch (error) {
+      const errorMessage = getErrorMessage(error);
+      alert(`${t.admin.teamMembers.saveError}: ${errorMessage}`);
+    } finally {
+      setIsSavingTeamMember(false);
+      setUploadingTeamAvatar(false);
+    }
+  };
+
+  const resetTeamMemberForm = () => {
+    setTeamMemberForm({
+      translations: {
+        en: { name: "", role: "", description: "" },
+        es: { name: "", role: "", description: "" },
+        it: { name: "", role: "", description: "" },
+      },
+      avatar: "",
+      avatar_blob_key: "",
+      category: "developer",
+      order: 0,
+      published: true,
+    });
+    setEditingTeamMember(null);
+    setSelectedTeamAvatar(null);
+    setTeamAvatarPreview("");
+    setIsTeamMemberDialogOpen(false);
+  };
+
+  const handleNewTeamMember = () => {
+    setTeamMemberForm({
+      translations: {
+        en: { name: "", role: "", description: "" },
+        es: { name: "", role: "", description: "" },
+        it: { name: "", role: "", description: "" },
+      },
+      avatar: "",
+      avatar_blob_key: "",
+      category: "developer",
+      order: teamMembers.length,
+      published: true,
+    });
+    setEditingTeamMember(null);
+    setIsTeamMemberDialogOpen(true);
+  };
+
+  const handleDeleteTeamMember = async (id: string) => {
+    if (!confirm(t.admin.teamMembers.deleteConfirm)) {
+      return;
+    }
+
+    try {
+      await deleteTeamMember(id);
+      await refreshData();
+    } catch (error) {
+      const errorMessage = getErrorMessage(error);
+      alert(`${t.admin.teamMembers.deleteError}: ${errorMessage}`);
+    }
+  };
+
+  const handleTeamAvatarSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setSelectedTeamAvatar(file);
+
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setTeamAvatarPreview(reader.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
   if (authLoading) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
@@ -699,15 +926,15 @@ export default function AdminPage() {
               {language === "es"
                 ? "Panel de Administración"
                 : language === "it"
-                ? "Pannello di Amministrazione"
-                : "Administration Panel"}
+                  ? "Pannello di Amministrazione"
+                  : "Administration Panel"}
             </CardTitle>
             <p className="text-muted-foreground">
               {language === "es"
                 ? "Ingresa tus credenciales para acceder"
                 : language === "it"
-                ? "Inserisci le tue credenziali per accedere"
-                : "Enter your credentials to access"}
+                  ? "Inserisci le tue credenziali per accedere"
+                  : "Enter your credentials to access"}
             </p>
           </CardHeader>
           <CardContent>
@@ -717,8 +944,8 @@ export default function AdminPage() {
                   {language === "es"
                     ? "Email"
                     : language === "it"
-                    ? "Email"
-                    : "Email"}
+                      ? "Email"
+                      : "Email"}
                 </Label>
                 <Input
                   id="email"
@@ -736,8 +963,8 @@ export default function AdminPage() {
                   {language === "es"
                     ? "Contraseña"
                     : language === "it"
-                    ? "Password"
-                    : "Password"}
+                      ? "Password"
+                      : "Password"}
                 </Label>
                 <Input
                   id="password"
@@ -760,8 +987,8 @@ export default function AdminPage() {
                 {language === "es"
                   ? "Iniciar Sesión"
                   : language === "it"
-                  ? "Accedi"
-                  : "Login"}
+                    ? "Accedi"
+                    : "Login"}
               </Button>
             </form>
             <div className="mt-6 p-4 bg-muted rounded-lg">
@@ -770,21 +997,21 @@ export default function AdminPage() {
                   {language === "es"
                     ? "Credenciales de prueba:"
                     : language === "it"
-                    ? "Credenziali di test:"
-                    : "Test credentials:"}
+                      ? "Credenziali di test:"
+                      : "Test credentials:"}
                 </strong>
                 <br />
                 {language === "es"
                   ? "Email: admin@capsulecodes.com"
                   : language === "it"
-                  ? "Email: admin@capsulecodes.com"
-                  : "Email: admin@capsulecodes.com"}
+                    ? "Email: admin@capsulecodes.com"
+                    : "Email: admin@capsulecodes.com"}
                 <br />
                 {language === "es"
                   ? "Contraseña: capsule2025"
                   : language === "it"
-                  ? "Password: capsule2025"
-                  : "Password: capsule2025"}
+                    ? "Password: capsule2025"
+                    : "Password: capsule2025"}
               </p>
             </div>
           </CardContent>
@@ -806,15 +1033,15 @@ export default function AdminPage() {
                   {language === "es"
                     ? "Panel de Administración"
                     : language === "it"
-                    ? "Pannello di Amministrazione"
-                    : "Administration Panel"}
+                      ? "Pannello di Amministrazione"
+                      : "Administration Panel"}
                 </h1>
                 <p className="text-sm text-muted-foreground">
                   {language === "es"
                     ? "Gestiona proyectos y tecnologías"
                     : language === "it"
-                    ? "Gestisci progetti e tecnologie"
-                    : "Manage projects and technologies"}
+                      ? "Gestisci progetti e tecnologie"
+                      : "Manage projects and technologies"}
                 </p>
               </div>
             </div>
@@ -830,8 +1057,8 @@ export default function AdminPage() {
                   {language === "es"
                     ? "Ver Sitio"
                     : language === "it"
-                    ? "Vedi Sito"
-                    : "View Site"}
+                      ? "Vedi Sito"
+                      : "View Site"}
                 </Button>
                 <Button
                   variant="outline"
@@ -850,8 +1077,8 @@ export default function AdminPage() {
                     {language === "es"
                       ? "Cerrar Sesión"
                       : language === "it"
-                      ? "Esci"
-                      : "Logout"}
+                        ? "Esci"
+                        : "Logout"}
                   </span>
                 </Button>
               </div>
@@ -870,8 +1097,8 @@ export default function AdminPage() {
                 {language === "es"
                   ? "Cargando datos..."
                   : language === "it"
-                  ? "Caricamento dati..."
-                  : "Loading data..."}
+                    ? "Caricamento dati..."
+                    : "Loading data..."}
               </p>
             </div>
           </div>
@@ -886,8 +1113,8 @@ export default function AdminPage() {
                   {language === "es"
                     ? "Error al cargar datos"
                     : language === "it"
-                    ? "Errore nel caricamento dei dati"
-                    : "Error loading data"}
+                      ? "Errore nel caricamento dei dati"
+                      : "Error loading data"}
                 </h3>
                 <p className="text-red-600 text-sm mt-1">{error}</p>
                 <Button
@@ -899,8 +1126,8 @@ export default function AdminPage() {
                   {language === "es"
                     ? "Reintentar"
                     : language === "it"
-                    ? "Riprova"
-                    : "Retry"}
+                      ? "Riprova"
+                      : "Retry"}
                 </Button>
               </div>
             </div>
@@ -908,14 +1135,14 @@ export default function AdminPage() {
         )}
 
         <Tabs defaultValue="projects" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-5">
+          <TabsList className="grid w-full grid-cols-6">
             <TabsTrigger value="projects" className="flex items-center gap-2">
               <FolderOpen className="w-4 h-4" />
               {language === "es"
                 ? "Proyectos"
                 : language === "it"
-                ? "Progetti"
-                : "Projects"}
+                  ? "Progetti"
+                  : "Projects"}
             </TabsTrigger>
             <TabsTrigger
               value="technologies"
@@ -925,32 +1152,40 @@ export default function AdminPage() {
               {language === "es"
                 ? "Tecnologías"
                 : language === "it"
-                ? "Tecnologie"
-                : "Technologies"}
+                  ? "Tecnologie"
+                  : "Technologies"}
             </TabsTrigger>
             <TabsTrigger value="reviews" className="flex items-center gap-2">
               <Star className="w-4 h-4" />
               {language === "es"
                 ? "Reseñas"
                 : language === "it"
-                ? "Recensioni"
-                : "Reviews"}
+                  ? "Recensioni"
+                  : "Reviews"}
+            </TabsTrigger>
+            <TabsTrigger value="team" className="flex items-center gap-2">
+              <Star className="w-4 h-4" />
+              {language === "es"
+                ? "Equipo"
+                : language === "it"
+                  ? "Team"
+                  : "Team"}
             </TabsTrigger>
             <TabsTrigger value="messages" className="flex items-center gap-2">
               <Mail className="w-4 h-4" />
               {language === "es"
                 ? "Mensajes"
                 : language === "it"
-                ? "Messaggi"
-                : "Messages"}
+                  ? "Messaggi"
+                  : "Messages"}
             </TabsTrigger>
             <TabsTrigger value="settings" className="flex items-center gap-2">
               <Settings className="w-4 h-4" />
               {language === "es"
                 ? "Contacto"
                 : language === "it"
-                ? "Contatto"
-                : "Contact"}
+                  ? "Contatto"
+                  : "Contact"}
             </TabsTrigger>
           </TabsList>
 
@@ -961,8 +1196,8 @@ export default function AdminPage() {
                 {language === "es"
                   ? "Gestión de Proyectos"
                   : language === "it"
-                  ? "Gestione Progetti"
-                  : "Project Management"}
+                    ? "Gestione Progetti"
+                    : "Project Management"}
               </h2>
               <Dialog
                 open={isProjectDialogOpen}
@@ -977,8 +1212,8 @@ export default function AdminPage() {
                     {language === "es"
                       ? "Nuevo Proyecto"
                       : language === "it"
-                      ? "Nuovo Progetto"
-                      : "New Project"}
+                        ? "Nuovo Progetto"
+                        : "New Project"}
                   </Button>
                 </DialogTrigger>
                 <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
@@ -988,13 +1223,13 @@ export default function AdminPage() {
                         ? language === "es"
                           ? "Editar Proyecto"
                           : language === "it"
-                          ? "Modifica Progetto"
-                          : "Edit Project"
+                            ? "Modifica Progetto"
+                            : "Edit Project"
                         : language === "es"
-                        ? "Nuevo Proyecto"
-                        : language === "it"
-                        ? "Nuovo Progetto"
-                        : "New Project"}
+                          ? "Nuevo Proyecto"
+                          : language === "it"
+                            ? "Nuovo Progetto"
+                            : "New Project"}
                     </DialogTitle>
                   </DialogHeader>
                   <div className="space-y-4">
@@ -1004,8 +1239,8 @@ export default function AdminPage() {
                         {language === "es"
                           ? "Contenido Multilingüe"
                           : language === "it"
-                          ? "Contenuto Multilingue"
-                          : "Multilingual Content"}
+                            ? "Contenuto Multilingue"
+                            : "Multilingual Content"}
                       </Label>
                       <Tabs defaultValue="en" className="w-full">
                         <TabsList className="grid w-full grid-cols-3">
@@ -1037,7 +1272,8 @@ export default function AdminPage() {
                           </div>
                           <div>
                             <Label htmlFor="subtitle-en">
-                              Subtitle (English) <span className="text-destructive">*</span>
+                              Subtitle (English){" "}
+                              <span className="text-destructive">*</span>
                             </Label>
                             <Input
                               id="subtitle-en"
@@ -1106,7 +1342,8 @@ export default function AdminPage() {
                           </div>
                           <div>
                             <Label htmlFor="subtitle-es">
-                              Subtítulo (Español) <span className="text-destructive">*</span>
+                              Subtítulo (Español){" "}
+                              <span className="text-destructive">*</span>
                             </Label>
                             <Input
                               id="subtitle-es"
@@ -1175,7 +1412,8 @@ export default function AdminPage() {
                           </div>
                           <div>
                             <Label htmlFor="subtitle-it">
-                              Sottotitolo (Italiano) <span className="text-destructive">*</span>
+                              Sottotitolo (Italiano){" "}
+                              <span className="text-destructive">*</span>
                             </Label>
                             <Input
                               id="subtitle-it"
@@ -1227,13 +1465,13 @@ export default function AdminPage() {
                         {language === "es"
                           ? "Categoría"
                           : language === "it"
-                          ? "Categoria"
-                          : "Category"}
+                            ? "Categoria"
+                            : "Category"}
                       </Label>
                       <Select
                         value={projectForm.category}
                         onValueChange={(
-                          value: "web" | "mobile" | "fullstack"
+                          value: "web" | "mobile" | "fullstack",
                         ) =>
                           setProjectForm({ ...projectForm, category: value })
                         }
@@ -1244,8 +1482,8 @@ export default function AdminPage() {
                               language === "es"
                                 ? "Seleccionar categoría"
                                 : language === "it"
-                                ? "Seleziona categoria"
-                                : "Select category"
+                                  ? "Seleziona categoria"
+                                  : "Select category"
                             }
                           />
                         </SelectTrigger>
@@ -1274,7 +1512,8 @@ export default function AdminPage() {
                           />
                           {selectedImages.length > 0 && (
                             <Badge variant="secondary">
-                              {selectedImages.length} {t.admin.projects.selectedImages}
+                              {selectedImages.length}{" "}
+                              {t.admin.projects.selectedImages}
                             </Badge>
                           )}
                         </div>
@@ -1327,8 +1566,8 @@ export default function AdminPage() {
                         {language === "es"
                           ? "Tecnologías (separadas por comas)"
                           : language === "it"
-                          ? "Tecnologie (separate da virgole)"
-                          : "Technologies (comma separated)"}
+                            ? "Tecnologie (separate da virgole)"
+                            : "Technologies (comma separated)"}
                       </Label>
                       <Input
                         id="technologies"
@@ -1348,8 +1587,8 @@ export default function AdminPage() {
                           {language === "es"
                             ? "URL Demo (opcional)"
                             : language === "it"
-                            ? "URL Demo (opzionale)"
-                            : "Demo URL (optional)"}
+                              ? "URL Demo (opzionale)"
+                              : "Demo URL (optional)"}
                         </Label>
                         <Input
                           id="liveUrl"
@@ -1368,8 +1607,8 @@ export default function AdminPage() {
                           {language === "es"
                             ? "URL GitHub (opcional)"
                             : language === "it"
-                            ? "URL GitHub (opzionale)"
-                            : "GitHub URL (optional)"}
+                              ? "URL GitHub (opzionale)"
+                              : "GitHub URL (optional)"}
                         </Label>
                         <Input
                           id="githubUrl"
@@ -1402,8 +1641,8 @@ export default function AdminPage() {
                           {language === "es"
                             ? "Destacar en página principal"
                             : language === "it"
-                            ? "In evidenza sulla pagina principale"
-                            : "Feature on homepage"}
+                              ? "In evidenza sulla pagina principale"
+                              : "Feature on homepage"}
                         </Label>
                       </div>
 
@@ -1425,8 +1664,8 @@ export default function AdminPage() {
                           {language === "es"
                             ? "Publicado (visible al público)"
                             : language === "it"
-                            ? "Pubblicato (visibile al pubblico)"
-                            : "Published (visible to public)"}
+                              ? "Pubblicato (visibile al pubblico)"
+                              : "Published (visible to public)"}
                         </Label>
                       </div>
                     </div>
@@ -1436,8 +1675,8 @@ export default function AdminPage() {
                         {language === "es"
                           ? "Cancelar"
                           : language === "it"
-                          ? "Annulla"
-                          : "Cancel"}
+                            ? "Annulla"
+                            : "Cancel"}
                       </Button>
                       <Button
                         onClick={handleSaveProject}
@@ -1450,8 +1689,8 @@ export default function AdminPage() {
                             {language === "es"
                               ? "Guardando..."
                               : language === "it"
-                              ? "Salvataggio..."
-                              : "Saving..."}
+                                ? "Salvataggio..."
+                                : "Saving..."}
                           </>
                         ) : (
                           <>
@@ -1459,8 +1698,8 @@ export default function AdminPage() {
                             {language === "es"
                               ? "Guardar"
                               : language === "it"
-                              ? "Salva"
-                              : "Save"}
+                                ? "Salva"
+                                : "Save"}
                           </>
                         )}
                       </Button>
@@ -1488,8 +1727,8 @@ export default function AdminPage() {
                         {language === "es"
                           ? "Destacado"
                           : language === "it"
-                          ? "In evidenza"
-                          : "Featured"}
+                            ? "In evidenza"
+                            : "Featured"}
                       </Badge>
                     )}
                   </div>
@@ -1529,8 +1768,8 @@ export default function AdminPage() {
                         {language === "es"
                           ? "Editar"
                           : language === "it"
-                          ? "Modifica"
-                          : "Edit"}
+                            ? "Modifica"
+                            : "Edit"}
                       </Button>
                       <Button
                         size="sm"
@@ -1553,8 +1792,8 @@ export default function AdminPage() {
                 {language === "es"
                   ? "Gestión de Tecnologías"
                   : language === "it"
-                  ? "Gestione Tecnologie"
-                  : "Technology Management"}
+                    ? "Gestione Tecnologie"
+                    : "Technology Management"}
               </h2>
               <Dialog
                 open={isTechDialogOpen}
@@ -1616,7 +1855,7 @@ export default function AdminPage() {
                             | "backend"
                             | "mobile"
                             | "database"
-                            | "deployment"
+                            | "deployment",
                         ) => setTechForm({ ...techForm, category: value })}
                       >
                         <SelectTrigger>
@@ -1634,7 +1873,11 @@ export default function AdminPage() {
                       </Select>
                     </div>
                     <div className="flex justify-end space-x-2">
-                      <Button type="button" variant="outline" onClick={resetTechForm}>
+                      <Button
+                        type="button"
+                        variant="outline"
+                        onClick={resetTechForm}
+                      >
                         <X className="w-4 h-4 mr-2" />
                         {t.admin.common.cancel}
                       </Button>
@@ -1649,7 +1892,9 @@ export default function AdminPage() {
                         ) : (
                           <Save className="w-4 h-4 mr-2" />
                         )}
-                        {isSavingTech ? t.admin.common.saving : t.admin.common.save}
+                        {isSavingTech
+                          ? t.admin.common.saving
+                          : t.admin.common.save}
                       </Button>
                     </div>
                   </div>
@@ -1712,8 +1957,8 @@ export default function AdminPage() {
                 {language === "es"
                   ? "Gestión de Reseñas"
                   : language === "it"
-                  ? "Gestione Recensioni"
-                  : "Review Management"}
+                    ? "Gestione Recensioni"
+                    : "Review Management"}
               </h2>
               <Dialog
                 open={isReviewDialogOpen}
@@ -1739,9 +1984,7 @@ export default function AdminPage() {
                     {/* Basic Info */}
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <div>
-                        <Label htmlFor="author">
-                          {t.admin.reviews.author}
-                        </Label>
+                        <Label htmlFor="author">{t.admin.reviews.author}</Label>
                         <Input
                           id="author"
                           value={reviewForm.author}
@@ -1755,8 +1998,8 @@ export default function AdminPage() {
                             language === "es"
                               ? "Nombre del autor"
                               : language === "it"
-                              ? "Nome dell'autore"
-                              : "Author name"
+                                ? "Nome dell'autore"
+                                : "Author name"
                           }
                         />
                       </div>
@@ -1777,8 +2020,8 @@ export default function AdminPage() {
                             language === "es"
                               ? "Nombre de la empresa"
                               : language === "it"
-                              ? "Nome dell'azienda"
-                              : "Company name"
+                                ? "Nome dell'azienda"
+                                : "Company name"
                           }
                         />
                       </div>
@@ -1799,15 +2042,13 @@ export default function AdminPage() {
                             language === "es"
                               ? "Cargo del autor"
                               : language === "it"
-                              ? "Posizione dell'autore"
-                              : "Author position"
+                                ? "Posizione dell'autore"
+                                : "Author position"
                           }
                         />
                       </div>
                       <div>
-                        <Label htmlFor="rating">
-                          {t.admin.reviews.rating}
-                        </Label>
+                        <Label htmlFor="rating">{t.admin.reviews.rating}</Label>
                         <Input
                           id="rating"
                           type="number"
@@ -1818,7 +2059,9 @@ export default function AdminPage() {
                             const value = parseInt(e.target.value);
                             setReviewForm({
                               ...reviewForm,
-                              rating: isNaN(value) ? 5 : Math.min(5, Math.max(1, value)),
+                              rating: isNaN(value)
+                                ? 5
+                                : Math.min(5, Math.max(1, value)),
                             });
                           }}
                           required
@@ -1832,8 +2075,8 @@ export default function AdminPage() {
                         {language === "es"
                           ? "Contenido Multilingüe"
                           : language === "it"
-                          ? "Contenuto Multilingue"
-                          : "Multilingual Content"}
+                            ? "Contenuto Multilingue"
+                            : "Multilingual Content"}
                       </Label>
                       <Tabs defaultValue="en" className="w-full">
                         <TabsList className="grid w-full grid-cols-3">
@@ -1930,8 +2173,8 @@ export default function AdminPage() {
                           {language === "es"
                             ? "Avatar (Azure)"
                             : language === "it"
-                            ? "Avatar (Azure)"
-                            : "Avatar (Azure)"}
+                              ? "Avatar (Azure)"
+                              : "Avatar (Azure)"}
                         </Label>
                         <div className="flex items-center gap-4">
                           <Input
@@ -1955,8 +2198,8 @@ export default function AdminPage() {
                           {language === "es"
                             ? "Se convertirá a WebP 400x400px automáticamente."
                             : language === "it"
-                            ? "Sarà convertito in WebP 400x400px automaticamente."
-                            : "Will be automatically converted to WebP 400x400px."}
+                              ? "Sarà convertito in WebP 400x400px automaticamente."
+                              : "Will be automatically converted to WebP 400x400px."}
                         </p>
                       </div>
 
@@ -1965,8 +2208,8 @@ export default function AdminPage() {
                           {language === "es"
                             ? "Fecha"
                             : language === "it"
-                            ? "Data"
-                            : "Date"}
+                              ? "Data"
+                              : "Date"}
                         </Label>
                         <Input
                           id="date"
@@ -1983,7 +2226,11 @@ export default function AdminPage() {
                     </div>
 
                     <div className="flex justify-end space-x-2">
-                      <Button variant="outline" onClick={resetReviewForm} disabled={isSavingReview}>
+                      <Button
+                        variant="outline"
+                        onClick={resetReviewForm}
+                        disabled={isSavingReview}
+                      >
                         <X className="w-4 h-4 mr-2" />
                         {t.admin.common.cancel}
                       </Button>
@@ -1997,7 +2244,9 @@ export default function AdminPage() {
                         ) : (
                           <Save className="w-4 h-4 mr-2" />
                         )}
-                        {isSavingReview ? t.admin.common.saving : t.admin.common.save}
+                        {isSavingReview
+                          ? t.admin.common.saving
+                          : t.admin.common.save}
                       </Button>
                     </div>
                   </div>
@@ -2066,6 +2315,472 @@ export default function AdminPage() {
                   </CardContent>
                 </Card>
               ))}
+            </div>
+          </TabsContent>
+
+          {/* Team Tab */}
+          <TabsContent value="team" className="space-y-6">
+            <div className="flex justify-between items-center">
+              <h2 className="text-2xl font-bold">
+                {t.admin.teamMembers.title}
+              </h2>
+              <Dialog
+                open={isTeamMemberDialogOpen}
+                onOpenChange={setIsTeamMemberDialogOpen}
+              >
+                <DialogTrigger asChild>
+                  <Button onClick={handleNewTeamMember}>
+                    <Plus className="w-4 h-4 mr-2" />
+                    {t.admin.teamMembers.newMember}
+                  </Button>
+                </DialogTrigger>
+                <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
+                  <DialogHeader>
+                    <DialogTitle>
+                      {editingTeamMember
+                        ? t.admin.teamMembers.editMember
+                        : t.admin.teamMembers.newMember}
+                    </DialogTitle>
+                  </DialogHeader>
+
+                  <div className="space-y-4">
+                    {/* Translations */}
+                    <div>
+                      <Label>Translations</Label>
+                      <Tabs defaultValue="en" className="w-full">
+                        <TabsList className="grid w-full grid-cols-3">
+                          <TabsTrigger value="en">🇺🇸 English</TabsTrigger>
+                          <TabsTrigger value="es">🇪🇸 Español</TabsTrigger>
+                          <TabsTrigger value="it">🇮🇹 Italiano</TabsTrigger>
+                        </TabsList>
+
+                        {/* English */}
+                        <TabsContent value="en" className="space-y-4">
+                          <div>
+                            <Label>{t.admin.teamMembers.name} (EN)</Label>
+                            <Input
+                              value={teamMemberForm.translations.en.name}
+                              onChange={(e) =>
+                                setTeamMemberForm({
+                                  ...teamMemberForm,
+                                  translations: {
+                                    ...teamMemberForm.translations,
+                                    en: {
+                                      ...teamMemberForm.translations.en,
+                                      name: e.target.value,
+                                    },
+                                  },
+                                })
+                              }
+                            />
+                          </div>
+                          <div>
+                            <Label>{t.admin.teamMembers.role} (EN)</Label>
+                            <Input
+                              value={teamMemberForm.translations.en.role}
+                              onChange={(e) =>
+                                setTeamMemberForm({
+                                  ...teamMemberForm,
+                                  translations: {
+                                    ...teamMemberForm.translations,
+                                    en: {
+                                      ...teamMemberForm.translations.en,
+                                      role: e.target.value,
+                                    },
+                                  },
+                                })
+                              }
+                            />
+                          </div>
+                          <div>
+                            <Label>
+                              {t.admin.teamMembers.description} (EN)
+                            </Label>
+                            <Textarea
+                              value={teamMemberForm.translations.en.description}
+                              onChange={(e) =>
+                                setTeamMemberForm({
+                                  ...teamMemberForm,
+                                  translations: {
+                                    ...teamMemberForm.translations,
+                                    en: {
+                                      ...teamMemberForm.translations.en,
+                                      description: e.target.value,
+                                    },
+                                  },
+                                })
+                              }
+                              rows={3}
+                            />
+                          </div>
+                        </TabsContent>
+
+                        {/* Spanish */}
+                        <TabsContent value="es" className="space-y-4">
+                          <div>
+                            <Label>{t.admin.teamMembers.name} (ES)</Label>
+                            <Input
+                              value={teamMemberForm.translations.es.name}
+                              onChange={(e) =>
+                                setTeamMemberForm({
+                                  ...teamMemberForm,
+                                  translations: {
+                                    ...teamMemberForm.translations,
+                                    es: {
+                                      ...teamMemberForm.translations.es,
+                                      name: e.target.value,
+                                    },
+                                  },
+                                })
+                              }
+                            />
+                          </div>
+                          <div>
+                            <Label>{t.admin.teamMembers.role} (ES)</Label>
+                            <Input
+                              value={teamMemberForm.translations.es.role}
+                              onChange={(e) =>
+                                setTeamMemberForm({
+                                  ...teamMemberForm,
+                                  translations: {
+                                    ...teamMemberForm.translations,
+                                    es: {
+                                      ...teamMemberForm.translations.es,
+                                      role: e.target.value,
+                                    },
+                                  },
+                                })
+                              }
+                            />
+                          </div>
+                          <div>
+                            <Label>
+                              {t.admin.teamMembers.description} (ES)
+                            </Label>
+                            <Textarea
+                              value={teamMemberForm.translations.es.description}
+                              onChange={(e) =>
+                                setTeamMemberForm({
+                                  ...teamMemberForm,
+                                  translations: {
+                                    ...teamMemberForm.translations,
+                                    es: {
+                                      ...teamMemberForm.translations.es,
+                                      description: e.target.value,
+                                    },
+                                  },
+                                })
+                              }
+                              rows={3}
+                            />
+                          </div>
+                        </TabsContent>
+
+                        {/* Italian */}
+                        <TabsContent value="it" className="space-y-4">
+                          <div>
+                            <Label>{t.admin.teamMembers.name} (IT)</Label>
+                            <Input
+                              value={teamMemberForm.translations.it.name}
+                              onChange={(e) =>
+                                setTeamMemberForm({
+                                  ...teamMemberForm,
+                                  translations: {
+                                    ...teamMemberForm.translations,
+                                    it: {
+                                      ...teamMemberForm.translations.it,
+                                      name: e.target.value,
+                                    },
+                                  },
+                                })
+                              }
+                            />
+                          </div>
+                          <div>
+                            <Label>{t.admin.teamMembers.role} (IT)</Label>
+                            <Input
+                              value={teamMemberForm.translations.it.role}
+                              onChange={(e) =>
+                                setTeamMemberForm({
+                                  ...teamMemberForm,
+                                  translations: {
+                                    ...teamMemberForm.translations,
+                                    it: {
+                                      ...teamMemberForm.translations.it,
+                                      role: e.target.value,
+                                    },
+                                  },
+                                })
+                              }
+                            />
+                          </div>
+                          <div>
+                            <Label>
+                              {t.admin.teamMembers.description} (IT)
+                            </Label>
+                            <Textarea
+                              value={teamMemberForm.translations.it.description}
+                              onChange={(e) =>
+                                setTeamMemberForm({
+                                  ...teamMemberForm,
+                                  translations: {
+                                    ...teamMemberForm.translations,
+                                    it: {
+                                      ...teamMemberForm.translations.it,
+                                      description: e.target.value,
+                                    },
+                                  },
+                                })
+                              }
+                              rows={3}
+                            />
+                          </div>
+                        </TabsContent>
+                      </Tabs>
+                    </div>
+
+                    {/* Avatar */}
+                    <div>
+                      <Label htmlFor="member-avatar">
+                        {t.admin.teamMembers.avatar}
+                      </Label>
+                      <div className="space-y-4">
+                        <Input
+                          id="member-avatar"
+                          type="file"
+                          accept="image/*"
+                          onChange={handleTeamAvatarSelect}
+                          disabled={uploadingTeamAvatar}
+                        />
+                        {(teamAvatarPreview || teamMemberForm.avatar) && (
+                          <div className="flex items-center gap-4">
+                            <img
+                              src={teamAvatarPreview || teamMemberForm.avatar}
+                              alt="Avatar preview"
+                              className="w-20 h-20 rounded-full object-cover border-2 border-border"
+                            />
+                            <Button
+                              type="button"
+                              variant="outline"
+                              size="sm"
+                              onClick={async () => {
+                                if (
+                                  teamMemberForm.avatar_blob_key &&
+                                  editingTeamMember?.id
+                                ) {
+                                  try {
+                                    const response = await fetch(
+                                      `/api/admin/team-members/${editingTeamMember.id}/avatar?blobKey=${encodeURIComponent(teamMemberForm.avatar_blob_key)}`,
+                                      { method: "DELETE" },
+                                    );
+                                    if (!response.ok) {
+                                      console.error(
+                                        "Failed to delete avatar from Azure",
+                                      );
+                                    }
+                                  } catch (error) {
+                                    console.error(
+                                      "Error deleting avatar:",
+                                      error,
+                                    );
+                                  }
+                                }
+
+                                setSelectedTeamAvatar(null);
+                                setTeamAvatarPreview("");
+                                setTeamMemberForm({
+                                  ...teamMemberForm,
+                                  avatar: "",
+                                  avatar_blob_key: "",
+                                });
+                              }}
+                              disabled={uploadingTeamAvatar}
+                            >
+                              <Trash2 className="w-4 h-4 mr-2" />
+                              {language === "es"
+                                ? "Eliminar"
+                                : language === "it"
+                                  ? "Elimina"
+                                  : "Remove"}
+                            </Button>
+                            {uploadingTeamAvatar && (
+                              <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                                <Loader2 className="w-4 h-4 animate-spin" />
+                                Uploading avatar...
+                              </div>
+                            )}
+                          </div>
+                        )}
+                      </div>
+                    </div>
+
+                    {/* Category */}
+                    <div>
+                      <Label htmlFor="member-category">
+                        {t.admin.teamMembers.category}
+                      </Label>
+                      <Select
+                        value={teamMemberForm.category}
+                        onValueChange={(value: "cofounder" | "developer") =>
+                          setTeamMemberForm({
+                            ...teamMemberForm,
+                            category: value,
+                          })
+                        }
+                      >
+                        <SelectTrigger>
+                          <SelectValue
+                            placeholder={t.admin.teamMembers.selectCategory}
+                          />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {teamMemberCategories.map((cat) => (
+                            <SelectItem key={cat} value={cat}>
+                              {
+                                t.admin.teamMembers.categories[
+                                  cat as "cofounder" | "developer"
+                                ]
+                              }
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+
+                    {/* Order */}
+                    <div>
+                      <Label htmlFor="member-order">
+                        {t.admin.teamMembers.order}
+                      </Label>
+                      <Input
+                        id="member-order"
+                        type="number"
+                        value={teamMemberForm.order}
+                        onChange={(e) =>
+                          setTeamMemberForm({
+                            ...teamMemberForm,
+                            order: parseInt(e.target.value) || 0,
+                          })
+                        }
+                      />
+                    </div>
+
+                    {/* Published */}
+                    <div className="flex items-center space-x-2">
+                      <Checkbox
+                        id="member-published"
+                        checked={teamMemberForm.published}
+                        onCheckedChange={(checked) =>
+                          setTeamMemberForm({
+                            ...teamMemberForm,
+                            published: checked as boolean,
+                          })
+                        }
+                      />
+                      <Label htmlFor="member-published">
+                        {t.admin.teamMembers.published}
+                      </Label>
+                    </div>
+
+                    {/* Actions */}
+                    <div className="flex justify-end gap-2 pt-4">
+                      <Button
+                        variant="outline"
+                        onClick={() => {
+                          resetTeamMemberForm();
+                          setIsTeamMemberDialogOpen(false);
+                        }}
+                      >
+                        <X className="w-4 h-4 mr-2" />
+                        {t.admin.common.cancel}
+                      </Button>
+                      <Button
+                        onClick={handleSaveTeamMember}
+                        disabled={isSavingTeamMember}
+                      >
+                        {isSavingTeamMember ? (
+                          <>
+                            <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                            {t.admin.common.saving}
+                          </>
+                        ) : (
+                          <>
+                            <Save className="w-4 h-4 mr-2" />
+                            {t.admin.common.save}
+                          </>
+                        )}
+                      </Button>
+                    </div>
+                  </div>
+                </DialogContent>
+              </Dialog>
+            </div>
+
+            {/* Team Members List */}
+            <div className="grid gap-4">
+              {teamMembers.map((member) => {
+                const memberName =
+                  member.translations[
+                    language as keyof typeof member.translations
+                  ]?.name || member.translations.en.name;
+                const memberRole =
+                  member.translations[
+                    language as keyof typeof member.translations
+                  ]?.role || member.translations.en.role;
+
+                return (
+                  <Card key={member.id}>
+                    <CardContent className="flex items-center justify-between p-6">
+                      <div className="flex items-center gap-4">
+                        {member.avatar && (
+                          <img
+                            src={member.avatar}
+                            alt={memberName}
+                            className="w-12 h-12 rounded-full object-cover"
+                          />
+                        )}
+                        <div>
+                          <h3 className="font-semibold">{memberName}</h3>
+                          <p className="text-sm text-muted-foreground">
+                            {memberRole}
+                          </p>
+                          <div className="flex gap-2 mt-2">
+                            <Badge variant="outline">
+                              {t.admin.teamMembers.categories[member.category]}
+                            </Badge>
+                            <Badge
+                              variant={
+                                member.published ? "default" : "secondary"
+                              }
+                            >
+                              {member.published ? "Published" : "Draft"}
+                            </Badge>
+                            <Badge variant="outline">
+                              Order: {member.order}
+                            </Badge>
+                          </div>
+                        </div>
+                      </div>
+                      <div className="flex gap-2">
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => handleEditTeamMember(member)}
+                        >
+                          <Edit className="w-4 h-4" />
+                        </Button>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => handleDeleteTeamMember(member.id!)}
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </Button>
+                      </div>
+                    </CardContent>
+                  </Card>
+                );
+              })}
             </div>
           </TabsContent>
 

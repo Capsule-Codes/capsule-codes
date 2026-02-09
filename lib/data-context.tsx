@@ -82,6 +82,27 @@ export interface Review {
   date: string;
 }
 
+// Team Member interfaces
+export interface TeamMemberTranslations {
+  name: string;
+  role: string;
+  description: string;
+}
+
+export interface TeamMember {
+  id: string;
+  translations: {
+    en: TeamMemberTranslations;
+    es: TeamMemberTranslations;
+    it: TeamMemberTranslations;
+  };
+  avatar: string;
+  avatar_blob_key?: string;
+  category: "cofounder" | "developer";
+  order: number;
+  published: boolean;
+}
+
 // Context type - now just a wrapper around Supabase
 export interface DataContextType {
   projects: Project[];

@@ -1,6 +1,6 @@
 import "server-only";
 import { supabaseAdmin } from "./supabase-admin";
-import type { Project, Technology, Review } from "@/lib/data-context";
+import type { Project, Technology, Review, TeamMember } from "@/lib/data-context";
 import type { ContactInfo } from "@/lib/types/contact";
 
 /**
@@ -150,13 +150,41 @@ export async function getContactInfo(): Promise<ContactInfo | null> {
 }
 
 /**
+ * Fetch all team members from the database
+ */
+export async function getTeamMembers(): Promise<TeamMember[]> {
+  if (!supabaseAdmin) {
+    console.error("Supabase admin client not configured");
+    return [];
+  }
+
+  try {
+    const { data, error } = await supabaseAdmin
+      .from("team_members")
+      .select("*")
+      .order("order", { ascending: true });
+
+    if (error) {
+      console.error("Error fetching team members:", error);
+      return [];
+    }
+
+    return data || [];
+  } catch (error) {
+    console.error("Error fetching team members:", error);
+    return [];
+  }
+}
+
+/**
  * Fetch all data needed for the homepage
  */
 export async function getHomePageData() {
-  const [projects, technologies, reviews, contactInfo] = await Promise.all([
+  const [projects, technologies, reviews, teamMembers, contactInfo] = await Promise.all([
     getProjects(),
     getTechnologies(),
     getReviews(),
+    getTeamMembers(),
     getContactInfo(),
   ]);
 
@@ -164,6 +192,7 @@ export async function getHomePageData() {
     projects,
     technologies,
     reviews,
+    teamMembers,
     contactInfo,
   };
 }
