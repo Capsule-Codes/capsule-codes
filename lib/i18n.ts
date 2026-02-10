@@ -277,6 +277,21 @@ export interface Translations {
       };
     };
   };
+  projectHighlights: {
+    title: string;
+    subtitle: string;
+    viewCaseStudy: string;
+    backToHome: string;
+    backToCaseStudies: string;
+    challenge: string;
+    solution: string;
+    results: string;
+    techStack: string;
+    features: string;
+    metrics: string;
+    client: string;
+    industry: string;
+  };
   // Admin Panel
   admin: {
     common: {
@@ -369,6 +384,31 @@ export interface Translations {
         cofounder: string;
         developer: string;
       };
+      requiredFields: string;
+      deleteConfirm: string;
+      saveError: string;
+      deleteError: string;
+    };
+    projectHighlights: {
+      title: string;
+      newProjectHighlight: string;
+      editProjectHighlight: string;
+      challenge: string;
+      solution: string;
+      results: string;
+      features: string;
+      addFeature: string;
+      metrics: string;
+      addMetric: string;
+      techStack: string;
+      clientInfo: string;
+      clientName: string;
+      industry: string;
+      testimonial: string;
+      testimonialText: string;
+      testimonialAuthor: string;
+      testimonialRole: string;
+      images: string;
       requiredFields: string;
       deleteConfirm: string;
       saveError: string;
@@ -797,8 +837,8 @@ export const translations: Record<Language, Translations> = {
       },
       teamMembers: {
         title: "Team Management",
-        newMember: "New Team Member",
-        editMember: "Edit Team Member",
+        newMember: "New Member",
+        editMember: "Edit Member",
         name: "Name",
         role: "Role",
         description: "Description",
@@ -816,6 +856,46 @@ export const translations: Record<Language, Translations> = {
         saveError: "Error saving team member",
         deleteError: "Error deleting team member",
       },
+      projectHighlights: {
+        title: "Project Highlights Management",
+        newProjectHighlight: "New Project Highlight",
+        editProjectHighlight: "Edit Project Highlight",
+        challenge: "Challenge",
+        solution: "Solution",
+        results: "Results",
+        features: "Key Features",
+        addFeature: "Add Feature",
+        metrics: "Metrics",
+        addMetric: "Add Metric",
+        techStack: "Tech Stack",
+        clientInfo: "Client Information",
+        clientName: "Client Name",
+        industry: "Industry",
+        testimonial: "Client Testimonial",
+        testimonialText: "Testimonial Text",
+        testimonialAuthor: "Author Name",
+        testimonialRole: "Author Role",
+        images: "Screenshots (max 10)",
+        requiredFields: "Please fill all required fields",
+        deleteConfirm: "Are you sure you want to delete this project highlight?",
+        saveError: "Error saving project highlight",
+        deleteError: "Error deleting project highlight",
+      },
+    },
+    projectHighlights: {
+      title: "Project Highlights",
+      subtitle: "Deep dives into our most successful projects",
+      viewCaseStudy: "View Case Study",
+      backToHome: "Back to Home",
+      backToCaseStudies: "Back to Case Studies",
+      challenge: "The Challenge",
+      solution: "Our Solution",
+      results: "Results & Impact",
+      techStack: "Technology Stack",
+      features: "Key Features",
+      metrics: "Key Metrics",
+      client: "Client",
+      industry: "Industry",
     },
   },
   es: {
@@ -1237,8 +1317,8 @@ export const translations: Record<Language, Translations> = {
       },
       teamMembers: {
         title: "Gestión de Equipo",
-        newMember: "Nuevo Miembro del Equipo",
-        editMember: "Editar Miembro del Equipo",
+        newMember: "Nuevo Miembro",
+        editMember: "Editar Miembro",
         name: "Nombre",
         role: "Rol",
         description: "Descripción",
@@ -1252,10 +1332,52 @@ export const translations: Record<Language, Translations> = {
           developer: "Desarrollador",
         },
         requiredFields: "Por favor completa todos los campos requeridos",
-        deleteConfirm: "¿Estás seguro de que quieres eliminar este miembro del equipo?",
+        deleteConfirm:
+          "¿Estás seguro de que quieres eliminar este miembro del equipo?",
         saveError: "Error al guardar el miembro del equipo",
         deleteError: "Error al eliminar el miembro del equipo",
       },
+      projectHighlights: {
+        title: "Gestión de Proyectos Destacados",
+        newProjectHighlight: "Nuevo Proyecto Destacado",
+        editProjectHighlight: "Editar Proyecto Destacado",
+        challenge: "Desafío",
+        solution: "Solución",
+        results: "Resultados",
+        features: "Características Clave",
+        addFeature: "Agregar Característica",
+        metrics: "Métricas",
+        addMetric: "Agregar Métrica",
+        techStack: "Stack Tecnológico",
+        clientInfo: "Información del Cliente",
+        clientName: "Nombre del Cliente",
+        industry: "Industria",
+        testimonial: "Testimonio del Cliente",
+        testimonialText: "Texto del Testimonio",
+        testimonialAuthor: "Nombre del Autor",
+        testimonialRole: "Rol del Autor",
+        images: "Screenshots (máx 10)",
+        requiredFields: "Por favor completa todos los campos requeridos",
+        deleteConfirm:
+          "¿Estás seguro de que quieres eliminar este proyecto destacado?",
+        saveError: "Error al guardar proyecto destacado",
+        deleteError: "Error al eliminar proyecto destacado",
+      },
+    },
+    projectHighlights: {
+      title: "Proyectos Destacados",
+      subtitle: "Análisis profundos de nuestros proyectos más exitosos",
+      viewCaseStudy: "Ver Caso de Estudio",
+      backToHome: "Volver al Inicio",
+      backToCaseStudies: "Volver a Casos de Estudio",
+      challenge: "El Desafío",
+      solution: "Nuestra Solución",
+      results: "Resultados e Impacto",
+      techStack: "Stack Tecnológico",
+      features: "Características Clave",
+      metrics: "Métricas Clave",
+      client: "Cliente",
+      industry: "Industria",
     },
   },
   it: {
@@ -1676,8 +1798,8 @@ export const translations: Record<Language, Translations> = {
       },
       teamMembers: {
         title: "Gestione Team",
-        newMember: "Nuovo Membro del Team",
-        editMember: "Modifica Membro del Team",
+        newMember: "Nuovo Membro",
+        editMember: "Modifica Membro",
         name: "Nome",
         role: "Ruolo",
         description: "Descrizione",
@@ -1695,6 +1817,46 @@ export const translations: Record<Language, Translations> = {
         saveError: "Errore nel salvataggio del membro del team",
         deleteError: "Errore nell'eliminazione del membro del team",
       },
+      projectHighlights: {
+        title: "Gestione Progetti in Evidenza",
+        newProjectHighlight: "Nuovo Progetto in Evidenza",
+        editProjectHighlight: "Modifica Progetto in Evidenza",
+        challenge: "Sfida",
+        solution: "Soluzione",
+        results: "Risultati",
+        features: "Caratteristiche Chiave",
+        addFeature: "Aggiungi Caratteristica",
+        metrics: "Metriche",
+        addMetric: "Aggiungi Metrica",
+        techStack: "Stack Tecnologico",
+        clientInfo: "Informazioni Cliente",
+        clientName: "Nome Cliente",
+        industry: "Settore",
+        testimonial: "Testimonianza Cliente",
+        testimonialText: "Testo Testimonianza",
+        testimonialAuthor: "Nome Autore",
+        testimonialRole: "Ruolo Autore",
+        images: "Screenshot (max 10)",
+        requiredFields: "Compila tutti i campi obbligatori",
+        deleteConfirm: "Sei sicuro di voler eliminare questo progetto in evidenza?",
+        saveError: "Errore nel salvare progetto in evidenza",
+        deleteError: "Errore nell'eliminare progetto in evidenza",
+      },
+    },
+    projectHighlights: {
+      title: "Progetti in Evidenza",
+      subtitle: "Analisi approfondite dei nostri progetti di maggior successo",
+      viewCaseStudy: "Vedi Caso di Studio",
+      backToHome: "Torna alla Home",
+      backToCaseStudies: "Torna ai Casi di Studio",
+      challenge: "La Sfida",
+      solution: "La Nostra Soluzione",
+      results: "Risultati e Impatto",
+      techStack: "Stack Tecnologico",
+      features: "Caratteristiche Chiave",
+      metrics: "Metriche Chiave",
+      client: "Cliente",
+      industry: "Settore",
     },
   },
 };

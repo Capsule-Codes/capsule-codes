@@ -1,6 +1,12 @@
 import "server-only";
 import { supabaseAdmin } from "./supabase-admin";
-import type { Project, Technology, Review, TeamMember } from "@/lib/data-context";
+import type {
+  Project,
+  Technology,
+  Review,
+  TeamMember,
+  ProjectHighlight,
+} from "@/lib/data-context";
 import type { ContactInfo } from "@/lib/types/contact";
 
 /**
@@ -177,16 +183,76 @@ export async function getTeamMembers(): Promise<TeamMember[]> {
 }
 
 /**
+ * Fetch all case studies from the database
+ */
+export async function getProjectHighlights(): Promise<ProjectHighlight[]> {
+  if (!supabaseAdmin) {
+    console.error("Supabase admin client not configured");
+    return [];
+  }
+
+  try {
+    const { data, error } = await supabaseAdmin
+      .from("project_highlights")
+      .select("*")
+      .order("order_index", { ascending: true })
+      .order("created_at", { ascending: false });
+
+    if (error) {
+      console.error("Error fetching case studies:", error);
+      return [];
+    }
+
+    return data || [];
+  } catch (error) {
+    console.error("Error fetching case studies:", error);
+    return [];
+  }
+}
+
+/**
+ * Fetch a single case study by ID from the database
+ */
+export async function getProjectHighlight(id: string): Promise<ProjectHighlight | null> {
+  if (!supabaseAdmin) {
+    console.error("Supabase admin client not configured");
+    return null;
+  }
+
+  try {
+    const { data, error } = await supabaseAdmin
+      .from("project_highlights")
+      .select("*")
+      .eq("id", id)
+      .single();
+
+    if (error) {
+      if (error.code === "PGRST116") {
+        return null;
+      }
+      console.error("Error fetching case study:", error);
+      return null;
+    }
+
+    return data;
+  } catch (error) {
+    console.error("Error fetching case study:", error);
+    return null;
+  }
+}
+
+/**
  * Fetch all data needed for the homepage
  */
 export async function getHomePageData() {
-  const [projects, technologies, reviews, teamMembers, contactInfo] = await Promise.all([
-    getProjects(),
-    getTechnologies(),
-    getReviews(),
-    getTeamMembers(),
-    getContactInfo(),
-  ]);
+  const [projects, technologies, reviews, teamMembers, contactInfo] =
+    await Promise.all([
+      getProjects(),
+      getTechnologies(),
+      getReviews(),
+      getTeamMembers(),
+      getContactInfo(),
+    ]);
 
   return {
     projects,

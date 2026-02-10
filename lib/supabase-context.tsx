@@ -3,7 +3,13 @@
 import type React from "react";
 import { createContext, useContext, useState, useEffect } from "react";
 import { supabase } from "./supabase";
-import type { Project, Technology, Review, TeamMember } from "./data-context";
+import type {
+  Project,
+  Technology,
+  Review,
+  TeamMember,
+  ProjectHighlight,
+} from "./data-context";
 import type { ContactMessage, ContactInfo } from "./types/contact";
 
 interface SupabaseContextType {
@@ -21,7 +27,7 @@ interface SupabaseContextType {
   addTechnology: (technology: Omit<Technology, "id">) => Promise<void>;
   updateTechnology: (
     id: string,
-    technology: Partial<Technology>
+    technology: Partial<Technology>,
   ) => Promise<void>;
   deleteTechnology: (id: string) => Promise<void>;
   addReview: (review: Omit<Review, "id">) => Promise<Review | void>;
@@ -30,15 +36,32 @@ interface SupabaseContextType {
   addTeamMember: (member: Omit<TeamMember, "id">) => Promise<TeamMember | void>;
   updateTeamMember: (id: string, member: Partial<TeamMember>) => Promise<void>;
   deleteTeamMember: (id: string) => Promise<void>;
-  addContactMessage: (message: Omit<ContactMessage, "id" | "status" | "created_at" | "updated_at">) => Promise<void>;
-  updateContactMessageStatus: (id: string, status: ContactMessage["status"]) => Promise<void>;
+  addContactMessage: (
+    message: Omit<
+      ContactMessage,
+      "id" | "status" | "created_at" | "updated_at"
+    >,
+  ) => Promise<void>;
+  updateContactMessageStatus: (
+    id: string,
+    status: ContactMessage["status"],
+  ) => Promise<void>;
   deleteContactMessage: (id: string) => Promise<void>;
   updateContactInfo: (info: Partial<ContactInfo>) => Promise<void>;
   refreshData: () => Promise<void>;
+  projectHighlights: ProjectHighlight[];
+  addProjectHighlight: (
+    caseStudy: Omit<ProjectHighlight, "id">,
+  ) => Promise<ProjectHighlight | null>;
+  updateProjectHighlight: (
+    id: string,
+    caseStudy: Partial<ProjectHighlight>,
+  ) => Promise<void>;
+  deleteProjectHighlight: (id: string) => Promise<void>;
 }
 
 const SupabaseContext = createContext<SupabaseContextType | undefined>(
-  undefined
+  undefined,
 );
 
 export function SupabaseProvider({ children }: { children: React.ReactNode }) {
@@ -48,6 +71,7 @@ export function SupabaseProvider({ children }: { children: React.ReactNode }) {
   const [teamMembers, setTeamMembers] = useState<TeamMember[]>([]);
   const [contactMessages, setContactMessages] = useState<ContactMessage[]>([]);
   const [contactInfo, setContactInfo] = useState<ContactInfo | null>(null);
+  const [projectHighlights, setCaseStudies] = useState<ProjectHighlight[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -59,28 +83,53 @@ export function SupabaseProvider({ children }: { children: React.ReactNode }) {
 
       // Load all data from API routes in parallel
       // Use cache: 'no-store' to ensure we always get fresh data
-      const [projectsResponse, technologiesResponse, reviewsResponse, teamMembersResponse, contactMessagesResponse, contactInfoResponse] = await Promise.all([
+      const [
+        projectsResponse,
+        technologiesResponse,
+        reviewsResponse,
+        teamMembersResponse,
+        contactMessagesResponse,
+        contactInfoResponse,
+        projectHighlightsRes,
+      ] = await Promise.all([
         fetch("/api/admin/projects", { cache: "no-store" }),
         fetch("/api/admin/technologies", { cache: "no-store" }),
         fetch("/api/admin/reviews", { cache: "no-store" }),
         fetch("/api/admin/team-members", { cache: "no-store" }),
         fetch("/api/admin/contact-messages", { cache: "no-store" }),
         fetch("/api/admin/contact-info", { cache: "no-store" }),
+        fetch("/api/admin/project-highlights", { cache: "no-store" }),
       ]);
 
-      const projectsData = projectsResponse.ok ? await projectsResponse.json() : [];
-      const technologiesData = technologiesResponse.ok ? await technologiesResponse.json() : [];
-      const reviewsData = reviewsResponse.ok ? await reviewsResponse.json() : [];
-      const teamMembersData = teamMembersResponse.ok ? await teamMembersResponse.json() : [];
-      const contactMessagesData = contactMessagesResponse.ok ? await contactMessagesResponse.json() : [];
-      const contactInfoData = contactInfoResponse.ok ? await contactInfoResponse.json() : null;
+      const projectsData = projectsResponse.ok
+        ? await projectsResponse.json()
+        : [];
+      const technologiesData = technologiesResponse.ok
+        ? await technologiesResponse.json()
+        : [];
+      const reviewsData = reviewsResponse.ok
+        ? await reviewsResponse.json()
+        : [];
+      const teamMembersData = teamMembersResponse.ok
+        ? await teamMembersResponse.json()
+        : [];
+      const contactMessagesData = contactMessagesResponse.ok
+        ? await contactMessagesResponse.json()
+        : [];
+      const contactInfoData = contactInfoResponse.ok
+        ? await contactInfoResponse.json()
+        : null;
+      const projectHighlightsData = projectHighlightsRes.ok
+        ? await projectHighlightsRes.json()
+        : [];
 
       setProjects(projectsData);
       setTechnologies(technologiesData);
       setReviews(reviewsData);
       setTeamMembers(teamMembersData);
       setContactMessages(contactMessagesData);
-      
+      setCaseStudies(projectHighlightsData);
+
       // Debug: Log contact info to verify data is loaded correctly
       console.log("API Response Status:", contactInfoResponse.status);
       console.log("Loaded contact info from API:", contactInfoData);
@@ -106,17 +155,17 @@ export function SupabaseProvider({ children }: { children: React.ReactNode }) {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-            title: project.title,
-            description: project.description,
-            translations: project.translations,
-            image: project.image,
-            images: project.images || [],
-            technologies: project.technologies,
+          title: project.title,
+          description: project.description,
+          translations: project.translations,
+          image: project.image,
+          images: project.images || [],
+          technologies: project.technologies,
           liveUrl: project.liveUrl,
           githubUrl: project.githubUrl,
-            category: project.category,
-            featured: project.featured,
-            published: project.published,
+          category: project.category,
+          featured: project.featured,
+          published: project.published,
         }),
       });
 
@@ -201,7 +250,7 @@ export function SupabaseProvider({ children }: { children: React.ReactNode }) {
 
   const updateTechnology = async (
     id: string,
-    technology: Partial<Technology>
+    technology: Partial<Technology>,
   ) => {
     try {
       const response = await fetch(`/api/admin/technologies/${id}`, {
@@ -221,7 +270,7 @@ export function SupabaseProvider({ children }: { children: React.ReactNode }) {
       setTechnologies((prev) => prev.map((t) => (t.id === id ? data : t)));
     } catch (err) {
       setError(
-        err instanceof Error ? err.message : "Failed to update technology"
+        err instanceof Error ? err.message : "Failed to update technology",
       );
       throw err;
     }
@@ -241,7 +290,7 @@ export function SupabaseProvider({ children }: { children: React.ReactNode }) {
       setTechnologies((prev) => prev.filter((t) => t.id !== id));
     } catch (err) {
       setError(
-        err instanceof Error ? err.message : "Failed to delete technology"
+        err instanceof Error ? err.message : "Failed to delete technology",
       );
       throw err;
     }
@@ -333,7 +382,9 @@ export function SupabaseProvider({ children }: { children: React.ReactNode }) {
       setTeamMembers((prev) => [...prev, data]);
       return data;
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to add team member");
+      setError(
+        err instanceof Error ? err.message : "Failed to add team member",
+      );
       throw err;
     }
   };
@@ -356,7 +407,9 @@ export function SupabaseProvider({ children }: { children: React.ReactNode }) {
       const data = await response.json();
       setTeamMembers((prev) => prev.map((m) => (m.id === id ? data : m)));
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to update team member");
+      setError(
+        err instanceof Error ? err.message : "Failed to update team member",
+      );
       throw err;
     }
   };
@@ -374,7 +427,9 @@ export function SupabaseProvider({ children }: { children: React.ReactNode }) {
 
       setTeamMembers((prev) => prev.filter((m) => m.id !== id));
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to delete team member");
+      setError(
+        err instanceof Error ? err.message : "Failed to delete team member",
+      );
       throw err;
     }
   };
@@ -384,7 +439,12 @@ export function SupabaseProvider({ children }: { children: React.ReactNode }) {
   };
 
   // Contact message functions
-  const addContactMessage = async (message: Omit<ContactMessage, "id" | "status" | "created_at" | "updated_at">) => {
+  const addContactMessage = async (
+    message: Omit<
+      ContactMessage,
+      "id" | "status" | "created_at" | "updated_at"
+    >,
+  ) => {
     try {
       const { data, error } = await supabase
         .from("contact_messages")
@@ -408,7 +468,10 @@ export function SupabaseProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
-  const updateContactMessageStatus = async (id: string, status: ContactMessage["status"]) => {
+  const updateContactMessageStatus = async (
+    id: string,
+    status: ContactMessage["status"],
+  ) => {
     try {
       const response = await fetch(`/api/admin/contact-messages/${id}`, {
         method: "PUT",
@@ -426,7 +489,9 @@ export function SupabaseProvider({ children }: { children: React.ReactNode }) {
       const data = await response.json();
       setContactMessages((prev) => prev.map((m) => (m.id === id ? data : m)));
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to update message status");
+      setError(
+        err instanceof Error ? err.message : "Failed to update message status",
+      );
       throw err;
     }
   };
@@ -453,7 +518,6 @@ export function SupabaseProvider({ children }: { children: React.ReactNode }) {
   const updateContactInfo = async (info: Partial<ContactInfo>) => {
     try {
       console.log("🔄 updateContactInfo - Request payload:", info);
-      // Use API route to bypass RLS policies
       const response = await fetch("/api/admin/contact-info", {
         method: "PUT",
         headers: {
@@ -462,7 +526,11 @@ export function SupabaseProvider({ children }: { children: React.ReactNode }) {
         body: JSON.stringify(info),
       });
 
-      console.log("📡 updateContactInfo - Response status:", response.status, response.statusText);
+      console.log(
+        "📡 updateContactInfo - Response status:",
+        response.status,
+        response.statusText,
+      );
 
       if (!response.ok) {
         const errorData = await response.json();
@@ -472,13 +540,81 @@ export function SupabaseProvider({ children }: { children: React.ReactNode }) {
 
       const data = await response.json();
       console.log("✅ updateContactInfo - Success, received data:", data);
-      // Update state immediately with the returned data
       setContactInfo(data);
       return data;
     } catch (err) {
       console.error("❌ updateContactInfo - Exception:", err);
-      setError(err instanceof Error ? err.message : "Failed to update contact info");
+      setError(
+        err instanceof Error ? err.message : "Failed to update contact info",
+      );
       throw err;
+    }
+  };
+
+  const addProjectHighlight = async (
+    caseStudy: Omit<ProjectHighlight, "id">,
+  ) => {
+    try {
+      const response = await fetch("/api/admin/project-highlights", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(caseStudy),
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to add case study");
+      }
+
+      const newProjectHighlight = await response.json();
+      setCaseStudies((prev) => [...prev, newProjectHighlight]);
+      return newProjectHighlight;
+    } catch (error) {
+      console.error("Error adding case study:", error);
+      throw error;
+    }
+  };
+
+  const updateProjectHighlight = async (
+    id: string,
+    caseStudy: Partial<ProjectHighlight>,
+  ) => {
+    try {
+      const response = await fetch(`/api/admin/project-highlights/${id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(caseStudy),
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to update case study");
+      }
+
+      const updatedProjectHighlight = await response.json();
+      setCaseStudies((prev) =>
+        prev.map((cs) =>
+          cs.id === id ? { ...cs, ...updatedProjectHighlight } : cs,
+        ),
+      );
+    } catch (error) {
+      console.error("Error updating case study:", error);
+      throw error;
+    }
+  };
+
+  const deleteProjectHighlight = async (id: string) => {
+    try {
+      const response = await fetch(`/api/admin/project-highlights/${id}`, {
+        method: "DELETE",
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to delete case study");
+      }
+
+      setCaseStudies((prev) => prev.filter((cs) => cs.id !== id));
+    } catch (error) {
+      console.error("Error deleting case study:", error);
+      throw error;
     }
   };
 
@@ -509,6 +645,10 @@ export function SupabaseProvider({ children }: { children: React.ReactNode }) {
         updateContactMessageStatus,
         deleteContactMessage,
         updateContactInfo,
+        projectHighlights,
+        addProjectHighlight,
+        updateProjectHighlight,
+        deleteProjectHighlight,
         refreshData,
       }}
     >

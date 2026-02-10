@@ -26,7 +26,7 @@ export function SimpleLanguageSwitcher() {
     window.dispatchEvent(
       new CustomEvent("languageChanged", {
         detail: { language: langCode },
-      })
+      }),
     );
   };
 
@@ -43,7 +43,7 @@ export function SimpleLanguageSwitcher() {
       </Button>
 
       {isOpen && (
-        <div className="absolute top-full right-0 mt-1 bg-background border border-border rounded-md shadow-lg z-[9999] min-w-[120px]">
+        <div className="absolute top-8 left-0 mt-1 bg-background border border-border rounded-md shadow-lg z-[9999] min-w-[120px]">
           {languages.map((lang) => (
             <button
               key={lang.code}

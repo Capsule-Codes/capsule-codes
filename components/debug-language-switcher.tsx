@@ -44,7 +44,7 @@ export function DebugLanguageSwitcher() {
 
       {/* Simple dropdown without shadcn components */}
       {isOpen && (
-        <div className="absolute top-full right-0 mt-1 bg-white border border-gray-200 rounded-md shadow-lg min-w-[120px] z-[9999]">
+        <div className="absolute top-8 left-0 mt-1 bg-white border border-gray-200 rounded-md shadow-lg min-w-[120px] z-[9999]">
           {languages.map((lang) => (
             <button
               key={lang.code}
