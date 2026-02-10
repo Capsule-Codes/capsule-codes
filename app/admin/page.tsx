@@ -2,11 +2,22 @@
 
 import type React from "react";
 
-import { useData } from "@/lib/data-context";
+import Image from "next/image";
+import type {
+  ProjectHighlight,
+  ProjectHighlightTranslations,
+  ProjectImage,
+} from "@/lib/data-context";
 import { useSupabase } from "@/lib/supabase-context";
 import { useAuth } from "@/hooks/use-auth";
 import { useState, useEffect } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+} from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -29,7 +40,6 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import {
-  Plus,
   Edit,
   Trash2,
   Save,
@@ -38,6 +48,7 @@ import {
   FolderOpen,
   Code,
   Star,
+  Users,
   LogOut,
   Mail,
   Loader2,
@@ -119,6 +130,7 @@ export default function AdminPage() {
     technologies,
     reviews,
     teamMembers,
+    projectHighlights,
     loading,
     error,
     addProject,
@@ -133,6 +145,9 @@ export default function AdminPage() {
     addTeamMember,
     updateTeamMember,
     deleteTeamMember,
+    addProjectHighlight,
+    updateProjectHighlight,
+    deleteProjectHighlight,
     refreshData,
   } = useSupabase();
 
@@ -230,7 +245,6 @@ export default function AdminPage() {
     published: true,
   });
 
-  const categories = ["web", "mobile", "fullstack"];
   const techCategories = [
     "frontend",
     "backend",
@@ -239,6 +253,63 @@ export default function AdminPage() {
     "deployment",
   ];
   const teamMemberCategories = ["cofounder", "developer"];
+
+  // Case Study states
+  const [editingProjectHighlight, setEditingProjectHighlight] =
+    useState<ProjectHighlight | null>(null);
+  const [isProjectHighlightDialogOpen, setIsProjectHighlightDialogOpen] =
+    useState(false);
+  const [isSavingProjectHighlight, setIsSavingProjectHighlight] =
+    useState(false);
+  const [projectHighlightImages, setProjectHighlightImages] = useState<
+    ProjectImage[]
+  >([]);
+  const [selectedProjectHighlightImages, setSelectedProjectHighlightImages] =
+    useState<File[]>([]);
+  const [projectHighlightImageError, setProjectHighlightImageError] =
+    useState<string>("");
+
+  // Case Study form state
+  const [projectHighlightForm, setProjectHighlightForm] = useState({
+    title: "",
+    subtitle: "",
+    translations: {
+      en: {
+        title: "",
+        subtitle: "",
+        challenge: "",
+        solution: "",
+        results: "",
+        features: [] as string[],
+      },
+      es: {
+        title: "",
+        subtitle: "",
+        challenge: "",
+        solution: "",
+        results: "",
+        features: [] as string[],
+      },
+      it: {
+        title: "",
+        subtitle: "",
+        challenge: "",
+        solution: "",
+        results: "",
+        features: [] as string[],
+      },
+    },
+    image: "",
+    technologies: "",
+    client_name: "",
+    industry: "",
+    category: "web" as "web" | "mobile" | "fullstack",
+    featured: false,
+    published: false,
+  });
+
+  // Tab state for mobile dropdown
+  const [activeTab, setActiveTab] = useState("projects");
 
   // Project handlers
   const handleEditProject = (project: Project) => {
@@ -903,6 +974,277 @@ export default function AdminPage() {
     }
   };
 
+  const handleEditProjectHighlight = (projectHighlight: ProjectHighlight) => {
+    const normalizedTranslations = {
+      en: {
+        title:
+          projectHighlight.translations?.en?.title ?? projectHighlight.title,
+        subtitle:
+          projectHighlight.translations?.en?.subtitle ??
+          projectHighlight.subtitle,
+        challenge: projectHighlight.translations?.en?.challenge ?? "",
+        solution: projectHighlight.translations?.en?.solution ?? "",
+        results: projectHighlight.translations?.en?.results ?? "",
+        features: projectHighlight.translations?.en?.features ?? [],
+      },
+      es: {
+        title:
+          projectHighlight.translations?.es?.title ?? projectHighlight.title,
+        subtitle:
+          projectHighlight.translations?.es?.subtitle ??
+          projectHighlight.subtitle,
+        challenge: projectHighlight.translations?.es?.challenge ?? "",
+        solution: projectHighlight.translations?.es?.solution ?? "",
+        results: projectHighlight.translations?.es?.results ?? "",
+        features: projectHighlight.translations?.es?.features ?? [],
+      },
+      it: {
+        title:
+          projectHighlight.translations?.it?.title ?? projectHighlight.title,
+        subtitle:
+          projectHighlight.translations?.it?.subtitle ??
+          projectHighlight.subtitle,
+        challenge: projectHighlight.translations?.it?.challenge ?? "",
+        solution: projectHighlight.translations?.it?.solution ?? "",
+        results: projectHighlight.translations?.it?.results ?? "",
+        features: projectHighlight.translations?.it?.features ?? [],
+      },
+    };
+
+    setEditingProjectHighlight(projectHighlight);
+    setProjectHighlightForm({
+      title: projectHighlight.title,
+      subtitle: projectHighlight.subtitle,
+      translations: normalizedTranslations,
+      image: projectHighlight.image,
+      technologies: projectHighlight.technologies.join(", "),
+      client_name: projectHighlight.client_name || "",
+      industry: projectHighlight.industry || "",
+      category: projectHighlight.category,
+      featured: projectHighlight.featured || false,
+      published: projectHighlight.published || false,
+    });
+    setProjectHighlightImages(projectHighlight.images || []);
+    setSelectedProjectHighlightImages([]);
+    setProjectHighlightImageError("");
+    setIsProjectHighlightDialogOpen(true);
+  };
+
+  const handleSaveProjectHighlight = async () => {
+    try {
+      setIsSavingProjectHighlight(true);
+      setProjectHighlightImageError("");
+
+      if (
+        !projectHighlightForm.translations.en.title ||
+        !projectHighlightForm.translations.es.title ||
+        !projectHighlightForm.translations.it.title ||
+        !projectHighlightForm.translations.en.subtitle ||
+        !projectHighlightForm.translations.es.subtitle ||
+        !projectHighlightForm.translations.it.subtitle
+      ) {
+        setProjectHighlightImageError(t.admin.projectHighlights.requiredFields);
+        setIsSavingProjectHighlight(false);
+        return;
+      }
+
+      const primaryImage =
+        projectHighlightImages.length > 0
+          ? `/api/images/${projectHighlightImages[0].blobKey}`
+          : projectHighlightForm.image;
+
+      const projectHighlightData = {
+        title: projectHighlightForm.translations.en.title,
+        subtitle: projectHighlightForm.translations.en.subtitle,
+        translations: projectHighlightForm.translations,
+        image: primaryImage,
+        technologies: projectHighlightForm.technologies
+          .split(",")
+          .map((tech) => tech.trim())
+          .filter((tech) => tech),
+        client_name: projectHighlightForm.client_name,
+        industry: projectHighlightForm.industry,
+        category: projectHighlightForm.category,
+        featured: projectHighlightForm.featured,
+        published: projectHighlightForm.published,
+      };
+
+      let projectHighlightId: string;
+
+      if (editingProjectHighlight) {
+        await updateProjectHighlight(
+          editingProjectHighlight.id,
+          projectHighlightData,
+        );
+        projectHighlightId = editingProjectHighlight.id;
+      } else {
+        const newProjectHighlight =
+          await addProjectHighlight(projectHighlightData);
+        projectHighlightId = newProjectHighlight?.id || "";
+      }
+
+      if (selectedProjectHighlightImages.length > 0 && projectHighlightId) {
+        const formData = new FormData();
+        for (const file of selectedProjectHighlightImages) {
+          formData.append("images", file);
+        }
+        formData.append("altText", projectHighlightForm.translations.en.title);
+
+        const response = await fetch(
+          `/api/admin/project-highlights/${projectHighlightId}/images`,
+          {
+            method: "POST",
+            body: formData,
+          },
+        );
+
+        if (!response.ok) {
+          const errorData = await response.json();
+          setProjectHighlightImageError(
+            errorData.message || "Error uploading images",
+          );
+          setIsSavingProjectHighlight(false);
+          return;
+        }
+
+        const result = await response.json();
+
+        const updatedImages = [...projectHighlightImages, ...result.images];
+        const newPrimaryImage =
+          updatedImages.length > 0
+            ? `/api/images/${updatedImages[0].blobKey}`
+            : projectHighlightForm.image;
+
+        await updateProjectHighlight(projectHighlightId, {
+          images: updatedImages,
+          image: newPrimaryImage,
+        } as any);
+      }
+
+      await refreshData();
+      resetProjectHighlightForm();
+      setIsSavingProjectHighlight(false);
+    } catch (error) {
+      console.error("Error saving case study:", error);
+      const errorMessage = getErrorMessage(error);
+      setProjectHighlightImageError(
+        `${t.admin.projectHighlights.saveError}: ${errorMessage}`,
+      );
+      setIsSavingProjectHighlight(false);
+    }
+  };
+
+  const handleDeleteProjectHighlight = async (id: string) => {
+    if (!confirm(t.admin.projectHighlights.deleteConfirm)) {
+      return;
+    }
+
+    try {
+      await deleteProjectHighlight(id);
+      await refreshData();
+    } catch (error) {
+      const errorMessage = getErrorMessage(error);
+      alert(`${t.admin.projectHighlights.deleteError}: ${errorMessage}`);
+    }
+  };
+
+  const resetProjectHighlightForm = () => {
+    setProjectHighlightForm({
+      title: "",
+      subtitle: "",
+      translations: {
+        en: {
+          title: "",
+          subtitle: "",
+          challenge: "",
+          solution: "",
+          results: "",
+          features: [],
+        },
+        es: {
+          title: "",
+          subtitle: "",
+          challenge: "",
+          solution: "",
+          results: "",
+          features: [],
+        },
+        it: {
+          title: "",
+          subtitle: "",
+          challenge: "",
+          solution: "",
+          results: "",
+          features: [],
+        },
+      },
+      image: "",
+      technologies: "",
+      client_name: "",
+      industry: "",
+      category: "web",
+      featured: false,
+      published: false,
+    });
+    setEditingProjectHighlight(null);
+    setSelectedProjectHighlightImages([]);
+    setProjectHighlightImages([]);
+    setProjectHighlightImageError("");
+    setIsProjectHighlightDialogOpen(false);
+  };
+
+  const handleNewProjectHighlight = () => {
+    resetProjectHighlightForm();
+    setIsProjectHighlightDialogOpen(true);
+  };
+
+  const handleProjectHighlightImageSelect = (
+    e: React.ChangeEvent<HTMLInputElement>,
+  ) => {
+    const files = e.target.files;
+    if (files && files.length > 0) {
+      const fileArray = Array.from(files);
+      setSelectedProjectHighlightImages(fileArray);
+      setProjectHighlightImageError("");
+    }
+  };
+
+  const handleDeleteProjectHighlightImage = async (image: ProjectImage) => {
+    if (!editingProjectHighlight) return;
+
+    try {
+      const response = await fetch(
+        `/api/admin/project-highlights/${editingProjectHighlight.id}/images?blobKey=${encodeURIComponent(image.blobKey)}&mediaId=${image.mediaId}`,
+        {
+          method: "DELETE",
+        },
+      );
+
+      if (!response.ok) {
+        throw new Error("Failed to delete image");
+      }
+
+      const updatedImages = projectHighlightImages.filter(
+        (img) => img.mediaId !== image.mediaId,
+      );
+      setProjectHighlightImages(updatedImages);
+
+      const newPrimaryImage =
+        updatedImages.length > 0
+          ? `/api/images/${updatedImages[0].blobKey}`
+          : "";
+
+      await updateProjectHighlight(editingProjectHighlight.id, {
+        images: updatedImages,
+        image: newPrimaryImage,
+      } as any);
+      await refreshData();
+    } catch (error) {
+      console.error("Error deleting image:", error);
+      setProjectHighlightImageError("Error deleting image");
+    }
+  };
+
   if (authLoading) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
@@ -1134,8 +1476,108 @@ export default function AdminPage() {
           </div>
         )}
 
-        <Tabs defaultValue="projects" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-6">
+        <Tabs
+          value={activeTab}
+          onValueChange={setActiveTab}
+          className="space-y-6"
+        >
+          {/* Mobile Dropdown */}
+          <div className="md:hidden">
+            <Select value={activeTab} onValueChange={setActiveTab}>
+              <SelectTrigger className="w-full">
+                <SelectValue placeholder="Select a section" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="projects">
+                  <div className="flex items-center gap-2">
+                    <FolderOpen className="w-4 h-4" />
+                    <span>
+                      {language === "es"
+                        ? "Proyectos"
+                        : language === "it"
+                          ? "Progetti"
+                          : "Projects"}
+                    </span>
+                  </div>
+                </SelectItem>
+                <SelectItem value="technologies">
+                  <div className="flex items-center gap-2">
+                    <Code className="w-4 h-4" />
+                    <span>
+                      {language === "es"
+                        ? "Tecnologías"
+                        : language === "it"
+                          ? "Tecnologie"
+                          : "Technologies"}
+                    </span>
+                  </div>
+                </SelectItem>
+                <SelectItem value="reviews">
+                  <div className="flex items-center gap-2">
+                    <Star className="w-4 h-4" />
+                    <span>
+                      {language === "es"
+                        ? "Reseñas"
+                        : language === "it"
+                          ? "Recensioni"
+                          : "Reviews"}
+                    </span>
+                  </div>
+                </SelectItem>
+                <SelectItem value="team">
+                  <div className="flex items-center gap-2">
+                    <Users className="w-4 h-4" />
+                    <span>
+                      {language === "es"
+                        ? "Equipo"
+                        : language === "it"
+                          ? "Team"
+                          : "Team"}
+                    </span>
+                  </div>
+                </SelectItem>
+                <SelectItem value="messages">
+                  <div className="flex items-center gap-2">
+                    <Mail className="w-4 h-4" />
+                    <span>
+                      {language === "es"
+                        ? "Mensajes"
+                        : language === "it"
+                          ? "Messaggi"
+                          : "Messages"}
+                    </span>
+                  </div>
+                </SelectItem>
+                <SelectItem value="settings">
+                  <div className="flex items-center gap-2">
+                    <Settings className="w-4 h-4" />
+                    <span>
+                      {language === "es"
+                        ? "Contacto"
+                        : language === "it"
+                          ? "Contatto"
+                          : "Contact"}
+                    </span>
+                  </div>
+                </SelectItem>
+                <SelectItem value="project-highlights">
+                  <div className="flex items-center gap-2">
+                    <FolderOpen className="w-4 h-4" />
+                    <span>
+                      {language === "es"
+                        ? "Proyectos Destacados"
+                        : language === "it"
+                          ? "Progetti in Evidenza"
+                          : "Project Highlights"}
+                    </span>
+                  </div>
+                </SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+
+          {/* Desktop Tabs */}
+          <TabsList className="hidden md:grid w-full grid-cols-7">
             <TabsTrigger value="projects" className="flex items-center gap-2">
               <FolderOpen className="w-4 h-4" />
               {language === "es"
@@ -1164,7 +1606,7 @@ export default function AdminPage() {
                   : "Reviews"}
             </TabsTrigger>
             <TabsTrigger value="team" className="flex items-center gap-2">
-              <Star className="w-4 h-4" />
+              <Users className="w-4 h-4" />
               {language === "es"
                 ? "Equipo"
                 : language === "it"
@@ -1187,6 +1629,17 @@ export default function AdminPage() {
                   ? "Contatto"
                   : "Contact"}
             </TabsTrigger>
+            <TabsTrigger
+              value="project-highlights"
+              className="flex items-center gap-2"
+            >
+              <FolderOpen className="w-4 h-4" />
+              {language === "es"
+                ? "Proyectos Destacados"
+                : language === "it"
+                  ? "Progetti in Evidenza"
+                  : "Project Highlights"}
+            </TabsTrigger>
           </TabsList>
 
           {/* Projects Tab */}
@@ -1208,7 +1661,6 @@ export default function AdminPage() {
                     onClick={handleNewProject}
                     className="bg-gradient-to-r from-primary to-secondary"
                   >
-                    <Plus className="w-4 h-4 mr-2" />
                     {language === "es"
                       ? "Nuevo Proyecto"
                       : language === "it"
@@ -1804,7 +2256,6 @@ export default function AdminPage() {
                     onClick={() => setEditingTechnology(null)}
                     className="bg-gradient-to-r from-primary to-secondary"
                   >
-                    <Plus className="w-4 h-4 mr-2" />
                     {t.admin.technologies.newTechnology}
                   </Button>
                 </DialogTrigger>
@@ -2329,8 +2780,10 @@ export default function AdminPage() {
                 onOpenChange={setIsTeamMemberDialogOpen}
               >
                 <DialogTrigger asChild>
-                  <Button onClick={handleNewTeamMember}>
-                    <Plus className="w-4 h-4 mr-2" />
+                  <Button
+                    onClick={handleNewTeamMember}
+                    className="bg-gradient-to-r from-primary to-secondary"
+                  >
                     {t.admin.teamMembers.newMember}
                   </Button>
                 </DialogTrigger>
@@ -2792,6 +3245,691 @@ export default function AdminPage() {
           {/* Contact Info Settings Tab */}
           <TabsContent value="settings">
             <ContactInfoSettings />
+          </TabsContent>
+
+          {/* Case Studies Tab */}
+          <TabsContent value="project-highlights" className="space-y-6">
+            <div className="flex justify-between items-center">
+              <h2 className="text-3xl font-bold">
+                {t.admin.projectHighlights.title}
+              </h2>
+              <Dialog
+                open={isProjectHighlightDialogOpen}
+                onOpenChange={setIsProjectHighlightDialogOpen}
+              >
+                <DialogTrigger asChild>
+                  <Button
+                    onClick={handleNewProjectHighlight}
+                    className="bg-gradient-to-r from-primary to-secondary"
+                  >
+                    {t.admin.projectHighlights.newProjectHighlight}
+                  </Button>
+                </DialogTrigger>
+                <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+                  <DialogHeader>
+                    <DialogTitle>
+                      {editingProjectHighlight
+                        ? t.admin.projectHighlights.editProjectHighlight
+                        : t.admin.projectHighlights.newProjectHighlight}
+                    </DialogTitle>
+                  </DialogHeader>
+                  <div className="space-y-6">
+                    {/* Multilingual Content */}
+                    <div>
+                      <Label className="text-base font-semibold mb-3 block">
+                        {language === "es"
+                          ? "Contenido Multilingüe"
+                          : language === "it"
+                            ? "Contenuto Multilingue"
+                            : "Multilingual Content"}
+                      </Label>
+                      <Tabs defaultValue="en" className="w-full">
+                        <TabsList className="grid w-full grid-cols-3">
+                          <TabsTrigger value="en">🇺🇸 English</TabsTrigger>
+                          <TabsTrigger value="es">🇪🇸 Español</TabsTrigger>
+                          <TabsTrigger value="it">🇮🇹 Italiano</TabsTrigger>
+                        </TabsList>
+
+                        {/* English Tab */}
+                        <TabsContent value="en" className="space-y-4 mt-4">
+                          <div>
+                            <Label htmlFor="cs-title-en">
+                              Title (English){" "}
+                              <span className="text-destructive">*</span>
+                            </Label>
+                            <Input
+                              id="cs-title-en"
+                              value={projectHighlightForm.translations.en.title}
+                              onChange={(e) =>
+                                setProjectHighlightForm({
+                                  ...projectHighlightForm,
+                                  translations: {
+                                    ...projectHighlightForm.translations,
+                                    en: {
+                                      ...projectHighlightForm.translations.en,
+                                      title: e.target.value,
+                                    },
+                                  },
+                                })
+                              }
+                              placeholder="Case study title in English"
+                            />
+                          </div>
+                          <div>
+                            <Label htmlFor="cs-subtitle-en">
+                              Subtitle (English){" "}
+                              <span className="text-destructive">*</span>
+                            </Label>
+                            <Input
+                              id="cs-subtitle-en"
+                              value={
+                                projectHighlightForm.translations.en.subtitle
+                              }
+                              onChange={(e) =>
+                                setProjectHighlightForm({
+                                  ...projectHighlightForm,
+                                  translations: {
+                                    ...projectHighlightForm.translations,
+                                    en: {
+                                      ...projectHighlightForm.translations.en,
+                                      subtitle: e.target.value,
+                                    },
+                                  },
+                                })
+                              }
+                              placeholder="Short description"
+                            />
+                          </div>
+                          <div>
+                            <Label htmlFor="cs-challenge-en">
+                              Challenge (English)
+                            </Label>
+                            <Textarea
+                              id="cs-challenge-en"
+                              value={
+                                projectHighlightForm.translations.en.challenge
+                              }
+                              onChange={(e) =>
+                                setProjectHighlightForm({
+                                  ...projectHighlightForm,
+                                  translations: {
+                                    ...projectHighlightForm.translations,
+                                    en: {
+                                      ...projectHighlightForm.translations.en,
+                                      challenge: e.target.value,
+                                    },
+                                  },
+                                })
+                              }
+                              placeholder="Describe the challenge or problem"
+                              rows={4}
+                            />
+                          </div>
+                          <div>
+                            <Label htmlFor="cs-solution-en">
+                              Solution (English)
+                            </Label>
+                            <Textarea
+                              id="cs-solution-en"
+                              value={
+                                projectHighlightForm.translations.en.solution
+                              }
+                              onChange={(e) =>
+                                setProjectHighlightForm({
+                                  ...projectHighlightForm,
+                                  translations: {
+                                    ...projectHighlightForm.translations,
+                                    en: {
+                                      ...projectHighlightForm.translations.en,
+                                      solution: e.target.value,
+                                    },
+                                  },
+                                })
+                              }
+                              placeholder="Describe the technical solution"
+                              rows={4}
+                            />
+                          </div>
+                          <div>
+                            <Label htmlFor="cs-results-en">
+                              Results (English)
+                            </Label>
+                            <Textarea
+                              id="cs-results-en"
+                              value={
+                                projectHighlightForm.translations.en.results
+                              }
+                              onChange={(e) =>
+                                setProjectHighlightForm({
+                                  ...projectHighlightForm,
+                                  translations: {
+                                    ...projectHighlightForm.translations,
+                                    en: {
+                                      ...projectHighlightForm.translations.en,
+                                      results: e.target.value,
+                                    },
+                                  },
+                                })
+                              }
+                              placeholder="Describe the results and impact"
+                              rows={4}
+                            />
+                          </div>
+                        </TabsContent>
+
+                        {/* Spanish Tab */}
+                        <TabsContent value="es" className="space-y-4 mt-4">
+                          <div>
+                            <Label htmlFor="cs-title-es">
+                              Título (Español){" "}
+                              <span className="text-destructive">*</span>
+                            </Label>
+                            <Input
+                              id="cs-title-es"
+                              value={projectHighlightForm.translations.es.title}
+                              onChange={(e) =>
+                                setProjectHighlightForm({
+                                  ...projectHighlightForm,
+                                  translations: {
+                                    ...projectHighlightForm.translations,
+                                    es: {
+                                      ...projectHighlightForm.translations.es,
+                                      title: e.target.value,
+                                    },
+                                  },
+                                })
+                              }
+                              placeholder="Título del caso de estudio en español"
+                            />
+                          </div>
+                          <div>
+                            <Label htmlFor="cs-subtitle-es">
+                              Subtítulo (Español){" "}
+                              <span className="text-destructive">*</span>
+                            </Label>
+                            <Input
+                              id="cs-subtitle-es"
+                              value={
+                                projectHighlightForm.translations.es.subtitle
+                              }
+                              onChange={(e) =>
+                                setProjectHighlightForm({
+                                  ...projectHighlightForm,
+                                  translations: {
+                                    ...projectHighlightForm.translations,
+                                    es: {
+                                      ...projectHighlightForm.translations.es,
+                                      subtitle: e.target.value,
+                                    },
+                                  },
+                                })
+                              }
+                              placeholder="Descripción breve"
+                            />
+                          </div>
+                          <div>
+                            <Label htmlFor="cs-challenge-es">
+                              Desafío (Español)
+                            </Label>
+                            <Textarea
+                              id="cs-challenge-es"
+                              value={
+                                projectHighlightForm.translations.es.challenge
+                              }
+                              onChange={(e) =>
+                                setProjectHighlightForm({
+                                  ...projectHighlightForm,
+                                  translations: {
+                                    ...projectHighlightForm.translations,
+                                    es: {
+                                      ...projectHighlightForm.translations.es,
+                                      challenge: e.target.value,
+                                    },
+                                  },
+                                })
+                              }
+                              placeholder="Describe el desafío o problema"
+                              rows={4}
+                            />
+                          </div>
+                          <div>
+                            <Label htmlFor="cs-solution-es">
+                              Solución (Español)
+                            </Label>
+                            <Textarea
+                              id="cs-solution-es"
+                              value={
+                                projectHighlightForm.translations.es.solution
+                              }
+                              onChange={(e) =>
+                                setProjectHighlightForm({
+                                  ...projectHighlightForm,
+                                  translations: {
+                                    ...projectHighlightForm.translations,
+                                    es: {
+                                      ...projectHighlightForm.translations.es,
+                                      solution: e.target.value,
+                                    },
+                                  },
+                                })
+                              }
+                              placeholder="Describe la solución técnica"
+                              rows={4}
+                            />
+                          </div>
+                          <div>
+                            <Label htmlFor="cs-results-es">
+                              Resultados (Español)
+                            </Label>
+                            <Textarea
+                              id="cs-results-es"
+                              value={
+                                projectHighlightForm.translations.es.results
+                              }
+                              onChange={(e) =>
+                                setProjectHighlightForm({
+                                  ...projectHighlightForm,
+                                  translations: {
+                                    ...projectHighlightForm.translations,
+                                    es: {
+                                      ...projectHighlightForm.translations.es,
+                                      results: e.target.value,
+                                    },
+                                  },
+                                })
+                              }
+                              placeholder="Describe los resultados e impacto"
+                              rows={4}
+                            />
+                          </div>
+                        </TabsContent>
+
+                        {/* Italian Tab */}
+                        <TabsContent value="it" className="space-y-4 mt-4">
+                          <div>
+                            <Label htmlFor="cs-title-it">
+                              Titolo (Italiano){" "}
+                              <span className="text-destructive">*</span>
+                            </Label>
+                            <Input
+                              id="cs-title-it"
+                              value={projectHighlightForm.translations.it.title}
+                              onChange={(e) =>
+                                setProjectHighlightForm({
+                                  ...projectHighlightForm,
+                                  translations: {
+                                    ...projectHighlightForm.translations,
+                                    it: {
+                                      ...projectHighlightForm.translations.it,
+                                      title: e.target.value,
+                                    },
+                                  },
+                                })
+                              }
+                              placeholder="Titolo del caso di studio in italiano"
+                            />
+                          </div>
+                          <div>
+                            <Label htmlFor="cs-subtitle-it">
+                              Sottotitolo (Italiano){" "}
+                              <span className="text-destructive">*</span>
+                            </Label>
+                            <Input
+                              id="cs-subtitle-it"
+                              value={
+                                projectHighlightForm.translations.it.subtitle
+                              }
+                              onChange={(e) =>
+                                setProjectHighlightForm({
+                                  ...projectHighlightForm,
+                                  translations: {
+                                    ...projectHighlightForm.translations,
+                                    it: {
+                                      ...projectHighlightForm.translations.it,
+                                      subtitle: e.target.value,
+                                    },
+                                  },
+                                })
+                              }
+                              placeholder="Breve descrizione"
+                            />
+                          </div>
+                          <div>
+                            <Label htmlFor="cs-challenge-it">
+                              Sfida (Italiano)
+                            </Label>
+                            <Textarea
+                              id="cs-challenge-it"
+                              value={
+                                projectHighlightForm.translations.it.challenge
+                              }
+                              onChange={(e) =>
+                                setProjectHighlightForm({
+                                  ...projectHighlightForm,
+                                  translations: {
+                                    ...projectHighlightForm.translations,
+                                    it: {
+                                      ...projectHighlightForm.translations.it,
+                                      challenge: e.target.value,
+                                    },
+                                  },
+                                })
+                              }
+                              placeholder="Descrivi la sfida o problema"
+                              rows={4}
+                            />
+                          </div>
+                          <div>
+                            <Label htmlFor="cs-solution-it">
+                              Soluzione (Italiano)
+                            </Label>
+                            <Textarea
+                              id="cs-solution-it"
+                              value={
+                                projectHighlightForm.translations.it.solution
+                              }
+                              onChange={(e) =>
+                                setProjectHighlightForm({
+                                  ...projectHighlightForm,
+                                  translations: {
+                                    ...projectHighlightForm.translations,
+                                    it: {
+                                      ...projectHighlightForm.translations.it,
+                                      solution: e.target.value,
+                                    },
+                                  },
+                                })
+                              }
+                              placeholder="Descrivi la soluzione tecnica"
+                              rows={4}
+                            />
+                          </div>
+                          <div>
+                            <Label htmlFor="cs-results-it">
+                              Risultati (Italiano)
+                            </Label>
+                            <Textarea
+                              id="cs-results-it"
+                              value={
+                                projectHighlightForm.translations.it.results
+                              }
+                              onChange={(e) =>
+                                setProjectHighlightForm({
+                                  ...projectHighlightForm,
+                                  translations: {
+                                    ...projectHighlightForm.translations,
+                                    it: {
+                                      ...projectHighlightForm.translations.it,
+                                      results: e.target.value,
+                                    },
+                                  },
+                                })
+                              }
+                              placeholder="Descrivi i risultati e l'impatto"
+                              rows={4}
+                            />
+                          </div>
+                        </TabsContent>
+                      </Tabs>
+                    </div>
+
+                    {/* Other Fields */}
+                    <div className="space-y-4">
+                      <div>
+                        <Label htmlFor="cs-technologies">
+                          Technologies (comma-separated)
+                        </Label>
+                        <Input
+                          id="cs-technologies"
+                          value={projectHighlightForm.technologies}
+                          onChange={(e) =>
+                            setProjectHighlightForm({
+                              ...projectHighlightForm,
+                              technologies: e.target.value,
+                            })
+                          }
+                          placeholder="React, Node.js, PostgreSQL"
+                        />
+                      </div>
+
+                      <div className="grid grid-cols-2 gap-4">
+                        <div>
+                          <Label htmlFor="cs-client">Client Name</Label>
+                          <Input
+                            id="cs-client"
+                            value={projectHighlightForm.client_name}
+                            onChange={(e) =>
+                              setProjectHighlightForm({
+                                ...projectHighlightForm,
+                                client_name: e.target.value,
+                              })
+                            }
+                            placeholder="Company Name"
+                          />
+                        </div>
+                        <div>
+                          <Label htmlFor="cs-industry">Industry</Label>
+                          <Input
+                            id="cs-industry"
+                            value={projectHighlightForm.industry}
+                            onChange={(e) =>
+                              setProjectHighlightForm({
+                                ...projectHighlightForm,
+                                industry: e.target.value,
+                              })
+                            }
+                            placeholder="e.g., FinTech, Education"
+                          />
+                        </div>
+                      </div>
+
+                      <div>
+                        <Label htmlFor="cs-category">Category</Label>
+                        <Select
+                          value={projectHighlightForm.category}
+                          onValueChange={(
+                            value: "web" | "mobile" | "fullstack",
+                          ) =>
+                            setProjectHighlightForm({
+                              ...projectHighlightForm,
+                              category: value,
+                            })
+                          }
+                        >
+                          <SelectTrigger>
+                            <SelectValue />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="web">Web</SelectItem>
+                            <SelectItem value="mobile">Mobile</SelectItem>
+                            <SelectItem value="fullstack">
+                              Full Stack
+                            </SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+
+                      <div className="flex items-center space-x-4">
+                        <div className="flex items-center space-x-2">
+                          <Checkbox
+                            id="cs-featured"
+                            checked={projectHighlightForm.featured}
+                            onCheckedChange={(checked) =>
+                              setProjectHighlightForm({
+                                ...projectHighlightForm,
+                                featured: checked as boolean,
+                              })
+                            }
+                          />
+                          <Label htmlFor="cs-featured">Featured</Label>
+                        </div>
+                        <div className="flex items-center space-x-2">
+                          <Checkbox
+                            id="cs-published"
+                            checked={projectHighlightForm.published}
+                            onCheckedChange={(checked) =>
+                              setProjectHighlightForm({
+                                ...projectHighlightForm,
+                                published: checked as boolean,
+                              })
+                            }
+                          />
+                          <Label htmlFor="cs-published">Published</Label>
+                        </div>
+                      </div>
+
+                      {/* Images */}
+                      <div>
+                        <Label>{t.admin.projectHighlights.images}</Label>
+                        <Input
+                          type="file"
+                          accept="image/*"
+                          multiple
+                          onChange={handleProjectHighlightImageSelect}
+                          className="mt-2"
+                        />
+                        {selectedProjectHighlightImages.length > 0 && (
+                          <p className="text-sm text-muted-foreground mt-2">
+                            {selectedProjectHighlightImages.length} image(s)
+                            selected
+                          </p>
+                        )}
+                        {projectHighlightImageError && (
+                          <p className="text-sm text-destructive mt-2">
+                            {projectHighlightImageError}
+                          </p>
+                        )}
+
+                        {/* Current Images */}
+                        {projectHighlightImages.length > 0 && (
+                          <div className="mt-4">
+                            <Label className="text-sm">Current Images:</Label>
+                            <div className="grid grid-cols-3 gap-4 mt-2">
+                              {projectHighlightImages.map((img) => (
+                                <div
+                                  key={img.mediaId}
+                                  className="relative group"
+                                >
+                                  <Image
+                                    src={`/api/images/${img.blobKey}`}
+                                    alt={img.alt}
+                                    width={200}
+                                    height={150}
+                                    className="rounded object-cover"
+                                  />
+                                  <Button
+                                    variant="destructive"
+                                    size="sm"
+                                    className="absolute top-2 right-2 opacity-0 group-hover:opacity-100"
+                                    onClick={() =>
+                                      handleDeleteProjectHighlightImage(img)
+                                    }
+                                  >
+                                    <Trash2 className="h-4 w-4" />
+                                  </Button>
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+
+                    {/* Actions */}
+                    <div className="flex justify-end gap-2">
+                      <Button
+                        variant="outline"
+                        onClick={resetProjectHighlightForm}
+                        disabled={isSavingProjectHighlight}
+                      >
+                        {t.admin.common.cancel}
+                      </Button>
+                      <Button
+                        onClick={handleSaveProjectHighlight}
+                        disabled={isSavingProjectHighlight}
+                        className="bg-gradient-to-r from-primary to-secondary"
+                      >
+                        {isSavingProjectHighlight ? (
+                          <>
+                            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                            {t.admin.common.saving}
+                          </>
+                        ) : (
+                          t.admin.common.save
+                        )}
+                      </Button>
+                    </div>
+                  </div>
+                </DialogContent>
+              </Dialog>
+            </div>
+
+            {/* Case Studies List */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {projectHighlights.map((projectHighlight) => (
+                <Card key={projectHighlight.id}>
+                  <CardHeader>
+                    <div className="flex items-start justify-between">
+                      <div className="flex-1">
+                        <CardTitle className="line-clamp-2">
+                          {projectHighlight.title}
+                        </CardTitle>
+                        <CardDescription className="line-clamp-1">
+                          {projectHighlight.subtitle}
+                        </CardDescription>
+                      </div>
+                      <div className="flex gap-2">
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() =>
+                            handleEditProjectHighlight(projectHighlight)
+                          }
+                        >
+                          <Edit className="h-4 w-4" />
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() =>
+                            handleDeleteProjectHighlight(projectHighlight.id)
+                          }
+                        >
+                          <Trash2 className="h-4 w-4 text-destructive" />
+                        </Button>
+                      </div>
+                    </div>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="space-y-2">
+                      {projectHighlight.client_name && (
+                        <p className="text-sm">
+                          <span className="font-semibold">Client:</span>{" "}
+                          {projectHighlight.client_name}
+                        </p>
+                      )}
+                      {projectHighlight.industry && (
+                        <Badge variant="secondary">
+                          {projectHighlight.industry}
+                        </Badge>
+                      )}
+                      <div className="flex gap-2">
+                        {projectHighlight.featured && (
+                          <Badge className="bg-gradient-to-r from-primary to-secondary">
+                            Featured
+                          </Badge>
+                        )}
+                        {projectHighlight.published ? (
+                          <Badge variant="outline">Published</Badge>
+                        ) : (
+                          <Badge variant="secondary">Draft</Badge>
+                        )}
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
           </TabsContent>
         </Tabs>
       </div>

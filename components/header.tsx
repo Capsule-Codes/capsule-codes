@@ -21,6 +21,12 @@ export function Header() {
     { href: "#technologies", label: t.nav.technologies, id: "technologies" },
     { href: "#team", label: t.nav.team, id: "team" },
     { href: "#projects", label: t.nav.projects, id: "projects" },
+    {
+      href: "/project-highlights",
+      label: t.projectHighlights.title,
+      id: "project-highlights",
+      isExternal: true,
+    },
     { href: "#reviews", label: t.nav.reviews, id: "reviews" },
     { href: "#contact", label: t.nav.contact, id: "contact" },
   ];
@@ -39,7 +45,10 @@ export function Header() {
           const sectionTop = section.offsetTop;
           const sectionHeight = section.offsetHeight;
 
-          if (scrollPosition >= sectionTop && scrollPosition < sectionTop + sectionHeight) {
+          if (
+            scrollPosition >= sectionTop &&
+            scrollPosition < sectionTop + sectionHeight
+          ) {
             setActiveSection(sections[i]);
             return;
           }
@@ -64,7 +73,13 @@ export function Header() {
     }
   }, [pathname]);
 
-  const handleNavClick = (href: string) => {
+  const handleNavClick = (href: string, isExternal?: boolean) => {
+    if (isExternal) {
+      window.location.href = href;
+      setIsMenuOpen(false);
+      return;
+    }
+
     if (window.location.pathname !== "/") {
       window.location.href = `/${href}`;
       return;
@@ -104,7 +119,7 @@ export function Header() {
             {navItems.map((item) => (
               <button
                 key={item.href}
-                onClick={() => handleNavClick(item.href)}
+                onClick={() => handleNavClick(item.href, item.isExternal)}
                 className={`transition-colors duration-200 font-medium cursor-pointer ${
                   isActive(item.id)
                     ? "text-primary"
@@ -143,7 +158,7 @@ export function Header() {
               {navItems.map((item) => (
                 <button
                   key={item.href}
-                  onClick={() => handleNavClick(item.href)}
+                  onClick={() => handleNavClick(item.href, item.isExternal)}
                   className={`transition-colors duration-200 font-medium text-left cursor-pointer py-1 ${
                     isActive(item.id)
                       ? "text-primary"
@@ -153,7 +168,8 @@ export function Header() {
                   {item.label}
                 </button>
               ))}
-              <div className="flex items-center pt-2 border-t border-border/50 relative z-50">
+
+              <div className="pt-3 border-t border-border mt-3">
                 <DebugLanguageSwitcher />
               </div>
             </div>

@@ -103,6 +103,66 @@ export interface TeamMember {
   published: boolean;
 }
 
+// Case Study interfaces
+export interface ProjectHighlightTranslations {
+  title: string;
+  subtitle: string;
+  challenge: string;
+  solution: string;
+  results: string;
+  features: string[];
+}
+
+export interface TechStackItem {
+  name: string;
+  icon: string;
+  category: string;
+}
+
+export interface MetricItem {
+  label: string;
+  value: string;
+  icon?: string;
+}
+
+export interface Testimonial {
+  text: string;
+  author: string;
+  role: string;
+  avatar?: string;
+}
+
+export interface ProjectHighlight {
+  id: string;
+  title: string;
+  subtitle: string;
+  translations: {
+    en: ProjectHighlightTranslations;
+    es: ProjectHighlightTranslations;
+    it: ProjectHighlightTranslations;
+  };
+  image: string;
+  images?: ProjectImage[];
+  technologies: string[];
+  tech_stack?: TechStackItem[];
+  metrics?: MetricItem[];
+  client_name?: string;
+  client_logo?: string;
+  industry?: string;
+  testimonial?: Testimonial;
+  project_id?: string;
+  live_url?: string;
+  github_url?: string;
+  case_study_url?: string;
+  architecture_diagram?: string;
+  category: "web" | "mobile" | "fullstack";
+  featured?: boolean;
+  published?: boolean;
+  order_index?: number;
+  created_at?: string;
+  updated_at?: string;
+}
+
 // Context type - now just a wrapper around Supabase
 export interface DataContextType {
   projects: Project[];
