@@ -1,8 +1,8 @@
 # Capsule Codes — Visual Redesign Spec
 
 **Date:** 2026-05-28
-**Status:** Design approved, pending implementation plan
-**Scope:** Full visual redesign of the public site + admin panel, no business logic or data shape changes.
+**Status:** Design approved + all open questions resolved. Pending implementation plan.
+**Scope:** Full visual redesign of the public site + admin panel restructure + migrate Team section to Supabase. No other business logic changes.
 
 ---
 
@@ -12,12 +12,15 @@ The current site uses a "generic agency template" visual language: cyan-green gr
 
 The goal is to give Capsule Codes a **distinctive visual identity** rooted in the studio's name — "capsule" — while staying within the technical/craft aesthetic the team operates in (not experimental/maximalist).
 
-This redesign is **visual and structural only**. It does NOT change:
+This redesign is **primarily visual + structural**. It does NOT change:
 
-- Data shapes (`Project`, `Technology`, `Review`, `ContactInfo`, `ContactMessage`)
-- Business logic (Supabase queries, Azure image upload, contact form submission, auth)
-- i18n keys (`lib/i18n.ts` keys stay; only consumption changes)
-- Routing, API routes, server-side data fetching
+- Existing data shapes (`Project`, `Technology`, `Review`, `ContactInfo`, `ContactMessage`)
+- Business logic for existing entities (Supabase queries, Azure image upload, contact form submission, auth)
+- Most i18n keys (section labels stay; only individual team-member content is migrated out)
+- Routing structure (admin routes are reorganized internally but `/admin` stays the entry point)
+- API routes for existing entities
+
+It **does add ONE new entity**: a `team_members` Supabase table with admin CRUD, migrated from the currently hardcoded team data in `lib/i18n.ts`. This is the only data model change.
 
 ---
 
@@ -54,7 +57,33 @@ Replace existing tokens in `app/globals.css`.
 | `--brand-green` | `oklch(0.75 0.18 155)` | Brand secondary, capsule status dot |
 | `--brand-grad` | `linear-gradient(180deg, oklch(0.85 0.16 195), oklch(0.72 0.18 155))` | Gradient for headlines, CTAs, capsule icons |
 
-**Light mode (supported but secondary):** retained for accessibility/user preference but acknowledged to lose atmospheric strength. The capsule's bevel and glow are dialed back; the page background becomes near-white with subtle cyan tint; cards become near-white with `--ink-line` at higher contrast. Detailed light tokens to be derived during implementation.
+**Light mode (first-class, equally polished):** light is NOT an inverted dark — it is a sibling experience designed deliberately, with its own visual treatment of the capsule atom.
+
+| Token | Value | Use |
+|---|---|---|
+| `--ink-bg` | `oklch(0.985 0.003 200)` | Page background (near-white with hint of cyan) |
+| `--ink-bg-2` | `oklch(0.97 0.005 200)` | Card / section panel |
+| `--ink-fg` | `oklch(0.16 0 0)` | Primary text |
+| `--ink-muted` | `oklch(0.45 0.02 200)` | Secondary text |
+| `--ink-line` | `oklch(0 0 0 / 0.08)` | Borders, dividers |
+| `--brand-cyan` | `oklch(0.5 0.18 210)` | Brand primary (darker for AA contrast on light) |
+| `--brand-green` | `oklch(0.55 0.18 160)` | Brand secondary (darker) |
+| `--brand-grad` | `linear-gradient(180deg, oklch(0.55 0.18 200), oklch(0.5 0.18 160))` | Gradient on light (deeper, retains saturation) |
+
+**Capsule on light mode:**
+- Background: `linear-gradient(180deg, oklch(1 0 0), oklch(0.96 0.005 200))` (subtle top-down)
+- Border: `1px solid oklch(0.4 0.12 200 / 0.25)` (more visible than dark)
+- Box-shadow: drops the atmospheric `0 0 24px` glow (doesn't read on light); keeps the depth: `0 1px 0 oklch(1 0 0) inset, 0 -1px 0 oklch(0 0 0 / 0.08) inset, 0 4px 12px oklch(0.4 0.1 200 / 0.12)`
+- Dot: stays at brand color, no glow halo
+
+**Hero atmosphere on light:**
+- Radial glows become subtle (opacity reduced to ~0.15), tinted with the deeper brand colors instead of bright glow
+- Dot grain pattern uses `oklch(0 0 0 / 0.04)` instead of white dots
+- The constellation capsules sit on the light bg with shadow-based depth instead of glow-based depth
+
+**Cursor ambient glow:** disabled in light mode (doesn't read).
+
+**Theme toggle:** persisted via `next-themes`. Default = `dark`. Toggle accessible from header + footer.
 
 **Semantic status colors** (used on capsule-style badges in admin):
 
@@ -172,6 +201,8 @@ Layout (top to bottom, centered):
 
 Background: two radial-gradient glows + 24px dot grain overlay (`background-image: radial-gradient(oklch(1 0 0 / 0.04) 1px, transparent 1px)`).
 
+**Mobile constellation behavior:** on viewports `< 768px`, only 2 of the 6 capsules render (the two highest-opacity ones, positioned top-left and top-right). The other 4 (medium + low opacity background depth) are hidden via `hidden md:block`. This preserves identity without cluttering small screens. Mouse parallax is also disabled on touch devices (no `pointer: fine`).
+
 ### 4.3 About
 
 Component: `components/about-section.tsx` (rewrite).
@@ -208,17 +239,36 @@ Component: `components/technologies-section.tsx` (rewrite).
 - Display: capsule cloud (flex-wrap) of all technologies. Each tech rendered as a `<Capsule>` with the emoji icon (from `tech.icon` field) + name. No category grouping in the main display (categories preserved in admin only).
 - Data: existing `technologies` prop from `getHomePageData()` — no shape change.
 
-### 4.6 Team
+### 4.6 Team (admin-driven, MIGRATED to Supabase)
 
 Component: `components/team-section.tsx` (rewrite).
 
 - Eyebrow: `— 04 / Team`
-- Title from `t.team.title.firstPart` + `t.team.title.secondPart` (gradient on second part)
+- Title from `t.team.title.firstPart` + `t.team.title.secondPart` (gradient on second part) — section labels stay in i18n
 - Lead: `t.team.subtitle`
-- **Co-Founders row** (label `— Co-Founders` in JetBrains Mono): 2 cards (Miguel, Facundo) with avatar circle + name + role + description
-- **Developers row** (label `— Developers`): 3 cards (Marco, Lucas, Juan)
-- Card: 52px avatar with brand gradient, name 15px/600, role in JetBrains Mono cyan, description 12.5px muted
-- Data from `t.team.coFounders.*` and `t.team.developers.*` (no admin yet for team)
+- **Co-Founders row** (label `— Co-Founders` in JetBrains Mono): cards filtered by `type === "cofounder"`
+- **Developers row** (label `— Developers`): cards filtered by `type === "developer"`
+- Card: 52px avatar (from `member.avatar_url` or initial fallback), name 15px/600, role in JetBrains Mono cyan, description 12.5px muted
+- **Data shape (NEW Supabase table `team_members`):**
+
+```ts
+type TeamMember = {
+  id: string                  // uuid
+  type: "cofounder" | "developer"
+  name: string                // language-agnostic (proper name)
+  avatar_url: string | null   // Azure or external URL
+  display_order: number       // for ordering within type
+  translations: {
+    en: { role: string, description: string }
+    es: { role: string, description: string }
+    it: { role: string, description: string }
+  }
+  created_at, updated_at
+}
+```
+
+- Migration: seed the table from current `t.team.coFounders.*` and `t.team.developers.*` content as part of the implementation. After migration, those keys are REMOVED from `i18n.ts` (section labels `title`, `subtitle`, `coFoundersTitle`, `developersTitle` stay).
+- Fetched server-side via `getHomePageData()` and passed to `TeamSection` as a prop (same pattern as projects/technologies/reviews).
 
 ### 4.7 Projects (admin-driven)
 
@@ -306,14 +356,15 @@ Replace the `<Tabs>` with a sidebar layout:
 **Sidebar** (`bg: oklch(0.05 0.005 200)`, border-right `--ink-line`):
 - Top: brand `capsule.admin` (JetBrains Mono 600, cyan dot)
 - Nav items (icon + label + optional count badge):
-  - Dashboard
+  - Overview (admin landing)
   - Projects (count from data)
   - Technologies (count)
+  - Team (count) — NEW
   - Reviews (count)
   - Contact Info (no count)
   - Messages (count of unread)
 - Active item: cyan-tinted background + border
-- Bottom: user pill (avatar + name + "admin" label in mono) + logout
+- Bottom: user pill (avatar + name + "admin" label in mono) + logout + theme toggle
 
 **Topbar** (per page):
 - Left: page title (24px/600) + JetBrains Mono subtitle describing the page
@@ -321,14 +372,16 @@ Replace the `<Tabs>` with a sidebar layout:
 
 ### 5.2 Page content patterns
 
-**Dashboard view** (NEW, replaces login-only entry):
-- 4 stat cards across the top: counts of Projects, Technologies, Reviews, Messages
-- Each stat: JetBrains Mono uppercase label + large 26px value + trend microcopy in `--brand-green`
-- Quick links to manage each entity
-- Recent activity feed (optional, later iteration)
+**Overview (admin landing at `/admin`)** — replaces the previous tabbed entry:
+- Simple welcome heading: `Hi, {user.name} 👋` + JetBrains Mono subtitle `signed in as admin`
+- Grid of large clickable cards, one per editable entity (Projects, Technologies, Team, Reviews, Contact Info, Messages). Each card:
+  - JetBrains Mono eyebrow label (e.g., `— content`)
+  - Title (e.g., "Projects")
+  - One-line description ("Manage published work, images and translations")
+  - Bottom-right: count capsule (e.g., `12 items`) + arrow icon
+- NO stats trends, NO activity feed — this is a navigation hub, not an analytics dashboard. Operation is 2 people; analytics would add noise without value.
 
-**List view** (Projects / Technologies / Reviews / Messages):
-- Stats row (4 cards) showing relevant counts
+**List view** (Projects / Technologies / Team / Reviews / Messages):
 - Table-style list inside a rounded card:
   - Header row: JetBrains Mono uppercase labels
   - Each row: thumbnail (where applicable) + primary text + JetBrains Mono sub-text + capsule badges for category/status + action buttons (edit/delete) on the right
@@ -355,14 +408,15 @@ Replace the `<Tabs>` with a sidebar layout:
 
 The current 81k single file should be split into:
 
-- `app/admin/layout.tsx` — sidebar shell, user, nav
-- `app/admin/page.tsx` — dashboard (was the Tabs container)
+- `app/admin/layout.tsx` — sidebar shell, user, nav, auth gate
+- `app/admin/page.tsx` — overview landing (entity cards, no stats)
 - `app/admin/projects/page.tsx` — projects list + form
 - `app/admin/technologies/page.tsx` — technologies list + form
+- `app/admin/team/page.tsx` — team list + form (NEW)
 - `app/admin/reviews/page.tsx` — reviews list + form
 - `app/admin/contact-info/page.tsx` — contact info form
 - `app/admin/messages/page.tsx` — messages inbox
-- `components/admin/sidebar.tsx`, `components/admin/topbar.tsx`, `components/admin/stat-card.tsx`, `components/admin/list-row.tsx`, `components/admin/multilingual-tabs.tsx` — shared
+- `components/admin/sidebar.tsx`, `components/admin/topbar.tsx`, `components/admin/overview-card.tsx`, `components/admin/list-row.tsx`, `components/admin/multilingual-tabs.tsx` — shared
 
 The auth check (`useAuth` + redirect-to-login if not `isAdmin`) moves up into `app/admin/layout.tsx` so all sub-pages are gated at the layout level instead of repeating the check in each page. The login form itself stays as a fallback inside the layout when `!user`, restyled with the new system.
 
@@ -390,6 +444,10 @@ This split is part of this redesign because the current file is too large to mai
 - `motion` (formerly `framer-motion`) for animations
 - `class-variance-authority` already present — used for the new Capsule component
 - New utility classes / animations in `globals.css`
+- New Supabase table `team_members` (with RLS policy mirroring `projects`/`reviews`)
+- Migration script that seeds `team_members` from the current `t.team.coFounders.*` / `t.team.developers.*` content in `lib/i18n.ts`
+- New server data fetcher in `lib/server/data.ts` for `team_members`, included in `getHomePageData()` return
+- Updated TypeScript types in `lib/data-context.tsx` (add `TeamMember` type, expose `addTeamMember`, `updateTeamMember`, `deleteTeamMember`)
 
 ### 6.3 What we remove
 
@@ -432,17 +490,30 @@ The redesign is complete when:
 2. The Reviews section is uncommented in `app/page.tsx` and renders correctly when Supabase data is present
 3. All existing i18n strings render correctly in EN, ES, IT
 4. All admin CRUD operations (Projects, Technologies, Reviews, Contact Info, Messages) continue to work without modification to business logic
-5. Admin shell uses the new sidebar layout with the design system applied
-6. Light mode still works (degraded but functional and accessible)
-7. `prefers-reduced-motion` is respected
-8. Lighthouse a11y score stays at or above current baseline
-9. No regressions in contact form submission, image upload, auth flow
+5. New Team CRUD works end-to-end: seed data migrated correctly, list/edit/delete from admin, public team section renders from Supabase
+6. Admin shell uses the new sidebar layout with the design system applied; `/admin` is an overview hub, not a stats dashboard
+7. Light mode is first-class — atmospheric treatment recalibrated for light, capsule visually coherent, ambient cursor glow off, theme toggle persists
+8. `prefers-reduced-motion` is respected
+9. Mobile constellation reduces to 2 visible capsules on `< 768px`; mouse parallax off on touch
+10. Lighthouse a11y score stays at or above current baseline
+11. No regressions in contact form submission, image upload, auth flow
 
 ---
 
-## 9. Open Questions / Followups
+## 9. Decisions Log
 
-- Should the Team section become admin-editable as a follow-up? (Currently hardcoded in i18n.ts.) — Out of scope for this redesign, flag for next iteration.
-- Light mode polish: dial of cyan tint in light backgrounds — to be decided during implementation when seen in context.
-- Mobile constellation behavior: should the floating capsules be hidden on small screens to avoid clutter, or kept with reduced count? — Default: hide background-depth capsules (low opacity), keep 2 visible. Confirm during implementation.
-- Should we add a Dashboard activity feed in admin? — Deferred to a follow-up; not blocking.
+Open questions resolved during brainstorming (2026-05-28):
+
+| # | Question | Decision | Rationale |
+|---|---|---|---|
+| 1 | Team section admin-editable? | **YES** — migrate to Supabase `team_members` table with full CRUD in admin. Section labels stay in i18n. | Team changes often enough (new hires, role changes) to justify the table. Avoids deploy-per-change. |
+| 2 | Light mode polish level | **First-class** — discrete light tokens, capsule recalibrated for light (shadow-based depth instead of glow), atmospheric glows attenuated, ambient cursor glow disabled. Default theme = `dark`. | Equal investment in both modes; light is not an inverted dark. |
+| 3 | Mobile constellation behavior | **2 capsules visible** on `< 768px` (the two top-positioned, highest opacity). Other 4 hidden. Mouse parallax disabled on touch. | Preserves identity, avoids clutter on small screens. |
+| 4 | Admin dashboard with stats? | **NO** — admin landing is a simple navigation overview (entity cards with counts). No analytics, no activity feed. | 2-person operation; analytics adds noise without value. Hub > dashboard. |
+
+## 10. Followups (NOT part of this redesign)
+
+- Per-project case study pages (`app/projects/[id]`) — will be restyled with the new system as part of this work, but no functional changes
+- Analytics dashboard (only if/when the team grows and metrics become operationally useful)
+- Activity feed in admin (only if multi-admin collaboration becomes a thing)
+- Editable Hero/About/Services/Footer copy from admin (explicitly chose to KEEP these in `i18n.ts` for stability + simpler ops)
