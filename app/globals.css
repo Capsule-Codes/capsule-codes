@@ -15,6 +15,8 @@
 
   --brand-cyan: oklch(0.7 0.18 200);
   --brand-green: oklch(0.75 0.18 155);
+  --brand-grad-from: oklch(0.85 0.16 195);
+  --brand-grad-to: oklch(0.72 0.18 155);
 
   --cap-bg: linear-gradient(180deg, oklch(0.26 0.04 200), oklch(0.16 0.03 170));
   --cap-border: oklch(0.5 0.12 180 / 0.55);
@@ -65,6 +67,8 @@
 
   --brand-cyan: oklch(0.5 0.18 210);
   --brand-green: oklch(0.55 0.18 160);
+  --brand-grad-from: oklch(0.55 0.18 200);
+  --brand-grad-to: oklch(0.5 0.18 160);
 
   --cap-bg: linear-gradient(180deg, oklch(1 0 0), oklch(0.96 0.005 200));
   --cap-border: oklch(0.4 0.12 200 / 0.25);
@@ -128,6 +132,7 @@
   --color-ink-fg: var(--ink-fg);
   --color-ink-muted: var(--ink-muted);
   --color-ink-line: var(--ink-line);
+  --color-ink-line-strong: var(--ink-line-strong);
   --color-brand-cyan: var(--brand-cyan);
   --color-brand-green: var(--brand-green);
   --radius-sm: calc(var(--radius) - 4px);
@@ -140,7 +145,7 @@
   * { @apply border-border outline-ring/50; }
   body { @apply bg-background text-foreground font-sans; }
   html { color-scheme: dark; }
-  .light html { color-scheme: light; }
+  html.light { color-scheme: light; }
 }
 
 /* === New animations === */
@@ -165,19 +170,10 @@
 
 /* Brand gradient utility */
 .brand-grad {
-  background: linear-gradient(180deg, oklch(0.85 0.16 195), oklch(0.72 0.18 155));
-}
-.light .brand-grad {
-  background: linear-gradient(180deg, oklch(0.55 0.18 200), oklch(0.5 0.18 160));
+  background: linear-gradient(180deg, var(--brand-grad-from), var(--brand-grad-to));
 }
 .text-brand-grad {
-  background: linear-gradient(180deg, oklch(0.85 0.16 195), oklch(0.72 0.18 155));
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-}
-.light .text-brand-grad {
-  background: linear-gradient(180deg, oklch(0.55 0.18 200), oklch(0.5 0.18 160));
+  background: linear-gradient(180deg, var(--brand-grad-from), var(--brand-grad-to));
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
