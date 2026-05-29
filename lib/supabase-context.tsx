@@ -3,13 +3,14 @@
 import type React from "react";
 import { createContext, useContext, useState, useEffect } from "react";
 import { supabase } from "./supabase";
-import type { Project, Technology, Review } from "./data-context";
+import type { Project, Technology, Review, TeamMember } from "./data-context";
 import type { ContactMessage, ContactInfo } from "./types/contact";
 
 interface SupabaseContextType {
   projects: Project[];
   technologies: Technology[];
   reviews: Review[];
+  teamMembers: TeamMember[];
   contactMessages: ContactMessage[];
   contactInfo: ContactInfo | null;
   loading: boolean;
@@ -26,6 +27,11 @@ interface SupabaseContextType {
   addReview: (review: Omit<Review, "id">) => Promise<Review | void>;
   updateReview: (id: string, review: Partial<Review>) => Promise<void>;
   deleteReview: (id: string) => Promise<void>;
+  addTeamMember: (
+    member: Omit<TeamMember, "id" | "created_at" | "updated_at">
+  ) => Promise<TeamMember | void>;
+  updateTeamMember: (id: string, member: Partial<TeamMember>) => Promise<void>;
+  deleteTeamMember: (id: string) => Promise<void>;
   addContactMessage: (message: Omit<ContactMessage, "id" | "status" | "created_at" | "updated_at">) => Promise<void>;
   updateContactMessageStatus: (id: string, status: ContactMessage["status"]) => Promise<void>;
   deleteContactMessage: (id: string) => Promise<void>;
@@ -41,6 +47,7 @@ export function SupabaseProvider({ children }: { children: React.ReactNode }) {
   const [projects, setProjects] = useState<Project[]>([]);
   const [technologies, setTechnologies] = useState<Technology[]>([]);
   const [reviews, setReviews] = useState<Review[]>([]);
+  const [teamMembers, setTeamMembers] = useState<TeamMember[]>([]);
   const [contactMessages, setContactMessages] = useState<ContactMessage[]>([]);
   const [contactInfo, setContactInfo] = useState<ContactInfo | null>(null);
   const [loading, setLoading] = useState(true);
@@ -54,10 +61,11 @@ export function SupabaseProvider({ children }: { children: React.ReactNode }) {
 
       // Load all data from API routes in parallel
       // Use cache: 'no-store' to ensure we always get fresh data
-      const [projectsResponse, technologiesResponse, reviewsResponse, contactMessagesResponse, contactInfoResponse] = await Promise.all([
+      const [projectsResponse, technologiesResponse, reviewsResponse, teamMembersResponse, contactMessagesResponse, contactInfoResponse] = await Promise.all([
         fetch("/api/admin/projects", { cache: "no-store" }),
         fetch("/api/admin/technologies", { cache: "no-store" }),
         fetch("/api/admin/reviews", { cache: "no-store" }),
+        fetch("/api/admin/team-members", { cache: "no-store" }),
         fetch("/api/admin/contact-messages", { cache: "no-store" }),
         fetch("/api/admin/contact-info", { cache: "no-store" }),
       ]);
@@ -65,12 +73,14 @@ export function SupabaseProvider({ children }: { children: React.ReactNode }) {
       const projectsData = projectsResponse.ok ? await projectsResponse.json() : [];
       const technologiesData = technologiesResponse.ok ? await technologiesResponse.json() : [];
       const reviewsData = reviewsResponse.ok ? await reviewsResponse.json() : [];
+      const teamMembersData = teamMembersResponse.ok ? await teamMembersResponse.json() : [];
       const contactMessagesData = contactMessagesResponse.ok ? await contactMessagesResponse.json() : [];
       const contactInfoData = contactInfoResponse.ok ? await contactInfoResponse.json() : null;
 
       setProjects(projectsData);
       setTechnologies(technologiesData);
       setReviews(reviewsData);
+      setTeamMembers(teamMembersData);
       setContactMessages(contactMessagesData);
       
       // Debug: Log contact info to verify data is loaded correctly
@@ -305,6 +315,78 @@ export function SupabaseProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
+  // Team member functions
+  const addTeamMember = async (
+    member: Omit<TeamMember, "id" | "created_at" | "updated_at">
+  ) => {
+    try {
+      const response = await fetch("/api/admin/team-members", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(member),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || "Failed to add team member");
+      }
+
+      const data = await response.json();
+      setTeamMembers((prev) => [data, ...prev]);
+      return data;
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to add team member");
+      throw err;
+    }
+  };
+
+  const updateTeamMember = async (id: string, member: Partial<TeamMember>) => {
+    try {
+      const response = await fetch(`/api/admin/team-members/${id}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(member),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || "Failed to update team member");
+      }
+
+      const data = await response.json();
+      setTeamMembers((prev) => prev.map((m) => (m.id === id ? data : m)));
+    } catch (err) {
+      setError(
+        err instanceof Error ? err.message : "Failed to update team member"
+      );
+      throw err;
+    }
+  };
+
+  const deleteTeamMember = async (id: string) => {
+    try {
+      const response = await fetch(`/api/admin/team-members/${id}`, {
+        method: "DELETE",
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || "Failed to delete team member");
+      }
+
+      setTeamMembers((prev) => prev.filter((m) => m.id !== id));
+    } catch (err) {
+      setError(
+        err instanceof Error ? err.message : "Failed to delete team member"
+      );
+      throw err;
+    }
+  };
+
   const refreshData = async () => {
     await loadData();
   };
@@ -414,6 +496,7 @@ export function SupabaseProvider({ children }: { children: React.ReactNode }) {
         projects,
         technologies,
         reviews,
+        teamMembers,
         contactMessages,
         contactInfo,
         loading,
@@ -427,6 +510,9 @@ export function SupabaseProvider({ children }: { children: React.ReactNode }) {
         addReview,
         updateReview,
         deleteReview,
+        addTeamMember,
+        updateTeamMember,
+        deleteTeamMember,
         addContactMessage,
         updateContactMessageStatus,
         deleteContactMessage,
