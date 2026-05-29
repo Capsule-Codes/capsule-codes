@@ -13,7 +13,7 @@ const capsuleVariants = cva(
       },
       variant: {
         default:
-          "text-white border bg-[image:var(--cap-bg)] border-[color:var(--cap-border)] shadow-[var(--cap-shadow)]",
+          "border bg-[image:var(--cap-bg)] border-[color:var(--cap-border)] shadow-[var(--cap-shadow)] text-[color:var(--cap-fg)]",
         success:
           "border bg-[color:var(--status-success-bg)] text-[color:var(--status-success-fg)] border-[color:var(--status-success-border)]",
         warning:
@@ -39,21 +39,35 @@ interface CapsuleProps
 
 export const Capsule = React.forwardRef<HTMLSpanElement, CapsuleProps>(
   ({ className, size, variant, interactive, dot = true, icon, children, ...props }, ref) => {
-    const dotColor =
-      variant === "success" ? "var(--status-success-fg)" :
-      variant === "warning" ? "var(--status-warning-fg)" :
-      variant === "info" ? "var(--status-info-fg)" :
-      "var(--brand-green)";
+    const isDefault = variant === "default" || variant === undefined || variant === null;
+    const isButton = interactive === true;
+
+    const handleKeyDown: React.KeyboardEventHandler<HTMLSpanElement> = (e) => {
+      if (isButton && (e.key === "Enter" || e.key === " ")) {
+        e.preventDefault();
+        (props.onClick as unknown as React.MouseEventHandler<HTMLSpanElement> | undefined)?.(
+          e as unknown as React.MouseEvent<HTMLSpanElement>
+        );
+      }
+      props.onKeyDown?.(e);
+    };
 
     return (
-      <span ref={ref} className={cn(capsuleVariants({ size, variant, interactive }), className)} {...props}>
+      <span
+        ref={ref}
+        className={cn(capsuleVariants({ size, variant, interactive }), className)}
+        {...props}
+        role={isButton ? (props.role ?? "button") : props.role}
+        tabIndex={isButton ? (props.tabIndex ?? 0) : props.tabIndex}
+        onKeyDown={handleKeyDown}
+      >
         {dot && (
           <span
             aria-hidden
             className="block size-1.5 rounded-full"
             style={{
-              backgroundColor: dotColor,
-              boxShadow: variant === "default" ? `0 0 8px ${dotColor}` : "none",
+              backgroundColor: isDefault ? "var(--brand-green)" : "currentColor",
+              boxShadow: isDefault ? "0 0 8px var(--brand-green)" : undefined,
             }}
           />
         )}
