@@ -78,7 +78,7 @@ export function Footer() {
               — {t.footer.followUs}
             </h6>
             <a
-              href="#"
+              href="https://www.linkedin.com/company/capsulecodes"
               target="_blank"
               rel="noopener noreferrer"
               className="flex items-center gap-2 text-[13px] text-[color:var(--ink-muted)] py-1 hover:text-foreground transition"

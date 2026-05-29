@@ -5,6 +5,7 @@ import { Analytics } from "@vercel/analytics/next";
 import { LanguageProvider } from "@/hooks/use-language";
 import { ThemeProvider } from "@/components/theme-provider";
 import { Toaster } from "@/components/ui/sonner";
+import { AmbientCursorGlow } from "@/components/motion/ambient-cursor-glow";
 import { Suspense } from "react";
 import "./globals.css";
 
@@ -96,6 +97,7 @@ export default function RootLayout({
       <body className="font-sans">
         <Suspense fallback={null}>
           <ThemeProvider attribute="class" defaultTheme="dark" enableSystem disableTransitionOnChange>
+            <AmbientCursorGlow />
             <LanguageProvider>{children}</LanguageProvider>
             <Toaster richColors position="bottom-right" />
           </ThemeProvider>
