@@ -1,24 +1,37 @@
 "use client";
 
-import { motion, useMotionValue, useSpring } from "motion/react";
+import { motion, useMotionValue, useSpring, useReducedMotion } from "motion/react";
 import { useEffect } from "react";
 import { useTheme } from "next-themes";
 
 export function AmbientCursorGlow() {
   const { resolvedTheme } = useTheme();
+  const reduced = useReducedMotion();
   const x = useMotionValue(-1000);
   const y = useMotionValue(-1000);
   const sx = useSpring(x, { stiffness: 50, damping: 14, mass: 0.6 });
   const sy = useSpring(y, { stiffness: 50, damping: 14, mass: 0.6 });
 
   useEffect(() => {
+    if (reduced) return;
     if (resolvedTheme !== "dark") return;
-    const onMove = (e: MouseEvent) => { x.set(e.clientX); y.set(e.clientY); };
+    let raf = 0;
+    const onMove = (e: PointerEvent) => {
+      if (raf) return;
+      raf = requestAnimationFrame(() => {
+        raf = 0;
+        x.set(e.clientX);
+        y.set(e.clientY);
+      });
+    };
     window.addEventListener("pointermove", onMove);
-    return () => window.removeEventListener("pointermove", onMove);
-  }, [resolvedTheme, x, y]);
+    return () => {
+      window.removeEventListener("pointermove", onMove);
+      if (raf) cancelAnimationFrame(raf);
+    };
+  }, [reduced, resolvedTheme, x, y]);
 
-  if (resolvedTheme !== "dark") return null;
+  if (reduced || resolvedTheme !== "dark") return null;
 
   return (
     <motion.div
