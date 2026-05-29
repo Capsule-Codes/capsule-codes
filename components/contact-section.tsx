@@ -1,19 +1,17 @@
 "use client";
 
-import type React from "react";
-
-import { useState } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { Mail, Phone, MapPin, Send, CheckCircle2, XCircle, Loader2 } from "lucide-react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { toast } from "sonner";
+import { Magnetic } from "@/components/motion/magnetic";
+import { SectionHeader } from "@/components/ui/section-header";
 import { useLanguage } from "@/hooks/use-language";
-import { contactFormSchema, type ContactFormData } from "@/lib/validations/contact";
-import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Send, Loader2 } from "lucide-react";
+import {
+  contactFormSchema,
+  type ContactFormData,
+} from "@/lib/validations/contact";
 import type { ContactInfo } from "@/lib/types/contact";
-
-type FormStatus = "idle" | "loading" | "success" | "error";
 
 interface ContactSectionProps {
   contactInfo: ContactInfo | null;
@@ -21,261 +19,211 @@ interface ContactSectionProps {
 
 export function ContactSection({ contactInfo }: ContactSectionProps) {
   const { t } = useLanguage();
+  const titleWords = t.contact.title.split(" ");
+  const lastWord = titleWords.pop() ?? "";
+  const leading = titleWords.join(" ");
 
-  const [formData, setFormData] = useState<ContactFormData>({
-    name: "",
-    email: "",
-    company: "",
-    message: "",
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors, isSubmitting },
+  } = useForm<ContactFormData>({
+    resolver: zodResolver(contactFormSchema),
+    defaultValues: {
+      name: "",
+      email: "",
+      company: "",
+      message: "",
+    },
   });
 
-  const [status, setStatus] = useState<FormStatus>("idle");
-  const [errors, setErrors] = useState<Partial<Record<keyof ContactFormData, string>>>({});
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setErrors({});
-    setStatus("loading");
-
+  const onSubmit = async (data: ContactFormData) => {
     try {
-      // Validate with Zod
-      const validatedData = contactFormSchema.parse(formData);
-
-      // Save to Supabase via API route
       const response = await fetch("/api/contact", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(validatedData),
+        body: JSON.stringify(data),
       });
 
       if (!response.ok) {
-        const errorData = await response.json();
+        const errorData = await response.json().catch(() => ({}));
         throw new Error(errorData.error || "Failed to send message");
       }
 
-      setStatus("success");
-      // Reset form
-      setFormData({
-        name: "",
-        email: "",
-        company: "",
-        message: "",
-      });
-
-      // Reset success message after 5 seconds
-      setTimeout(() => setStatus("idle"), 5000);
+      toast.success(t.contact.form.successMessage);
+      reset();
     } catch (error) {
-      setStatus("error");
-
-      if (error instanceof Error && error.name === "ZodError") {
-        const zodError = error as any;
-        const fieldErrors: Partial<Record<keyof ContactFormData, string>> = {};
-        zodError.errors?.forEach((err: any) => {
-          if (err.path[0]) {
-            fieldErrors[err.path[0] as keyof ContactFormData] = err.message;
-          }
-        });
-        setErrors(fieldErrors);
-      }
-
-      setTimeout(() => setStatus("idle"), 5000);
+      toast.error(
+        error instanceof Error && error.message
+          ? error.message
+          : t.contact.form.errorMessage
+      );
     }
   };
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    setFormData((prev) => ({
-      ...prev,
-      [e.target.name]: e.target.value,
-    }));
-    // Clear error for this field when user types
-    if (errors[e.target.name as keyof ContactFormData]) {
-      setErrors((prev) => ({ ...prev, [e.target.name]: undefined }));
-    }
-  };
+  const emailValue = contactInfo?.email ?? "—";
+  const phoneValue = contactInfo?.phone ?? "—";
+  const locationValue = contactInfo?.location ?? "—";
+  const hoursValue = t.contact.hours.weekdays;
 
-  const contactInfoItems = contactInfo ? [
-    {
-      icon: <Mail className="w-6 h-6 text-primary" />,
-      title: t.contact.info.email,
-      value: contactInfo.email,
-      link: `mailto:${contactInfo.email}`,
-    },
-    {
-      icon: <Phone className="w-6 h-6 text-secondary" />,
-      title: t.contact.info.phone,
-      value: contactInfo.phone,
-      link: `tel:${contactInfo.phone.replace(/\s/g, "")}`,
-    },
-    {
-      icon: <MapPin className="w-6 h-6 text-accent" />,
-      title: t.contact.info.location,
-      value: contactInfo.location,
-      link: "#",
-    },
-  ] : null;
+  const labelClass =
+    "font-mono text-[10px] uppercase tracking-[0.06em] text-[color:var(--brand-cyan)] w-[80px] shrink-0";
+  const rowClass =
+    "flex items-center gap-3 py-3 border-t border-[color:var(--ink-line)] text-[13px]";
+
+  const formLabelClass =
+    "font-mono text-[10px] uppercase tracking-[0.06em] text-[color:var(--ink-muted)] mb-1.5 block";
+  const inputClass =
+    "w-full bg-[color:oklch(0.06_0_0)] border border-[color:var(--ink-line)] rounded-[10px] px-3.5 py-3 text-sm text-foreground placeholder:text-[color:var(--ink-muted)] focus:outline-none focus:border-[color:var(--brand-cyan)]/50";
+  const errorClass = "text-[11px] text-[color:oklch(0.65_0.2_25)] mt-1";
 
   return (
-    <section id="contact" className="py-20 bg-muted/30 scroll-mt-24">
-      <div className="container mx-auto px-4">
-        <div className="text-center mb-16">
-          <h2 className="text-3xl md:text-4xl font-bold mb-4">
-            {t.contact.title.split(" ")[0]}{" "}
-            <span className="bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
-              {t.contact.title.split(" ").slice(1).join(" ")}
-            </span>
-          </h2>
-          <p className="text-xl text-muted-foreground max-w-3xl mx-auto text-pretty">{t.contact.subtitle}</p>
-        </div>
+    <section
+      id="contact"
+      className="py-[90px] px-4 lg:px-12 border-t border-[color:var(--ink-line)]"
+    >
+      <div className="container mx-auto">
+        <SectionHeader
+          eyebrow="— 07 / Contact"
+          align="center"
+          title={
+            <>
+              {leading} <em className="not-italic text-brand-grad">{lastWord}</em>
+            </>
+          }
+          lead={t.contact.subtitle}
+        />
 
-        <div className={`grid grid-cols-1 ${contactInfoItems ? 'lg:grid-cols-2' : ''} gap-12`}>
-          {/* Contact Form */}
-          <Card className="border-border/50">
-            <CardHeader>
-              <CardTitle className="text-2xl">{t.contact.form.title}</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <form onSubmit={handleSubmit} className="space-y-6">
-                {status === "success" && (
-                  <Alert className="bg-green-50 border-green-200">
-                    <CheckCircle2 className="h-4 w-4 text-green-600" />
-                    <AlertDescription className="text-green-800">
-                      {t.contact.form.successMessage}
-                    </AlertDescription>
-                  </Alert>
+        <div
+          className="mt-12 lg:mt-14 border border-[color:oklch(0.5_0.18_180_/_0.4)] rounded-3xl p-9 grid grid-cols-1 lg:grid-cols-[1fr_1.2fr] gap-9"
+          style={{
+            background:
+              "radial-gradient(ellipse at top right, oklch(0.4 0.18 180 / 0.25), transparent 60%), var(--ink-bg-2)",
+          }}
+        >
+          {/* Left column — info */}
+          <div>
+            <h4 className="text-base font-semibold mb-2">
+              {t.contact.info.title}
+            </h4>
+            <p className="text-[13px] leading-[1.5] text-[color:var(--ink-muted)] mb-6">
+              {t.contact.info.description}
+            </p>
+
+            <div className={rowClass}>
+              <span className={labelClass}>{t.contact.info.email}</span>
+              <span className="truncate">{emailValue}</span>
+            </div>
+            <div className={rowClass}>
+              <span className={labelClass}>{t.contact.info.phone}</span>
+              <span>{phoneValue}</span>
+            </div>
+            <div className={rowClass}>
+              <span className={labelClass}>{t.contact.info.location}</span>
+              <span>{locationValue}</span>
+            </div>
+            <div className={rowClass}>
+              <span className={labelClass}>{t.contact.hours.title}</span>
+              <span>{hoursValue}</span>
+            </div>
+          </div>
+
+          {/* Right column — form */}
+          <form onSubmit={handleSubmit(onSubmit)} noValidate>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-3">
+              <div>
+                <label htmlFor="name" className={formLabelClass}>
+                  {t.contact.form.name}
+                </label>
+                <input
+                  id="name"
+                  type="text"
+                  autoComplete="name"
+                  placeholder={t.contact.form.namePlaceholder}
+                  disabled={isSubmitting}
+                  className={inputClass}
+                  {...register("name")}
+                />
+                {errors.name && (
+                  <p className={errorClass}>{errors.name.message}</p>
                 )}
-
-                {status === "error" && !Object.keys(errors).length && (
-                  <Alert className="bg-red-50 border-red-200">
-                    <XCircle className="h-4 w-4 text-red-600" />
-                    <AlertDescription className="text-red-800">
-                      {t.contact.form.errorMessage}
-                    </AlertDescription>
-                  </Alert>
+              </div>
+              <div>
+                <label htmlFor="email" className={formLabelClass}>
+                  {t.contact.form.email}
+                </label>
+                <input
+                  id="email"
+                  type="email"
+                  autoComplete="email"
+                  placeholder={t.contact.form.emailPlaceholder}
+                  disabled={isSubmitting}
+                  className={inputClass}
+                  {...register("email")}
+                />
+                {errors.email && (
+                  <p className={errorClass}>{errors.email.message}</p>
                 )}
+              </div>
+            </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div>
-                    <label htmlFor="name" className="block text-sm font-medium mb-2">
-                      {t.contact.form.name} *
-                    </label>
-                    <Input
-                      id="name"
-                      name="name"
-                      value={formData.name}
-                      onChange={handleChange}
-                      placeholder={t.contact.form.namePlaceholder}
-                      disabled={status === "loading"}
-                      className={errors.name ? "border-red-500" : ""}
-                    />
-                    {errors.name && (
-                      <p className="text-sm text-red-600 mt-1">{errors.name}</p>
-                    )}
-                  </div>
-                  <div>
-                    <label htmlFor="email" className="block text-sm font-medium mb-2">
-                      {t.contact.form.email} *
-                    </label>
-                    <Input
-                      id="email"
-                      name="email"
-                      type="email"
-                      value={formData.email}
-                      onChange={handleChange}
-                      placeholder={t.contact.form.emailPlaceholder}
-                      disabled={status === "loading"}
-                      className={errors.email ? "border-red-500" : ""}
-                    />
-                    {errors.email && (
-                      <p className="text-sm text-red-600 mt-1">{errors.email}</p>
-                    )}
-                  </div>
-                </div>
+            <div className="mb-3">
+              <label htmlFor="company" className={formLabelClass}>
+                {t.contact.form.company}
+              </label>
+              <input
+                id="company"
+                type="text"
+                autoComplete="organization"
+                placeholder={t.contact.form.companyPlaceholder}
+                disabled={isSubmitting}
+                className={inputClass}
+                {...register("company")}
+              />
+              {errors.company && (
+                <p className={errorClass}>{errors.company.message}</p>
+              )}
+            </div>
 
-                <div>
-                  <label htmlFor="company" className="block text-sm font-medium mb-2">
-                    {t.contact.form.company}
-                  </label>
-                  <Input
-                    id="company"
-                    name="company"
-                    value={formData.company}
-                    onChange={handleChange}
-                    placeholder={t.contact.form.companyPlaceholder}
-                    disabled={status === "loading"}
-                    className={errors.company ? "border-red-500" : ""}
-                  />
-                  {errors.company && (
-                    <p className="text-sm text-red-600 mt-1">{errors.company}</p>
-                  )}
-                </div>
+            <div className="mb-4">
+              <label htmlFor="message" className={formLabelClass}>
+                {t.contact.form.message}
+              </label>
+              <textarea
+                id="message"
+                placeholder={t.contact.form.messagePlaceholder}
+                disabled={isSubmitting}
+                className={`${inputClass} min-h-[120px] resize-y`}
+                {...register("message")}
+              />
+              {errors.message && (
+                <p className={errorClass}>{errors.message.message}</p>
+              )}
+            </div>
 
-                <div>
-                  <label htmlFor="message" className="block text-sm font-medium mb-2">
-                    {t.contact.form.message} *
-                  </label>
-                  <Textarea
-                    id="message"
-                    name="message"
-                    value={formData.message}
-                    onChange={handleChange}
-                    placeholder="Cuéntanos sobre tu proyecto..."
-                    rows={5}
-                    disabled={status === "loading"}
-                    className={errors.message ? "border-red-500" : ""}
-                  />
-                  {errors.message && (
-                    <p className="text-sm text-red-600 mt-1">{errors.message}</p>
-                  )}
-                </div>
-
-                <Button
+            <div className="flex justify-end">
+              <Magnetic>
+                <button
                   type="submit"
-                  className="w-full bg-gradient-to-r from-primary to-secondary"
-                  disabled={status === "loading"}
+                  disabled={isSubmitting}
+                  className="brand-grad text-black rounded-full px-6 py-3 text-sm font-semibold inline-flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  {status === "loading" ? (
+                  {isSubmitting ? (
                     <>
-                      <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                      <Loader2 className="w-4 h-4 animate-spin" />
                       {t.contact.form.sending}
                     </>
                   ) : (
                     <>
-                      <Send className="w-4 h-4 mr-2" />
+                      <Send className="w-4 h-4" />
                       {t.contact.form.send}
                     </>
                   )}
-                </Button>
-              </form>
-            </CardContent>
-          </Card>
-
-          {/* Contact Information */}
-          {contactInfoItems && (
-            <div className="space-y-6">
-              <Card className="border-border/50">
-                <CardHeader>
-                  <CardTitle className="text-2xl">{t.contact.info.title}</CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-6">
-                  {contactInfoItems.map((item, index) => (
-                    <a
-                      key={index}
-                      href={item.link}
-                      className="flex items-start space-x-4 p-4 rounded-lg hover:bg-muted/50 transition-colors group"
-                    >
-                      <div className="mt-1">{item.icon}</div>
-                      <div className="flex-1">
-                        <h3 className="font-semibold mb-1 group-hover:text-primary transition-colors">
-                          {item.title}
-                        </h3>
-                        <p className="text-muted-foreground">{item.value}</p>
-                      </div>
-                    </a>
-                  ))}
-                </CardContent>
-              </Card>
+                </button>
+              </Magnetic>
             </div>
-          )}
+          </form>
         </div>
       </div>
     </section>
