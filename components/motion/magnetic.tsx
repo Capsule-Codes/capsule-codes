@@ -3,7 +3,11 @@
 import { motion, useMotionValue, useSpring, useReducedMotion } from "motion/react";
 import { useRef, useEffect, type ReactNode, type HTMLAttributes } from "react";
 
-interface MagneticProps extends HTMLAttributes<HTMLDivElement> {
+interface MagneticProps
+  extends Omit<
+    HTMLAttributes<HTMLDivElement>,
+    "onDrag" | "onDragStart" | "onDragEnd" | "onAnimationStart" | "onAnimationEnd" | "onAnimationIteration"
+  > {
   children: ReactNode;
   /** Strength ratio applied to cursor distance. Default 0.25. */
   strength?: number;
