@@ -1,84 +1,62 @@
-"use client"
+"use client";
 
-import { Card, CardContent } from "@/components/ui/card"
-import { useLanguage } from "@/hooks/use-language"
-import type { Technology } from "@/lib/data-context"
+import { Capsule } from "@/components/ui/capsule";
+import { SectionHeader } from "@/components/ui/section-header";
+import { ScrollReveal } from "@/components/motion/scroll-reveal";
+import { useLanguage } from "@/hooks/use-language";
+import type { Technology } from "@/lib/data-context";
 
 interface TechnologiesSectionProps {
-  technologies?: Technology[]
+  technologies: Technology[];
 }
 
-export function TechnologiesSection({ technologies: technologiesProp }: TechnologiesSectionProps = {}) {
-  const { t } = useLanguage()
-  const technologies = technologiesProp || []
+export function TechnologiesSection({
+  technologies,
+}: TechnologiesSectionProps) {
+  const { t, language } = useLanguage();
 
-  // Group technologies by category
-  const groupedTechnologies = technologies.reduce(
-    (acc, tech) => {
-      if (!acc[tech.category]) {
-        acc[tech.category] = []
-      }
-      acc[tech.category].push(tech)
-      return acc
-    },
-    {} as Record<string, typeof technologies>,
-  )
+  const titleWords = t.technologies.title.split(" ");
+  const lastWord = titleWords[titleWords.length - 1];
+  const leadingWords = titleWords.slice(0, -1).join(" ");
 
-  const categoryColors = {
-    frontend: "from-primary to-primary/70",
-    mobile: "from-secondary to-secondary/70",
-    backend: "from-accent to-accent/70",
-    database: "from-primary/80 to-secondary/80",
-    deployment: "from-secondary/80 to-accent/80",
-  }
-
-  const categoryOrder = ["frontend", "mobile", "backend", "database", "deployment"]
+  const getTechName = (tech: Technology) => {
+    const translated =
+      tech.translations?.[language as keyof typeof tech.translations]?.name;
+    return translated && translated.length > 0 ? translated : tech.name;
+  };
 
   return (
-    <section id="technologies" className="py-20 bg-muted/30 scroll-mt-24">
-      <div className="container mx-auto px-4">
-        <div className="text-center mb-16">
-          <h2 className="text-3xl md:text-4xl font-bold mb-4">
-            {t.technologies.title.split(" ")[0]}{" "}
-            <span className="bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
-              {t.technologies.title.split(" ").slice(1).join(" ")}
-            </span>
-          </h2>
-          <p className="text-xl text-muted-foreground max-w-3xl mx-auto text-pretty">{t.technologies.subtitle}</p>
-        </div>
+    <section
+      id="technologies"
+      className="py-[90px] px-4 lg:px-12 border-t border-[color:var(--ink-line)]"
+    >
+      <SectionHeader
+        eyebrow="— 03 / Technologies"
+        title={
+          <>
+            {leadingWords}
+            {leadingWords && " "}
+            <em className="not-italic text-brand-grad">{lastWord}</em>
+          </>
+        }
+        lead={t.technologies.subtitle}
+      />
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-8">
-          {categoryOrder.map((categoryKey) => {
-            const categoryTechs = groupedTechnologies[categoryKey] || []
-            if (categoryTechs.length === 0) return null
-
-            return (
-              <Card
-                key={categoryKey}
-                className="overflow-hidden border-border/50 hover:border-primary/30 transition-colors duration-300"
+      <div className="mt-12 lg:mt-14">
+        <ScrollReveal>
+          <div className="flex flex-wrap gap-2.5 max-w-[800px]">
+            {technologies.map((tech) => (
+              <Capsule
+                key={tech.id}
+                dot={false}
+                icon={<span>{tech.icon}</span>}
               >
-                <div className={`h-1 bg-gradient-to-r ${categoryColors[categoryKey as keyof typeof categoryColors]}`} />
-                <CardContent className="p-6">
-                  <h3 className="text-xl font-bold mb-6 text-center capitalize">
-                    {t.technologies.categories[categoryKey as keyof typeof t.technologies.categories]}
-                  </h3>
-                  <div className="space-y-4">
-                    {categoryTechs.map((tech) => (
-                      <div
-                        key={tech.id}
-                        className="flex items-center p-3 bg-muted/50 rounded-lg hover:bg-muted transition-colors duration-200"
-                      >
-                        <span className="text-2xl mr-3">{tech.icon}</span>
-                        <span className="font-medium">{tech.name}</span>
-                      </div>
-                    ))}
-                  </div>
-                </CardContent>
-              </Card>
-            )
-          })}
-        </div>
+                {getTechName(tech)}
+              </Capsule>
+            ))}
+          </div>
+        </ScrollReveal>
       </div>
     </section>
-  )
+  );
 }
