@@ -84,35 +84,6 @@ export interface Translations {
     subtitle: string;
     coFoundersTitle: string;
     developersTitle: string;
-    coFounders: {
-      miguel: {
-        name: string;
-        role: string;
-        description: string;
-      };
-      facundo: {
-        name: string;
-        role: string;
-        description: string;
-      };
-    };
-    developers: {
-      marco: {
-        name: string;
-        role: string;
-        description: string;
-      };
-      lucas: {
-        name: string;
-        role: string;
-        description: string;
-      };
-      juan: {
-        name: string;
-        role: string;
-        description: string;
-      };
-    };
   };
   // Projects Section
   projects: {
@@ -447,40 +418,6 @@ export const translations: Record<Language, Translations> = {
         "Our team is led by Facundo and composed of specialized senior developers",
       coFoundersTitle: "Co-Founders",
       developersTitle: "Developers",
-      coFounders: {
-        miguel: {
-          name: "Miguel Scala",
-          role: "Co-founder & Business Lead",
-          description:
-            "Handles all client relationships, project management, and business strategy. Your main point of contact who ensures your vision becomes reality on time and on budget.",
-        },
-        facundo: {
-          name: "Facundo Pascale",
-          role: "Co-founder & Tech Lead",
-          description:
-            "Principal technical architect with 5+ years building production systems. Leads all technical architecture, defines code standards, and oversees quality on every project. Senior specialist in React, React Native, Next.js, Node.js and Typescript. He makes all technical decisions and ensures every line of code meets the highest standards.",
-        },
-      },
-      developers: {
-        marco: {
-          name: "Marco Galván",
-          role: "Senior Full Stack Developer",
-          description:
-            "Full-stack developer specialized in modern web and mobile applications. Expert in building high-quality user interfaces and scalable systems with the latest Javascript ecosystem technologies. Stack: Typescript, React, React Native, Next.js, Node.js.",
-        },
-        lucas: {
-          name: "Lucas Mansilla",
-          role: "Senior Full Stack Developer",
-          description:
-            "Computer engineer specialized in full-stack web development. Focused on building applications with clean and scalable architecture. Strong experience in agile methodologies and collaborative teamwork. Stack: Next.js, React, Angular, Typescript",
-        },
-        juan: {
-          name: "Juan Segundo Sosa",
-          role: "Senior Full Stack Developer",
-          description:
-            "Full-stack developer specialized in robust API development and user interface design. Computer Science student with extensive experience in the complete Javascript/Typescript ecosystem. Stack: Next.js, React.js, Node.js, Nest.js, Angular",
-        },
-      },
     },
     projects: {
       title: "Our Projects",
@@ -866,40 +803,6 @@ export const translations: Record<Language, Translations> = {
         "Nuestro equipo está liderado por Facundo y compuesto por desarrolladores senior especializados",
       coFoundersTitle: "Co-Fundadores",
       developersTitle: "Desarrolladores",
-      coFounders: {
-        miguel: {
-          name: "Miguel Scala",
-          role: "Co-founder y Líder de Negocios",
-          description:
-            "Maneja todas las relaciones con los clientes, gestión de proyectos y estrategia de negocio. Tu punto de contacto principal que asegura que tu visión se convierta en realidad a tiempo y dentro del presupuesto.",
-        },
-        facundo: {
-          name: "Facundo Pascale",
-          role: "Co-founder y Tech Lead",
-          description:
-            "Arquitecto técnico principal con más de 5 años construyendo sistemas en producción. Lidera toda la arquitectura técnica, define estándares de código, y supervisa la calidad de cada proyecto. Especialista senior en React, React Native, Next.js, Node.js y Typescript. Es quien toma todas las decisiones técnicas y asegura que cada línea de código cumpla con los más altos estándares.",
-        },
-      },
-      developers: {
-        marco: {
-          name: "Marco Galván",
-          role: "Senior Full Stack Developer",
-          description:
-            "Desarrollador full-stack especializado en aplicaciones web y móviles modernas. Experto en construir interfaces de usuario de alta calidad y sistemas escalables con las últimas tecnologías del ecosistema Javascript. Stack: Typescript, React, React Native, Next.js, Node.js.",
-        },
-        lucas: {
-          name: "Lucas Mansilla",
-          role: "Senior Full Stack Developer",
-          description:
-            "Ingeniero en informática especializado en desarrollo web full-stack. Enfocado en construir aplicaciones con arquitectura limpia y escalable. Fuerte experiencia en metodologías ágiles y trabajo colaborativo en equipo. Stack: Next.js, React, Angular, Typescript",
-        },
-        juan: {
-          name: "Juan Segundo Sosa",
-          role: "Senior Full Stack Developer",
-          description:
-            "Desarrollador full-stack especializado en desarrollo de APIs robustas y diseño de interfaces de usuario. Estudiante de Licenciatura en Informática con amplia experiencia en el ecosistema completo de Javascript/Typescript. Stack: Next.js, React.js, Node.js, Nest.js, Angular",
-        },
-      },
     },
     projects: {
       title: "Nuestros Proyectos",
@@ -1285,40 +1188,6 @@ export const translations: Record<Language, Translations> = {
         "Il nostro team è guidato da Facundo e composto da sviluppatori senior specializzati",
       coFoundersTitle: "Co-Fondatori",
       developersTitle: "Sviluppatori",
-      coFounders: {
-        miguel: {
-          name: "Miguel Scala",
-          role: "Co-founder e Leader di Business",
-          description:
-            "Gestisce tutte le relazioni con i clienti, la gestione dei progetti e la strategia di business. Il tuo punto di contatto principale che assicura che la tua visione diventi realtà nei tempi e nel budget.",
-        },
-        facundo: {
-          name: "Facundo Pascale",
-          role: "Co-founder e Tech Lead",
-          description:
-            "Architetto tecnico principale con oltre 5 anni di esperienza nella costruzione di sistemi in produzione. Guida tutta l'architettura tecnica, definisce gli standard del codice e supervisiona la qualità di ogni progetto. Specialista senior in React, React Native, Next.js, Node.js e Typescript. Prende tutte le decisioni tecniche e assicura che ogni riga di codice rispetti i più alti standard.",
-        },
-      },
-      developers: {
-        marco: {
-          name: "Marco Galván",
-          role: "Senior Full Stack Developer",
-          description:
-            "Sviluppatore full-stack specializzato in applicazioni web e mobili moderne. Esperto nella costruzione di interfacce utente di alta qualità e sistemi scalabili con le ultime tecnologie dell'ecosistema Javascript. Stack: Typescript, React, React Native, Next.js, Node.js.",
-        },
-        lucas: {
-          name: "Lucas Mansilla",
-          role: "Senior Full Stack Developer",
-          description:
-            "Ingegnere informatico specializzato nello sviluppo web full-stack. Focalizzato sulla costruzione di applicazioni con architettura pulita e scalabile. Forte esperienza in metodologie agili e lavoro collaborativo in team. Stack: Next.js, React, Angular, Typescript",
-        },
-        juan: {
-          name: "Juan Segundo Sosa",
-          role: "Senior Full Stack Developer",
-          description:
-            "Sviluppatore full-stack specializzato nello sviluppo di API robuste e design di interfacce utente. Studente di Laurea in Informatica con ampia esperienza nell'ecosistema completo Javascript/Typescript. Stack: Next.js, React.js, Node.js, Nest.js, Angular",
-        },
-      },
     },
     projects: {
       title: "I Nostri Progetti",
