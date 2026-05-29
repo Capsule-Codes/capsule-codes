@@ -1,119 +1,74 @@
-"use client"
+"use client";
 
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import { Globe, Smartphone, Database, Cloud, Palette, Cog } from "lucide-react"
-import { useLanguage } from "@/hooks/use-language"
+import { Capsule } from "@/components/ui/capsule";
+import { SectionHeader } from "@/components/ui/section-header";
+import { ScrollReveal } from "@/components/motion/scroll-reveal";
+import { useLanguage } from "@/hooks/use-language";
+
+const SERVICE_KEYS = [
+  "web",
+  "mobile",
+  "backend",
+  "cloud",
+  "design",
+  "consulting",
+] as const;
+
+type ServiceKey = (typeof SERVICE_KEYS)[number];
 
 export function ServicesSection() {
-  const { t } = useLanguage()
+  const { t } = useLanguage();
 
-  const services = [
-    {
-      icon: <Globe className="w-12 h-12 text-primary" />,
-      title: t.services.web.title,
-      description: t.services.web.description,
-      features: t.services.web.features,
-      color: "from-primary/20 to-primary/5",
-    },
-    {
-      icon: <Smartphone className="w-12 h-12 text-secondary" />,
-      title: t.services.mobile.title,
-      description: t.services.mobile.description,
-      features: t.services.mobile.features,
-      color: "from-secondary/20 to-secondary/5",
-    },
-    {
-      icon: <Database className="w-12 h-12 text-accent" />,
-      title: t.services.backend.title,
-      description: t.services.backend.description,
-      features: t.services.backend.features,
-      color: "from-accent/20 to-accent/5",
-    },
-    {
-      icon: <Cloud className="w-12 h-12 text-primary" />,
-      title: t.services.cloud.title,
-      description: t.services.cloud.description,
-      features: t.services.cloud.features,
-      color: "from-primary/20 to-primary/5",
-    },
-    {
-      icon: <Palette className="w-12 h-12 text-secondary" />,
-      title: t.services.design.title,
-      description: t.services.design.description,
-      features: t.services.design.features,
-      color: "from-secondary/20 to-secondary/5",
-    },
-    {
-      icon: <Cog className="w-12 h-12 text-accent" />,
-      title: t.services.consulting.title,
-      description: t.services.consulting.description,
-      features: t.services.consulting.features,
-      color: "from-accent/20 to-accent/5",
-    },
-  ]
+  const titleWords = t.services.title.split(" ");
+  const lastWord = titleWords[titleWords.length - 1];
+  const leadingWords = titleWords.slice(0, -1).join(" ");
 
   return (
-    <section id="services" className="py-20 scroll-mt-24">
-      <div className="container mx-auto px-4">
-        <div className="text-center mb-16">
-          <h2 className="text-3xl md:text-4xl font-bold mb-4">
-            {t.services.title.split(" ")[0]}{" "}
-            <span className="bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
-              {t.services.title.split(" ").slice(1).join(" ")}
-            </span>
-          </h2>
-          <p className="text-xl text-muted-foreground max-w-3xl mx-auto text-pretty">{t.services.subtitle}</p>
-        </div>
+    <section
+      id="services"
+      className="py-[90px] px-4 lg:px-12 border-t border-[color:var(--ink-line)]"
+    >
+      <SectionHeader
+        eyebrow="— 02 / Services"
+        title={
+          <>
+            {leadingWords}
+            {leadingWords && " "}
+            <em className="not-italic text-brand-grad">{lastWord}</em>
+          </>
+        }
+        lead={t.services.subtitle}
+      />
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
-          {services.map((service, index) => (
-            <Card
-              key={index}
-              className="group hover:shadow-xl transition-all duration-300 border-border/50 hover:border-primary/30 overflow-hidden"
-            >
-              <div className={`h-2 bg-gradient-to-r ${service.color}`} />
-              <CardHeader className="pb-4">
-                <div className="flex items-center justify-between mb-4">
-                  <div className="p-3 bg-gradient-to-br from-muted to-muted/50 rounded-xl group-hover:scale-110 transition-transform duration-300">
-                    {service.icon}
-                  </div>
+      <div className="mt-12 lg:mt-14 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        {SERVICE_KEYS.map((key: ServiceKey, index) => {
+          const service = t.services[key];
+          const features = service.features as string[];
+
+          return (
+            <ScrollReveal key={key} delay={index * 0.06}>
+              <div className="bg-[color:var(--ink-bg-2)] border border-[color:var(--ink-line)] rounded-2xl p-7 transition-[transform,border-color] duration-300 hover:-translate-y-0.5 hover:border-[color:var(--brand-cyan)]/40">
+                <div className="w-10 h-10 rounded-xl bg-gradient-to-b from-[oklch(0.3_0.08_180)] to-[oklch(0.2_0.05_170)] border border-[color:oklch(0.5_0.12_180_/_0.5)] mb-[18px] flex items-center justify-center shadow-[0_0_16px_oklch(0.5_0.15_180_/_0.2)]">
+                  <div className="w-4 h-4 rounded brand-grad" />
                 </div>
-                <CardTitle className="text-xl group-hover:text-primary transition-colors duration-300">
+                <h4 className="text-base font-semibold tracking-[-0.01em] mb-2">
                   {service.title}
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-muted-foreground mb-6 leading-relaxed">{service.description}</p>
-                <div className="space-y-2 mb-6">
-                  {service.features.map((feature, featureIndex) => (
-                    <div key={featureIndex} className="flex items-center text-sm">
-                      <div className="w-2 h-2 bg-primary rounded-full mr-3" />
-                      <span className="text-muted-foreground">{feature}</span>
-                    </div>
+                </h4>
+                <p className="text-[13px] leading-[1.5] text-[color:var(--ink-muted)] mb-3.5">
+                  {service.description}
+                </p>
+                <div className="flex flex-wrap gap-1.5">
+                  {features.map((feature) => (
+                    <Capsule size="sm" dot={false} key={feature}>
+                      {feature}
+                    </Capsule>
                   ))}
                 </div>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
-
-        {/* Single Button */}
-        <div className="text-center">
-          <Button
-            size="lg"
-            className="bg-gradient-to-r from-primary to-secondary hover:from-primary/90 hover:to-secondary/90 text-lg px-8 py-6 hover:scale-105 transition-transform duration-300"
-            onClick={() => {
-              const contactElement = document.querySelector("#contact")
-              if (contactElement) {
-                contactElement.scrollIntoView({ behavior: "smooth" })
-              }
-            }}
-          >
-            {t.services.startProject}
-          </Button>
-        </div>
+              </div>
+            </ScrollReveal>
+          );
+        })}
       </div>
     </section>
-  )
+  );
 }
