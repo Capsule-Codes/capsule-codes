@@ -1,5 +1,9 @@
 import { NextResponse } from "next/server";
 import { supabaseAdmin } from "@/lib/server/supabase-admin";
+import {
+  deleteImageFromStorage,
+  deriveStoragePath,
+} from "@/lib/server/media";
 
 export async function GET(
   request: Request,
@@ -98,6 +102,31 @@ export async function DELETE(
     }
 
     const { id } = await params;
+
+    // Fetch the row first so we can cascade-delete any associated storage objects.
+    const { data: existing, error: fetchError } = await supabaseAdmin
+      .from("team_members")
+      .select("avatar")
+      .eq("id", id)
+      .maybeSingle();
+
+    if (fetchError) throw fetchError;
+
+    // Best-effort: delete avatar from storage BEFORE removing the DB row.
+    // Failures are logged but never block the row deletion.
+    if (existing?.avatar) {
+      const path = deriveStoragePath(existing.avatar);
+      if (path) {
+        try {
+          await deleteImageFromStorage(path);
+        } catch (storageErr: any) {
+          console.error(
+            `Failed to delete team member avatar from storage (path=${path}):`,
+            storageErr?.message || storageErr
+          );
+        }
+      }
+    }
 
     const { error } = await supabaseAdmin
       .from("team_members")

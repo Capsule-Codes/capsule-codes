@@ -1,5 +1,12 @@
 import { NextResponse } from "next/server";
 import { supabaseAdmin } from "@/lib/server/supabase-admin";
+import {
+  deleteImageFromStorage,
+  deriveStoragePath,
+} from "@/lib/server/media";
+
+// Placeholder avatar URL shipped with the app — NOT a Supabase Storage object.
+const PLACEHOLDER_AVATAR = "/placeholder-user.jpg";
 
 export async function GET(
   request: Request,
@@ -98,6 +105,31 @@ export async function DELETE(
     }
 
     const { id } = await params;
+
+    // Fetch the row first so we can cascade-delete any associated storage objects.
+    const { data: existing, error: fetchError } = await supabaseAdmin
+      .from("reviews")
+      .select("avatar")
+      .eq("id", id)
+      .maybeSingle();
+
+    if (fetchError) throw fetchError;
+
+    // Best-effort: delete avatar from storage BEFORE removing the DB row.
+    // Skip the shipped placeholder — it lives in /public, not Supabase Storage.
+    if (existing?.avatar && existing.avatar !== PLACEHOLDER_AVATAR) {
+      const path = deriveStoragePath(existing.avatar);
+      if (path) {
+        try {
+          await deleteImageFromStorage(path);
+        } catch (storageErr: any) {
+          console.error(
+            `Failed to delete review avatar from storage (path=${path}):`,
+            storageErr?.message || storageErr
+          );
+        }
+      }
+    }
 
     const { error } = await supabaseAdmin
       .from("reviews")
