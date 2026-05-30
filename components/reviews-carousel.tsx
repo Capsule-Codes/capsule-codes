@@ -218,7 +218,7 @@ export function ReviewsCarousel({ reviews }: ReviewsCarouselProps) {
           type="button"
           onClick={prevReview}
           aria-label="Previous review"
-          className="w-9 h-9 rounded-full bg-white/[0.05] border border-[color:var(--ink-line)] inline-flex items-center justify-center text-foreground hover:bg-white/[0.08] hover:border-[color:var(--ink-line-strong)] transition-colors"
+          className="w-9 h-9 rounded-full bg-[color:var(--hover-bg)] border border-[color:var(--ink-line)] inline-flex items-center justify-center text-foreground hover:bg-[color:var(--hover-bg-strong)] hover:border-[color:var(--ink-line-strong)] transition-colors"
         >
           <ChevronLeft className="w-4 h-4" />
         </button>
@@ -246,7 +246,7 @@ export function ReviewsCarousel({ reviews }: ReviewsCarouselProps) {
           type="button"
           onClick={nextReview}
           aria-label="Next review"
-          className="w-9 h-9 rounded-full bg-white/[0.05] border border-[color:var(--ink-line)] inline-flex items-center justify-center text-foreground hover:bg-white/[0.08] hover:border-[color:var(--ink-line-strong)] transition-colors"
+          className="w-9 h-9 rounded-full bg-[color:var(--hover-bg)] border border-[color:var(--ink-line)] inline-flex items-center justify-center text-foreground hover:bg-[color:var(--hover-bg-strong)] hover:border-[color:var(--ink-line-strong)] transition-colors"
         >
           <ChevronRight className="w-4 h-4" />
         </button>

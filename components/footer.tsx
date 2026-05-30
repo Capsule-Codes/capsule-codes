@@ -110,7 +110,7 @@ export function Footer() {
                 type="button"
                 onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
                 aria-label="Toggle theme"
-                className="inline-flex items-center justify-center w-8 h-8 rounded-md border border-[color:var(--ink-line)] hover:bg-[oklch(1_0_0_/_0.05)] transition"
+                className="inline-flex items-center justify-center w-8 h-8 rounded-md border border-[color:var(--ink-line)] text-[color:var(--ink-muted)] hover:bg-[color:var(--hover-bg)] hover:text-foreground transition"
               >
                 {theme === "dark" ? (
                   <Sun className="w-3.5 h-3.5" />

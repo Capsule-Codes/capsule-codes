@@ -49,7 +49,7 @@ const labelClass =
 const primaryBtn =
   "brand-grad text-on-grad rounded-full px-4 py-2 text-sm font-semibold inline-flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed";
 const ghostBtn =
-  "bg-white/[0.05] text-foreground border border-white/[0.1] rounded-full px-4 py-2 text-sm inline-flex items-center gap-2 hover:bg-white/[0.08] transition";
+  "bg-[color:var(--hover-bg)] text-foreground border border-[color:var(--ink-line)] rounded-full px-4 py-2 text-sm inline-flex items-center gap-2 hover:bg-[color:var(--hover-bg-strong)] transition";
 
 function getErrorMessage(error: unknown): string {
   if (error instanceof Error) return error.message;
@@ -183,7 +183,7 @@ export default function AdminTechnologiesPage() {
         {technologies.map((tech) => (
           <div
             key={tech.id}
-            className="flex items-center gap-4 px-5 py-3.5 border-b border-[color:var(--ink-line)] last:border-b-0 hover:bg-white/[0.02] transition"
+            className="flex items-center gap-4 px-5 py-3.5 border-b border-[color:var(--ink-line)] last:border-b-0 hover:bg-[color:var(--hover-bg)] transition"
           >
             {/* Icon */}
             <div className="size-9 rounded-lg bg-gradient-to-b from-[oklch(0.3_0.08_180)] to-[oklch(0.2_0.05_170)] border border-[color:oklch(0.5_0.12_180_/_0.5)] flex items-center justify-center text-lg shrink-0">
@@ -211,7 +211,7 @@ export default function AdminTechnologiesPage() {
               <button
                 type="button"
                 onClick={() => handleEditTechnology(tech)}
-                className="size-8 inline-flex items-center justify-center rounded-md border border-[color:var(--ink-line)] text-[color:var(--ink-muted)] hover:bg-white/[0.05] hover:text-foreground transition"
+                className="size-8 inline-flex items-center justify-center rounded-md border border-[color:var(--ink-line)] text-[color:var(--ink-muted)] hover:bg-[color:var(--hover-bg)] hover:text-foreground transition"
                 aria-label="Edit"
               >
                 <Pencil className="w-3.5 h-3.5" />

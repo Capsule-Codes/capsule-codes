@@ -52,7 +52,7 @@ const labelClass =
 const primaryBtn =
   "brand-grad text-on-grad rounded-full px-4 py-2 text-sm font-semibold inline-flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed";
 const ghostBtn =
-  "bg-white/[0.05] text-foreground border border-white/[0.1] rounded-full px-4 py-2 text-sm inline-flex items-center gap-2 hover:bg-white/[0.08] transition";
+  "bg-[color:var(--hover-bg)] text-foreground border border-[color:var(--ink-line)] rounded-full px-4 py-2 text-sm inline-flex items-center gap-2 hover:bg-[color:var(--hover-bg-strong)] transition";
 
 function getErrorMessage(error: unknown): string {
   if (error instanceof Error) return error.message;
@@ -322,7 +322,7 @@ export default function AdminTeamPage() {
           return (
             <div
               key={m.id}
-              className="flex items-center gap-4 px-5 py-3.5 border-b border-[color:var(--ink-line)] last:border-b-0 hover:bg-white/[0.02] transition"
+              className="flex items-center gap-4 px-5 py-3.5 border-b border-[color:var(--ink-line)] last:border-b-0 hover:bg-[color:var(--hover-bg)] transition"
             >
               {/* Avatar */}
               <div
@@ -374,7 +374,7 @@ export default function AdminTeamPage() {
                 <button
                   type="button"
                   onClick={() => handleEditMember(m)}
-                  className="size-8 inline-flex items-center justify-center rounded-md border border-[color:var(--ink-line)] text-[color:var(--ink-muted)] hover:bg-white/[0.05] hover:text-foreground transition"
+                  className="size-8 inline-flex items-center justify-center rounded-md border border-[color:var(--ink-line)] text-[color:var(--ink-muted)] hover:bg-[color:var(--hover-bg)] hover:text-foreground transition"
                   aria-label="Edit"
                 >
                   <Pencil className="w-3.5 h-3.5" />
@@ -459,7 +459,7 @@ export default function AdminTeamPage() {
                 </div>
                 <div>
                   <span className={labelClass}>Status</span>
-                  <label className="flex items-center gap-2.5 cursor-pointer bg-white/[0.03] border border-[color:var(--ink-line)] rounded-[10px] px-3.5 py-3 hover:bg-white/[0.05] transition">
+                  <label className="flex items-center gap-2.5 cursor-pointer bg-[color:var(--hover-bg)] border border-[color:var(--ink-line)] rounded-[10px] px-3.5 py-3 hover:bg-[color:var(--hover-bg-strong)] transition">
                     <input
                       type="checkbox"
                       checked={form.published}

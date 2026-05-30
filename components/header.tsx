@@ -127,7 +127,7 @@ export function Header() {
           {/* Center pill nav (desktop) */}
           <nav
             aria-label="Primary"
-            className="hidden md:flex items-center bg-white/[0.04] border border-[color:var(--ink-line)] rounded-full p-1"
+            className="hidden md:flex items-center bg-[color:var(--hover-bg)] border border-[color:var(--ink-line)] rounded-full p-1"
           >
             {navItems.map((item) => {
               const active = isActive(item.id);
@@ -138,8 +138,8 @@ export function Header() {
                   className={cn(
                     "text-xs px-3.5 py-1.5 rounded-full transition cursor-pointer",
                     active
-                      ? "bg-white/[0.06] text-foreground"
-                      : "text-[color:var(--ink-muted)] hover:bg-white/[0.06] hover:text-foreground"
+                      ? "bg-[color:var(--hover-bg-strong)] text-foreground"
+                      : "text-[color:var(--ink-muted)] hover:bg-[color:var(--hover-bg)] hover:text-foreground"
                   )}
                 >
                   {item.label}
@@ -154,7 +154,7 @@ export function Header() {
             <Magnetic>
               <button
                 onClick={() => handleNavClick("#contact")}
-                className="brand-grad text-on-grad rounded-full px-4 py-2 text-sm font-semibold inline-flex items-center gap-1.5 cursor-pointer hover:opacity-95 transition-opacity"
+                className="brand-grad text-on-grad rounded-full px-4 py-2 text-sm font-semibold inline-flex items-center gap-1.5 cursor-pointer"
               >
                 {t.nav.contact}
                 <ArrowUpRight className="h-4 w-4" />
@@ -170,7 +170,7 @@ export function Header() {
               aria-label={isMenuOpen ? "Close menu" : "Open menu"}
               aria-expanded={isMenuOpen}
               onClick={() => setIsMenuOpen((v) => !v)}
-              className="p-2 rounded-full text-foreground hover:bg-white/[0.06] transition cursor-pointer"
+              className="p-2 rounded-full text-foreground hover:bg-[color:var(--hover-bg)] transition cursor-pointer"
             >
               {isMenuOpen ? (
                 <X className="h-5 w-5" />
@@ -201,8 +201,8 @@ export function Header() {
                   className={cn(
                     "text-left text-base px-4 py-3 rounded-2xl transition cursor-pointer border border-transparent",
                     active
-                      ? "bg-white/[0.06] text-foreground border-[color:var(--ink-line)]"
-                      : "text-[color:var(--ink-muted)] hover:bg-white/[0.06] hover:text-foreground"
+                      ? "bg-[color:var(--hover-bg-strong)] text-foreground border-[color:var(--ink-line)]"
+                      : "text-[color:var(--ink-muted)] hover:bg-[color:var(--hover-bg)] hover:text-foreground"
                   )}
                 >
                   {item.label}
@@ -213,7 +213,7 @@ export function Header() {
             <div className="pt-4 mt-2 border-t border-[color:var(--ink-line)]">
               <button
                 onClick={() => handleNavClick("#contact")}
-                className="w-full brand-grad text-on-grad rounded-full px-4 py-3 text-sm font-semibold inline-flex items-center justify-center gap-1.5 cursor-pointer hover:opacity-95 transition-opacity"
+                className="w-full brand-grad text-on-grad rounded-full px-4 py-3 text-sm font-semibold inline-flex items-center justify-center gap-1.5 cursor-pointer"
               >
                 {t.nav.contact}
                 <ArrowUpRight className="h-4 w-4" />

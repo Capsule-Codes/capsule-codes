@@ -62,7 +62,7 @@ export function HeroSection() {
               </button>
             </Magnetic>
             <Magnetic>
-              <button onClick={() => scroll("contact")} className="bg-white/[0.05] text-[color:var(--ink-fg)] border border-white/[0.1] rounded-full px-6 py-3 text-sm font-medium inline-flex items-center gap-2">
+              <button onClick={() => scroll("contact")} className="bg-[color:var(--hover-bg)] text-[color:var(--ink-fg)] border border-[color:var(--ink-line)] rounded-full px-6 py-3 text-sm font-medium inline-flex items-center gap-2 hover:bg-[color:var(--hover-bg-strong)] transition">
                 {t.hero.cta.contact}
               </button>
             </Magnetic>

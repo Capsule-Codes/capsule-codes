@@ -12,6 +12,8 @@
   --ink-muted: oklch(0.62 0.02 200);
   --ink-line: oklch(1 0 0 / 0.08);
   --ink-line-strong: oklch(1 0 0 / 0.14);
+  --hover-bg: oklch(1 0 0 / 0.06);
+  --hover-bg-strong: oklch(1 0 0 / 0.10);
   --sidebar-bg: oklch(0.05 0.005 200);
 
   --brand-cyan: oklch(0.7 0.18 200);
@@ -69,6 +71,8 @@
   --ink-muted: oklch(0.45 0.02 200);
   --ink-line: oklch(0 0 0 / 0.08);
   --ink-line-strong: oklch(0 0 0 / 0.14);
+  --hover-bg: oklch(0 0 0 / 0.06);
+  --hover-bg-strong: oklch(0 0 0 / 0.10);
   --sidebar-bg: oklch(0.97 0.005 200);
 
   --brand-cyan: oklch(0.5 0.18 210);
@@ -191,6 +195,11 @@
 /* Brand gradient utility */
 .brand-grad {
   background: linear-gradient(180deg, var(--brand-grad-from), var(--brand-grad-to));
+  color: var(--on-grad);
+  transition: filter 0.2s, transform 0.2s;
+}
+.brand-grad:hover:not(:disabled) {
+  filter: brightness(1.08);
 }
 .text-on-grad { color: var(--on-grad); }
 .text-brand-grad {

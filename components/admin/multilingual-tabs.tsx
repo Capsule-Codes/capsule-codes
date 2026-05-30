@@ -16,7 +16,7 @@ export function MultilingualTabs({ completion, children }: MultilingualTabsProps
 
   return (
     <div className="flex flex-col gap-3">
-      <div className="flex items-center gap-2 p-1 bg-white/[0.04] border border-[color:var(--ink-line)] rounded-full w-fit">
+      <div className="flex items-center gap-2 p-1 bg-[color:var(--hover-bg)] border border-[color:var(--ink-line)] rounded-full w-fit">
         {LANGS.map((l) => {
           const active = lang === l;
           const done = completion[l];
@@ -27,8 +27,8 @@ export function MultilingualTabs({ completion, children }: MultilingualTabsProps
               onClick={() => setLang(l)}
               className={
                 active
-                  ? "inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs bg-white/[0.06] text-foreground"
-                  : "inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs text-[color:var(--ink-muted)] hover:text-foreground transition"
+                  ? "inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs bg-[color:var(--hover-bg-strong)] text-foreground"
+                  : "inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs text-[color:var(--ink-muted)] hover:bg-[color:var(--hover-bg)] hover:text-foreground transition"
               }
             >
               <span className="font-mono uppercase">{l}</span>

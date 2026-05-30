@@ -91,7 +91,7 @@ export function ContactMessages() {
         return (
           <div
             key={message.id}
-            className="flex items-center gap-4 px-5 py-3.5 border-b border-[color:var(--ink-line)] last:border-b-0 hover:bg-white/[0.02] transition"
+            className="flex items-center gap-4 px-5 py-3.5 border-b border-[color:var(--ink-line)] last:border-b-0 hover:bg-[color:var(--hover-bg)] transition"
           >
             {/* Avatar */}
             <div className="size-9 rounded-full bg-gradient-to-br from-[oklch(0.4_0.15_180)] to-[oklch(0.5_0.18_155)] shadow-[0_0_12px_oklch(0.5_0.15_180_/_0.3)] shrink-0 flex items-center justify-center">
@@ -141,7 +141,7 @@ export function ContactMessages() {
                         handleStatusChange(message.id, "read");
                       }
                     }}
-                    className="size-8 inline-flex items-center justify-center rounded-md border border-[color:var(--ink-line)] text-[color:var(--ink-muted)] hover:bg-white/[0.05] hover:text-foreground transition"
+                    className="size-8 inline-flex items-center justify-center rounded-md border border-[color:var(--ink-line)] text-[color:var(--ink-muted)] hover:bg-[color:var(--hover-bg)] hover:text-foreground transition"
                     aria-label="View"
                   >
                     <Eye className="w-3.5 h-3.5" />
