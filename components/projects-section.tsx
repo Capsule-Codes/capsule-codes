@@ -1,56 +1,133 @@
 "use client";
 
+import Link from "next/link";
+import { Capsule } from "@/components/ui/capsule";
+import { SectionHeader } from "@/components/ui/section-header";
+import { ScrollReveal } from "@/components/motion/scroll-reveal";
 import { useLanguage } from "@/hooks/use-language";
-import { Button } from "@/components/ui/button";
-import { ProjectsCarousel } from "./projects-carousel";
 import type { Project } from "@/lib/data-context";
+import {
+  ProjectsCarousel,
+  getProjectContent,
+  getCategoryLabel,
+  getProjectImage,
+} from "./projects-carousel";
 
 interface ProjectsSectionProps {
   projects?: Project[];
 }
 
+const FALLBACK_BG =
+  "radial-gradient(ellipse at 30% 30%, oklch(0.4 0.18 180 / 0.5), transparent 60%), oklch(0.12 0.02 200)";
+
 export function ProjectsSection({
   projects: projectsProp,
 }: ProjectsSectionProps = {}) {
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
 
-  // Use prop if provided, otherwise fall back to context (for backward compatibility)
-  // This allows the component to work both with SSR (props) and client-side (context)
-  const projects = projectsProp || [];
+  const allProjects = projectsProp ?? [];
+  const projects = allProjects.filter((p) => p.published === true);
 
-  const featuredProjects = projects.filter((project) => project.featured);
+  const featuredIndex = projects.findIndex((p) => p.featured === true);
+  const featured = featuredIndex >= 0 ? projects[featuredIndex] : null;
+  const others = featured
+    ? projects.filter((_, i) => i !== featuredIndex)
+    : projects;
 
-  const handleViewAllProjects = () => {
-    window.location.href = "/projects";
-  };
+  const titleWords = t.projects.title.split(" ");
+  const lastWord = titleWords[titleWords.length - 1];
+  const leadingWords = titleWords.slice(0, -1).join(" ");
 
   return (
-    <section id="projects" className="py-20 scroll-mt-24">
-      <div className="container mx-auto px-4">
-        <div className="text-center mb-16">
-          <h2 className="text-3xl md:text-4xl font-bold mb-4">
-            {t.projects.title.split(" ")[0]}{" "}
-            <span className="bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
-              {t.projects.title.split(" ").slice(1).join(" ")}
-            </span>
-          </h2>
-          <p className="text-xl text-muted-foreground max-w-3xl mx-auto text-pretty">
-            {t.projects.subtitle}
-          </p>
-        </div>
+    <section
+      id="projects"
+      className="py-[90px] px-4 lg:px-12 border-t border-[color:var(--ink-line)]"
+    >
+      <SectionHeader
+        eyebrow="— 05 / Projects"
+        title={
+          <>
+            {leadingWords}
+            {leadingWords && " "}
+            <em className="not-italic text-brand-grad">{lastWord}</em>
+          </>
+        }
+        lead={t.projects.subtitle}
+      />
 
-        <ProjectsCarousel projects={featuredProjects} />
+      {/* Mobile carousel */}
+      <ProjectsCarousel projects={projects} />
 
-        <div className="text-center mt-12">
-          <Button
-            size="lg"
-            className="bg-gradient-to-r from-primary to-secondary hover:from-primary/90 hover:to-secondary/90 text-lg px-8 py-6 hover:scale-105 transition-transform duration-300"
-            onClick={handleViewAllProjects}
-          >
-            {t.projects.viewAll}
-          </Button>
+      {/* Desktop bento */}
+      {projects.length > 0 && (
+        <div className="hidden md:grid grid-cols-3 grid-rows-2 gap-4 mt-12 lg:mt-14">
+          {featured && (
+            <ScrollReveal className="col-span-1 row-span-2">
+              <BentoCard project={featured} featured language={language} t={t} />
+            </ScrollReveal>
+          )}
+          {others.slice(0, featured ? 4 : 6).map((project, i) => (
+            <ScrollReveal key={project.id} delay={i * 0.06}>
+              <BentoCard project={project} language={language} t={t} />
+            </ScrollReveal>
+          ))}
         </div>
-      </div>
+      )}
     </section>
+  );
+}
+
+interface BentoCardProps {
+  project: Project;
+  featured?: boolean;
+  language: ReturnType<typeof useLanguage>["language"];
+  t: ReturnType<typeof useLanguage>["t"];
+}
+
+function BentoCard({ project, featured = false, language, t }: BentoCardProps) {
+  const content = getProjectContent(project, language);
+  const image = getProjectImage(project);
+  const category = getCategoryLabel(project.category, t);
+
+  return (
+    <Link href={`/projects/${project.id}`} className="block h-full group">
+      <article
+        className={`relative overflow-hidden rounded-2xl bg-cover bg-center border border-[color:var(--ink-line)] transition-[transform,border-color] duration-300 group-hover:-translate-y-0.5 group-hover:border-[color:var(--brand-cyan)]/40 ${
+          featured ? "h-full min-h-[400px]" : "aspect-[4/3]"
+        }`}
+        style={{
+          backgroundImage: image ? `url(${image})` : FALLBACK_BG,
+        }}
+      >
+        <div
+          className="absolute inset-0 z-[1]"
+          style={{
+            background:
+              "linear-gradient(180deg, transparent 50%, oklch(0.05 0 0 / 0.95))",
+          }}
+        />
+        <div
+          className={`absolute left-5 right-5 bottom-5 z-[2] flex flex-col items-start ${
+            featured ? "gap-3" : "gap-2"
+          }`}
+        >
+          <Capsule size="sm" dot={false}>
+            {category}
+          </Capsule>
+          <h3
+            className={`font-semibold tracking-[-0.01em] text-white ${
+              featured ? "text-2xl leading-[1.15]" : "text-base"
+            }`}
+          >
+            {content.title}
+          </h3>
+          {featured && content.description && (
+            <p className="text-[13px] leading-[1.5] text-white/70 line-clamp-3">
+              {content.description}
+            </p>
+          )}
+        </div>
+      </article>
+    </Link>
   );
 }

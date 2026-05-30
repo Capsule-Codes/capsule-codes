@@ -1,9 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Card, CardContent } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { ChevronLeft, ChevronRight, Star } from "lucide-react";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useLanguage } from "@/hooks/use-language";
 import type { Review } from "@/lib/data-context";
 
@@ -13,7 +11,7 @@ interface ReviewsCarouselProps {
 
 export function ReviewsCarousel({ reviews }: ReviewsCarouselProps) {
   const loading = false;
-  const error = null;
+  const error: string | null = null;
   const { language } = useLanguage();
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isAutoPlaying, setIsAutoPlaying] = useState(true);
@@ -29,7 +27,7 @@ export function ReviewsCarousel({ reviews }: ReviewsCarouselProps) {
 
     const interval = setInterval(() => {
       setCurrentIndex((prev) => (prev + 1) % reviews.length);
-    }, 5000); // Change every 5 seconds
+    }, 5000);
 
     return () => clearInterval(interval);
   }, [isAutoPlaying, reviews.length]);
@@ -72,32 +70,35 @@ export function ReviewsCarousel({ reviews }: ReviewsCarouselProps) {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center py-12">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
-        <span className="ml-3 text-muted-foreground">
-          {language === "es"
-            ? "Cargando reseñas..."
-            : language === "it"
-            ? "Caricamento recensioni..."
-            : "Loading reviews..."}
-        </span>
+      <div className="relative max-w-[760px] mx-auto mt-12 lg:mt-14">
+        <div className="rounded-3xl p-11 text-center bg-[var(--ink-bg-2)] border border-[color:var(--ink-line)] flex items-center justify-center gap-3">
+          <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-[color:var(--brand-cyan)]" />
+          <span className="font-mono text-[12px] text-[color:var(--ink-muted)] uppercase tracking-[0.08em]">
+            {language === "es"
+              ? "Cargando reseñas..."
+              : language === "it"
+              ? "Caricamento recensioni..."
+              : "Loading reviews..."}
+          </span>
+        </div>
       </div>
     );
   }
 
   if (error) {
     return (
-      <div className="text-center py-12">
-        <div className="bg-red-50 border border-red-200 rounded-lg p-6 max-w-md mx-auto">
-          <div className="text-red-600 mb-2">⚠️</div>
-          <h3 className="text-red-800 font-medium mb-2">
+      <div className="relative max-w-[760px] mx-auto mt-12 lg:mt-14">
+        <div className="rounded-3xl p-11 text-center bg-[var(--ink-bg-2)] border border-[color:oklch(0.6_0.2_25_/_0.4)]">
+          <h3 className="font-sans text-base font-semibold mb-2 text-foreground">
             {language === "es"
               ? "Error al cargar reseñas"
               : language === "it"
               ? "Errore nel caricamento delle recensioni"
               : "Error loading reviews"}
           </h3>
-          <p className="text-red-600 text-sm">{error}</p>
+          <p className="font-mono text-[12px] text-[color:var(--ink-muted)]">
+            {error}
+          </p>
         </div>
       </div>
     );
@@ -105,17 +106,16 @@ export function ReviewsCarousel({ reviews }: ReviewsCarouselProps) {
 
   if (reviews.length === 0) {
     return (
-      <div className="text-center py-12">
-        <div className="bg-gray-50 border border-gray-200 rounded-lg p-6 max-w-md mx-auto">
-          <div className="text-gray-600 mb-2">📝</div>
-          <h3 className="text-gray-800 font-medium mb-2">
+      <div className="relative max-w-[760px] mx-auto mt-12 lg:mt-14">
+        <div className="rounded-3xl p-11 text-center bg-[var(--ink-bg-2)] border border-[color:var(--ink-line)]">
+          <h3 className="font-sans text-base font-semibold mb-2 text-foreground">
             {language === "es"
               ? "No hay reseñas disponibles"
               : language === "it"
               ? "Nessuna recensione disponibile"
               : "No reviews available"}
           </h3>
-          <p className="text-gray-600 text-sm">
+          <p className="font-mono text-[12px] text-[color:var(--ink-muted)] max-w-[420px] mx-auto leading-[1.6]">
             {language === "es"
               ? "Las reseñas aparecerán aquí una vez que se agreguen desde el panel de administración."
               : language === "it"
@@ -129,99 +129,127 @@ export function ReviewsCarousel({ reviews }: ReviewsCarouselProps) {
 
   const currentReview = reviews[currentIndex];
   const reviewContent = getReviewContent(currentReview);
+  const filledStars = Math.max(0, Math.min(5, currentReview.rating ?? 0));
 
   return (
-    <div className="w-full max-w-4xl mx-auto">
-      <div className="relative">
-        {/* Main Review Card */}
-        <Card className="bg-gradient-to-br from-background to-muted/20 border-2 border-primary/20 shadow-xl">
-          <CardContent className="p-8">
-            <div className="text-center">
-              {/* Stars Rating */}
-              <div className="flex justify-center mb-6">
-                {[...Array(5)].map((_, i) => (
-                  <Star
-                    key={i}
-                    className={`w-6 h-6 ${
-                      i < currentReview.rating
-                        ? "text-yellow-400 fill-current"
-                        : "text-gray-300"
-                    }`}
-                  />
-                ))}
-              </div>
+    <div className="relative max-w-[760px] mx-auto mt-12 lg:mt-14">
+      {/* Review Card */}
+      <div
+        className="relative border border-[color:oklch(0.5_0.18_180_/_0.4)] rounded-3xl p-11 text-center"
+        style={{
+          background:
+            "radial-gradient(ellipse at top, oklch(0.4 0.18 180 / 0.2), transparent 60%), var(--ink-bg-2)",
+        }}
+      >
+        {/* Big quote mark */}
+        <span
+          aria-hidden="true"
+          className="absolute top-4 left-6 select-none pointer-events-none"
+          style={{
+            fontFamily: "var(--font-mono), ui-monospace, monospace",
+            fontSize: "60px",
+            lineHeight: 1,
+            fontWeight: 600,
+            color: "var(--brand-cyan)",
+            opacity: 0.4,
+          }}
+        >
+          “
+        </span>
 
-              {/* Review Text */}
-              <blockquote className="text-lg md:text-xl text-foreground mb-8 leading-relaxed">
-                "{reviewContent.text}"
-              </blockquote>
+        {/* Stars */}
+        <div className="flex justify-center gap-1 mb-6">
+          {[0, 1, 2, 3, 4].map((i) => (
+            <span
+              key={i}
+              aria-hidden="true"
+              className={
+                i < filledStars
+                  ? "text-[color:oklch(0.85_0.16_90)]"
+                  : "text-[color:var(--ink-muted)]/40"
+              }
+              style={{ fontSize: 16, lineHeight: 1 }}
+            >
+              ★
+            </span>
+          ))}
+        </div>
 
-              {/* Author Info */}
-              <div className="flex flex-col items-center">
-                <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mb-4">
-                  {currentReview.avatar ? (
-                    <img
-                      src={currentReview.avatar}
-                      alt={reviewContent.author}
-                      className="w-12 h-12 rounded-full object-cover"
-                    />
-                  ) : (
-                    <div className="w-12 h-12 bg-primary/20 rounded-full flex items-center justify-center">
-                      <span className="text-primary font-bold text-lg">
-                        {reviewContent.author.charAt(0)}
-                      </span>
-                    </div>
-                  )}
-                </div>
-                <h4 className="font-semibold text-lg text-foreground">
-                  {reviewContent.author}
-                </h4>
-                <p className="text-muted-foreground">
-                  {reviewContent.position} at {reviewContent.company}
-                </p>
-                <p className="text-sm text-muted-foreground mt-1">
-                  {new Date(currentReview.date).toLocaleDateString()}
-                </p>
-              </div>
+        {/* Quote text */}
+        <blockquote className="text-lg leading-[1.5] text-foreground mb-7 italic max-w-[580px] mx-auto">
+          {reviewContent.text}
+        </blockquote>
+
+        {/* Author block */}
+        <div className="flex items-center justify-center gap-3">
+          {currentReview.avatar ? (
+            <img
+              src={currentReview.avatar}
+              alt={reviewContent.author}
+              className="w-11 h-11 rounded-full object-cover border border-[color:var(--ink-line)]"
+            />
+          ) : (
+            <div
+              className="w-11 h-11 rounded-full flex items-center justify-center text-sm font-semibold text-background"
+              style={{
+                background:
+                  "linear-gradient(135deg, var(--brand-grad-from), var(--brand-grad-to))",
+              }}
+            >
+              {reviewContent.author.charAt(0).toUpperCase()}
             </div>
-          </CardContent>
-        </Card>
+          )}
+          <div className="text-left">
+            <div className="text-sm font-semibold text-foreground leading-tight">
+              {reviewContent.author}
+            </div>
+            <div className="font-mono text-[11px] text-[color:var(--ink-muted)] leading-tight mt-0.5">
+              {reviewContent.position}
+              {reviewContent.position && reviewContent.company ? " · " : ""}
+              {reviewContent.company}
+            </div>
+          </div>
+        </div>
+      </div>
 
-        {/* Navigation Controls */}
-        <div className="flex items-center justify-between mt-8">
-          <Button
-            variant="outline"
-            size="icon"
-            onClick={prevReview}
-            className="hover:bg-primary/10"
-          >
-            <ChevronLeft className="w-5 h-5" />
-          </Button>
+      {/* Navigation */}
+      <div className="flex justify-center items-center gap-4 mt-6">
+        <button
+          type="button"
+          onClick={prevReview}
+          aria-label="Previous review"
+          className="w-9 h-9 rounded-full bg-[color:var(--hover-bg)] border border-[color:var(--ink-line)] inline-flex items-center justify-center text-foreground hover:bg-[color:var(--hover-bg-strong)] hover:border-[color:var(--ink-line-strong)] transition-colors"
+        >
+          <ChevronLeft className="w-4 h-4" />
+        </button>
 
-          {/* Dots Indicator */}
-          <div className="flex space-x-2">
-            {reviews.map((_, index) => (
+        <div className="flex items-center gap-1.5">
+          {reviews.map((_, index) => {
+            const active = index === currentIndex;
+            return (
               <button
                 key={index}
+                type="button"
+                aria-label={`Go to review ${index + 1}`}
                 onClick={() => goToReview(index)}
-                className={`w-3 h-3 rounded-full transition-all duration-300 ${
-                  index === currentIndex
-                    ? "bg-primary scale-125"
-                    : "bg-muted-foreground/30 hover:bg-muted-foreground/50"
+                className={`h-1.5 rounded-full transition-all duration-300 ${
+                  active
+                    ? "w-6 bg-[color:var(--brand-cyan)]"
+                    : "w-1.5 bg-[color:var(--ink-muted)]/40 hover:bg-[color:var(--ink-muted)]/60"
                 }`}
               />
-            ))}
-          </div>
-
-          <Button
-            variant="outline"
-            size="icon"
-            onClick={nextReview}
-            className="hover:bg-primary/10"
-          >
-            <ChevronRight className="w-5 h-5" />
-          </Button>
+            );
+          })}
         </div>
+
+        <button
+          type="button"
+          onClick={nextReview}
+          aria-label="Next review"
+          className="w-9 h-9 rounded-full bg-[color:var(--hover-bg)] border border-[color:var(--ink-line)] inline-flex items-center justify-center text-foreground hover:bg-[color:var(--hover-bg-strong)] hover:border-[color:var(--ink-line-strong)] transition-colors"
+        >
+          <ChevronRight className="w-4 h-4" />
+        </button>
       </div>
     </div>
   );

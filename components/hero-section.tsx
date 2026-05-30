@@ -1,111 +1,71 @@
 "use client";
-
-import { Button } from "@/components/ui/button";
-import { ArrowRight, Zap, Code, Smartphone, Globe } from "lucide-react";
+import { Capsule } from "@/components/ui/capsule";
+import { ParallaxConstellation } from "@/components/motion/parallax-constellation";
+import { Magnetic } from "@/components/motion/magnetic";
 import { useLanguage } from "@/hooks/use-language";
+import { Zap, ArrowRight } from "lucide-react";
 
 export function HeroSection() {
   const { t } = useLanguage();
+  const scroll = (id: string) => document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
 
   return (
-    <section className="relative min-h-screen flex items-center justify-center overflow-hidden bg-gradient-to-br from-background via-muted/30 to-background">
-      {/* Animated Background Elements */}
-      <div className="absolute inset-0 overflow-hidden">
-        <div className="absolute top-20 left-10 w-20 h-20 bg-primary/20 rounded-full animate-float" />
-        <div
-          className="absolute top-40 right-20 w-16 h-16 bg-secondary/20 rounded-full animate-float"
-          style={{ animationDelay: "1s" }}
-        />
-        <div
-          className="absolute bottom-40 left-20 w-12 h-12 bg-accent/20 rounded-full animate-float"
-          style={{ animationDelay: "2s" }}
-        />
-        <div
-          className="absolute bottom-20 right-10 w-24 h-24 bg-primary/10 rounded-full animate-float"
-          style={{ animationDelay: "0.5s" }}
-        />
+    <section className="relative overflow-hidden">
+      {/* atmospheric background */}
+      <div className="pointer-events-none absolute inset-0">
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_60%_50%_at_50%_30%,oklch(0.45_0.22_185_/_0.45),transparent_70%)]" />
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_50%_40%_at_30%_80%,oklch(0.4_0.2_155_/_0.3),transparent_70%)]" />
+        <div className="absolute inset-0 [background-image:radial-gradient(oklch(1_0_0_/_0.04)_1px,transparent_1px)] [background-size:24px_24px] opacity-50" />
       </div>
 
-      <div className="container mx-auto px-4 py-20 text-center relative z-10">
-        <div className="max-w-4xl mx-auto">
-          {/* Badge */}
-          <div className="inline-flex items-center px-4 py-2 bg-primary/10 border border-primary/20 rounded-full text-primary text-sm font-medium mt-12 mb-8">
-            <Zap className="w-4 h-4 mr-2" />
-            {t.hero.badge}
-          </div>
+      {/* constellation — 6 on md+, 2 on mobile */}
+      <ParallaxConstellation className="absolute inset-0 pointer-events-none">
+        <Capsule size="sm" className="absolute top-[85%] lg:top-[18%] left-[6%] lg:left-[8%] rotate-[-6deg] animate-capsule-drift opacity-100 dark:opacity-90">web platforms</Capsule>
+        <Capsule size="sm" className="absolute top-[90%] lg:top-[14%] right-[6%] lg:right-[12%] rotate-[5deg] animate-capsule-drift opacity-100 dark:opacity-90" style={{ animationDelay: "1s" }}>mobile apps</Capsule>
+        {/* the remaining 4 are hidden below lg */}
+        <Capsule size="sm" className="absolute top-[70%] left-[6%] rotate-[2deg] opacity-85 dark:opacity-60 hidden lg:inline-flex animate-capsule-drift" style={{ animationDelay: "2s" }}>fintech</Capsule>
+        <Capsule size="sm" className="absolute top-[75%] right-[9%] rotate-[-4deg] opacity-85 dark:opacity-60 hidden lg:inline-flex animate-capsule-drift" style={{ animationDelay: "3s" }}>edtech</Capsule>
+        <Capsule size="sm" dot={false} className="absolute top-[42%] left-[14%] rotate-[3deg] opacity-60 dark:opacity-30 hidden lg:inline-flex animate-capsule-drift" style={{ animationDelay: "1.5s" }}>react native</Capsule>
+        <Capsule size="sm" dot={false} className="absolute top-[38%] right-[16%] rotate-[-3deg] opacity-60 dark:opacity-30 hidden lg:inline-flex animate-capsule-drift" style={{ animationDelay: "2.5s" }}>next.js</Capsule>
+      </ParallaxConstellation>
 
-          {/* Main Heading */}
-          <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold mb-6 text-balance">
+      <div className="container mx-auto px-4 lg:px-12 py-[100px] lg:py-[120px] text-center relative z-10">
+        <div className="max-w-4xl mx-auto">
+          <Capsule icon={<Zap className="w-3 h-3" />} className="mb-7">{t.hero.badge}</Capsule>
+
+          <h1 className="font-sans text-4xl md:text-6xl lg:text-[60px] leading-[1.02] font-semibold tracking-[-0.045em] mb-6 text-balance max-w-[920px] mx-auto">
             {t.hero.title.firstCommonText}{" "}
-            <span className="bg-gradient-to-r from-primary via-secondary to-accent bg-clip-text text-transparent">
-              {t.hero.title.firstKeyword}
-            </span>{" "}
+            <em className="not-italic text-brand-grad">{t.hero.title.firstKeyword}</em>{" "}
             {t.hero.title.secondCommonText}{" "}
-            <span className="bg-gradient-to-r from-secondary via-accent to-primary bg-clip-text text-transparent">
-              {t.hero.title.secondKeyword}{" "}
-            </span>
+            <em className="not-italic text-brand-grad">{t.hero.title.secondKeyword}</em>{" "}
             {t.hero.title.thirdCommonText}{" "}
-            <span className="bg-gradient-to-r from-secondary via-accent to-primary bg-clip-text text-transparent">
-              {t.hero.title.thirdKeyword}
-            </span>
+            <em className="not-italic text-brand-grad">{t.hero.title.thirdKeyword}</em>
           </h1>
 
-          {/* Subtitle */}
-          <p className="text-xl md:text-2xl text-muted-foreground mb-8 max-w-3xl mx-auto text-pretty">
+          <p className="text-base md:text-lg text-[color:var(--ink-muted)] mb-10 max-w-[620px] mx-auto text-pretty leading-relaxed">
             {t.hero.subtitle}
           </p>
 
-          {/* Stats */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
-            <div className="flex flex-col items-center">
-              <Code className="w-8 h-8 text-primary mb-2" />
-              <div className="text-2xl font-bold text-foreground">10+</div>
-              <div className="text-muted-foreground">
-                {t.hero.stats.projects}
-              </div>
-            </div>
-            <div className="flex flex-col items-center">
-              <Globe className="w-8 h-8 text-secondary mb-2" />
-              <div className="text-2xl font-bold text-foreground">8</div>
-              <div className="text-muted-foreground">
-                {t.hero.stats.countries}
-              </div>
-            </div>
-            <div className="flex flex-col items-center">
-              <Smartphone className="w-8 h-8 text-secondary mb-2" />
-              <div className="text-2xl font-bold text-foreground">2</div>
-              <div className="text-muted-foreground">
-                {t.hero.stats.apps}
-              </div>
-            </div>
+          {/* stats pill bar */}
+          <div className="inline-flex items-stretch gap-2 mb-10 p-2 bg-white/[0.03] border border-[color:var(--ink-line)] rounded-full backdrop-blur-md">
+            <div className="inline-flex items-center gap-2 px-4 py-1.5 text-xs text-[color:var(--ink-muted)]"><span className="font-mono font-semibold text-[color:var(--ink-fg)]">10+</span> {t.hero.stats.projects}</div>
+            <div className="w-px self-center h-4 bg-[color:var(--ink-line)]" />
+            <div className="inline-flex items-center gap-2 px-4 py-1.5 text-xs text-[color:var(--ink-muted)]"><span className="font-mono font-semibold text-[color:var(--ink-fg)]">8</span> {t.hero.stats.countries}</div>
+            <div className="w-px self-center h-4 bg-[color:var(--ink-line)]" />
+            <div className="inline-flex items-center gap-2 px-4 py-1.5 text-xs text-[color:var(--ink-muted)]"><span className="font-mono font-semibold text-[color:var(--ink-fg)]">2</span> {t.hero.stats.apps}</div>
           </div>
 
-          {/* CTA Buttons */}
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Button
-              size="lg"
-              className="bg-gradient-to-r from-primary to-secondary hover:from-primary/90 hover:to-secondary/90 text-lg px-8 py-6"
-              onClick={() =>
-                document
-                  .getElementById("projects")
-                  ?.scrollIntoView({ behavior: "smooth" })
-              }
-            >
-              {t.hero.cta.viewProjects}
-              <ArrowRight className="ml-2 h-5 w-5" />
-            </Button>
-            <Button
-              size="lg"
-              className="bg-gradient-to-r from-primary to-secondary hover:from-primary/90 hover:to-secondary/90 text-lg px-8 py-6"
-              onClick={() =>
-                document
-                  .getElementById("contact")
-                  ?.scrollIntoView({ behavior: "smooth" })
-              }
-            >
-              {t.hero.cta.contact}
-              <ArrowRight className="ml-2 h-5 w-5" />
-            </Button>
+          <div className="flex flex-col sm:flex-row gap-3 justify-center">
+            <Magnetic>
+              <button onClick={() => scroll("projects")} className="brand-grad text-on-grad rounded-full px-6 py-3 text-sm font-semibold shadow-[0_6px_22px_oklch(0.5_0.16_180_/_0.4)] inline-flex items-center gap-2">
+                {t.hero.cta.viewProjects} <ArrowRight className="w-4 h-4" />
+              </button>
+            </Magnetic>
+            <Magnetic>
+              <button onClick={() => scroll("contact")} className="bg-[color:var(--hover-bg)] text-[color:var(--ink-fg)] border border-[color:var(--ink-line)] rounded-full px-6 py-3 text-sm font-medium inline-flex items-center gap-2 hover:bg-[color:var(--hover-bg-strong)] transition">
+                {t.hero.cta.contact}
+              </button>
+            </Magnetic>
           </div>
         </div>
       </div>

@@ -32,7 +32,7 @@ export interface Project {
     it: ProjectTranslations;
   };
   image: string; // Deprecated - kept for backward compatibility
-  images?: ProjectImage[]; // New field for Azure Blob Storage images
+  images?: ProjectImage[]; // Public URLs in Supabase Storage (blobKey holds full URL)
   technologies: string[];
   liveUrl?: string;
   githubUrl?: string;
@@ -82,26 +82,30 @@ export interface Review {
   date: string;
 }
 
-// Team Member interfaces
-export interface TeamMemberTranslations {
+// Team member interfaces
+export type TeamMemberTranslation = {
   name: string;
   role: string;
   description: string;
-}
+};
 
-export interface TeamMember {
+export type TeamMemberTranslations = {
+  en: TeamMemberTranslation;
+  es: TeamMemberTranslation;
+  it: TeamMemberTranslation;
+};
+
+export type TeamMember = {
   id: string;
-  translations: {
-    en: TeamMemberTranslations;
-    es: TeamMemberTranslations;
-    it: TeamMemberTranslations;
-  };
-  avatar: string;
-  avatar_blob_key?: string;
   category: "cofounder" | "developer";
-  order: number;
-  published: boolean;
-}
+  avatar: string | null;
+  avatar_blob_key: string | null;
+  order: number | null;
+  published: boolean | null;
+  translations: TeamMemberTranslations;
+  created_at: string;
+  updated_at: string;
+};
 
 // Context type - now just a wrapper around Supabase
 export interface DataContextType {

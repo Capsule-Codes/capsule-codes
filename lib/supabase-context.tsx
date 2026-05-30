@@ -27,7 +27,9 @@ interface SupabaseContextType {
   addReview: (review: Omit<Review, "id">) => Promise<Review | void>;
   updateReview: (id: string, review: Partial<Review>) => Promise<void>;
   deleteReview: (id: string) => Promise<void>;
-  addTeamMember: (member: Omit<TeamMember, "id">) => Promise<TeamMember | void>;
+  addTeamMember: (
+    member: Omit<TeamMember, "id" | "created_at" | "updated_at">
+  ) => Promise<TeamMember | void>;
   updateTeamMember: (id: string, member: Partial<TeamMember>) => Promise<void>;
   deleteTeamMember: (id: string) => Promise<void>;
   addContactMessage: (message: Omit<ContactMessage, "id" | "status" | "created_at" | "updated_at">) => Promise<void>;
@@ -313,8 +315,10 @@ export function SupabaseProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
-  // Team Member functions
-  const addTeamMember = async (member: Omit<TeamMember, "id">) => {
+  // Team member functions
+  const addTeamMember = async (
+    member: Omit<TeamMember, "id" | "created_at" | "updated_at">
+  ) => {
     try {
       const response = await fetch("/api/admin/team-members", {
         method: "POST",
@@ -330,7 +334,7 @@ export function SupabaseProvider({ children }: { children: React.ReactNode }) {
       }
 
       const data = await response.json();
-      setTeamMembers((prev) => [...prev, data]);
+      setTeamMembers((prev) => [data, ...prev]);
       return data;
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to add team member");
@@ -356,7 +360,9 @@ export function SupabaseProvider({ children }: { children: React.ReactNode }) {
       const data = await response.json();
       setTeamMembers((prev) => prev.map((m) => (m.id === id ? data : m)));
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to update team member");
+      setError(
+        err instanceof Error ? err.message : "Failed to update team member"
+      );
       throw err;
     }
   };
@@ -374,7 +380,9 @@ export function SupabaseProvider({ children }: { children: React.ReactNode }) {
 
       setTeamMembers((prev) => prev.filter((m) => m.id !== id));
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to delete team member");
+      setError(
+        err instanceof Error ? err.message : "Failed to delete team member"
+      );
       throw err;
     }
   };

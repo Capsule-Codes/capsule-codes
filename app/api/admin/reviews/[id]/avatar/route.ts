@@ -1,6 +1,8 @@
 import { NextResponse } from "next/server";
-import { getContainerClient } from "@/lib/azure";
-import sharp from "sharp";
+import {
+  processAndUploadAvatar,
+  deleteImageFromStorage,
+} from "@/lib/server/media";
 
 const ALLOWED_MIME = new Set([
   "image/jpeg",
@@ -26,7 +28,6 @@ export async function POST(
       );
     }
 
-    // Validate MIME type
     if (!ALLOWED_MIME.has(file.type)) {
       return NextResponse.json(
         { message: `Invalid image format: ${file.name}` },
@@ -34,37 +35,18 @@ export async function POST(
       );
     }
 
-    // Process image
-    const arrayBuf = await file.arrayBuffer();
-    const inputBuffer = Buffer.from(arrayBuf);
-
-    // Optimize avatar (smaller size, circular crop works better with square images)
-    const optimized = await sharp(inputBuffer)
-      .rotate() // Auto-rotate based on EXIF
-      .resize({ width: 400, height: 400, fit: "cover" }) // Square avatar
-      .webp({ quality: 85 })
-      .toBuffer();
-
-    const avatarId = `${Date.now()}_${Math.random().toString(36).substring(7)}`;
-    const blobKey = `capsulecodes/reviews/avatars/${reviewId}/${avatarId}_400.webp`;
-
-    // Upload to Azure
-    const container = getContainerClient();
-    const blobClient = container.getBlockBlobClient(blobKey);
-    await blobClient.uploadData(optimized, {
-      blobHTTPHeaders: {
-        blobContentType: "image/webp",
-        blobCacheControl: "public, max-age=31536000, immutable",
-      },
-    });
-
-    const avatarUrl = `/api/images/${blobKey}`;
+    const { avatarUrl, path } = await processAndUploadAvatar(
+      reviewId,
+      file,
+      "reviews"
+    );
 
     return NextResponse.json(
       {
         ok: true,
         avatarUrl,
-        blobKey,
+        // Kept under `blobKey` for backward-compat with any existing caller.
+        blobKey: path,
       },
       { status: 201 }
     );
@@ -79,11 +61,12 @@ export async function POST(
 
 export async function DELETE(
   req: Request,
-  { params }: { params: Promise<{ id: string }> }
+  { params: _params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const { searchParams } = new URL(req.url);
-    const blobKey = searchParams.get("blobKey");
+    const blobKey =
+      searchParams.get("blobKey") || searchParams.get("path");
 
     if (!blobKey) {
       return NextResponse.json(
@@ -92,10 +75,7 @@ export async function DELETE(
       );
     }
 
-    // Delete from Azure
-    const container = getContainerClient();
-    const blobClient = container.getBlockBlobClient(blobKey);
-    await blobClient.delete();
+    await deleteImageFromStorage(blobKey);
 
     return NextResponse.json(
       {

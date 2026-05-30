@@ -2,33 +2,35 @@
 
 import { ReviewsCarousel } from "./reviews-carousel";
 import { useLanguage } from "@/hooks/use-language";
+import { SectionHeader } from "@/components/ui/section-header";
 import type { Review } from "@/lib/data-context";
 
 interface ReviewsSectionProps {
-  reviews: Review[]
+  reviews: Review[];
 }
 
 export function ReviewsSection({ reviews }: ReviewsSectionProps) {
   const { t } = useLanguage();
+  const titleWords = t.reviews.title.split(" ");
+  const lastWord = titleWords.pop() ?? "";
+  const leading = titleWords.join(" ");
 
   return (
     <section
       id="reviews"
-      className="py-20 bg-gradient-to-br from-background via-muted/20 to-background scroll-mt-24"
+      className="py-[90px] px-4 lg:px-12 border-t border-[color:var(--ink-line)]"
     >
-      <div className="container mx-auto px-4">
-        <div className="text-center mb-16">
-          <h2 className="text-3xl md:text-4xl font-bold mb-4">
-            {t.reviews.title.split(" ")[0]}{" "}
-            <span className="bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
-              {t.reviews.title.split(" ").slice(1).join(" ")}
-            </span>
-          </h2>
-          <p className="text-xl text-muted-foreground max-w-3xl mx-auto text-pretty">
-            {t.reviews.subtitle}
-          </p>
-        </div>
-
+      <div className="container mx-auto">
+        <SectionHeader
+          eyebrow="— 06 / Reviews"
+          align="center"
+          title={
+            <>
+              {leading} <em className="not-italic text-brand-grad">{lastWord}</em>
+            </>
+          }
+          lead={t.reviews.subtitle}
+        />
         <ReviewsCarousel reviews={reviews} />
       </div>
     </section>

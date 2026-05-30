@@ -1,5 +1,9 @@
 import { NextResponse } from "next/server";
 import { supabaseAdmin } from "@/lib/server/supabase-admin";
+import {
+  deleteImageFromStorage,
+  deriveStoragePath,
+} from "@/lib/server/media";
 
 export async function GET(
   request: Request,
@@ -99,6 +103,55 @@ export async function DELETE(
     }
 
     const { id } = await params;
+
+    // Fetch the row first so we can cascade-delete any associated storage objects.
+    const { data: existing, error: fetchError } = await supabaseAdmin
+      .from("projects")
+      .select("image, images")
+      .eq("id", id)
+      .maybeSingle();
+
+    if (fetchError) throw fetchError;
+
+    // Collect every storage path we can derive from `image` + `images[]`.
+    const pathsToDelete: string[] = [];
+
+    if (existing?.image) {
+      const path = deriveStoragePath(existing.image);
+      if (path) pathsToDelete.push(path);
+    }
+
+    if (Array.isArray(existing?.images)) {
+      for (const item of existing.images) {
+        const raw =
+          typeof item === "string"
+            ? item
+            : item && typeof item === "object"
+              ? (item as any).blobKey ?? (item as any).url
+              : null;
+        if (!raw || typeof raw !== "string") continue;
+        const path = deriveStoragePath(raw);
+        if (path) pathsToDelete.push(path);
+      }
+    }
+
+    // Dedupe in case `image` matches one of the entries in `images[]`.
+    const uniquePaths = Array.from(new Set(pathsToDelete));
+
+    // Best-effort: delete all storage objects in parallel. Log failures, don't abort.
+    if (uniquePaths.length > 0) {
+      const results = await Promise.allSettled(
+        uniquePaths.map((path) => deleteImageFromStorage(path))
+      );
+      results.forEach((result, idx) => {
+        if (result.status === "rejected") {
+          console.error(
+            `Failed to delete project image from storage (path=${uniquePaths[idx]}):`,
+            result.reason?.message || result.reason
+          );
+        }
+      });
+    }
 
     const { error } = await supabaseAdmin
       .from("projects")

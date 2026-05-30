@@ -1,9 +1,8 @@
 "use client";
-
-import { Card, CardContent } from "@/components/ui/card";
 import { useLanguage } from "@/hooks/use-language";
+import { ScrollReveal } from "@/components/motion/scroll-reveal";
+import { SectionHeader } from "@/components/ui/section-header";
 import type { TeamMember } from "@/lib/data-context";
-import Image from "next/image";
 
 interface TeamSectionProps {
   teamMembers: TeamMember[];
@@ -12,132 +11,61 @@ interface TeamSectionProps {
 export function TeamSection({ teamMembers }: TeamSectionProps) {
   const { t, language } = useLanguage();
 
-  const coFounders = teamMembers
-    .filter((member) => member.category === "cofounder" && member.published)
-    .sort((a, b) => a.order - b.order);
+  const cofounders = teamMembers.filter((m) => m.category === "cofounder");
+  const developers = teamMembers.filter((m) => m.category === "developer");
 
-  const developers = teamMembers
-    .filter((member) => member.category === "developer" && member.published)
-    .sort((a, b) => a.order - b.order);
-
-  const getMemberContent = (member: TeamMember) => {
-    const translation =
-      member.translations[language as keyof typeof member.translations];
-    return {
-      name: translation?.name || member.translations.en.name,
-      role: translation?.role || member.translations.en.role,
-      description:
-        translation?.description || member.translations.en.description,
-    };
-  };
+  const tr = (m: TeamMember) => m.translations?.[language] ?? m.translations.en;
 
   return (
-    <section id="team" className="py-20 scroll-mt-24">
-      <div className="container mx-auto px-4">
-        <div className="text-center mb-16">
-          <h2 className="text-3xl md:text-4xl font-bold mb-4">
-            {t.team.title.firstPart}{" "}
-            <span className="bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
-              {t.team.title.secondPart}
-            </span>
-          </h2>
-          <p className="text-xl text-muted-foreground max-w-3xl mx-auto text-pretty">
-            {t.team.subtitle}
-          </p>
+    <section id="team" className="py-[90px] px-4 lg:px-12 border-t border-[color:var(--ink-line)]">
+      <SectionHeader
+        eyebrow="— 04 / Team"
+        title={<>{t.team.title.firstPart} <em className="not-italic text-brand-grad">{t.team.title.secondPart}</em></>}
+        lead={t.team.subtitle}
+      />
+
+      <div className="mt-12">
+        <div className="font-mono text-[11px] uppercase tracking-[0.08em] text-[color:var(--brand-cyan)] mb-4">— {t.team.coFoundersTitle}</div>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {cofounders.map((m, i) => {
+            const c = tr(m);
+            return (
+              <ScrollReveal key={m.id} delay={i * 0.08} className="h-full">
+                <MemberCard name={c.name} role={c.role} description={c.description} avatarUrl={m.avatar} />
+              </ScrollReveal>
+            );
+          })}
         </div>
 
-        <div className="mb-20">
-          <h3 className="text-2xl md:text-3xl font-bold text-center mb-12">
-            {t.team.coFoundersTitle}
-          </h3>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
-            {coFounders.map((member) => {
-              const content = getMemberContent(member);
-              return (
-                <Card
-                  key={member.id}
-                  className="group hover:shadow-xl transition-all duration-300 border-border/50 hover:border-primary/30 overflow-hidden"
-                >
-                  <div className="h-2 bg-gradient-to-r from-primary to-secondary" />
-                  <CardContent className="p-6">
-                    <div className="w-32 h-32 mx-auto mb-6 rounded-full bg-gradient-to-br from-primary/20 to-secondary/20 flex items-center justify-center overflow-hidden group-hover:scale-105 transition-transform duration-300">
-                      {member.avatar ? (
-                        <Image
-                          src={member.avatar}
-                          alt={content.name}
-                          width={128}
-                          height={128}
-                          className="w-full h-full object-cover"
-                        />
-                      ) : (
-                        <div className="text-5xl">👤</div>
-                      )}
-                    </div>
-
-                    <div className="text-center">
-                      <h4 className="text-xl font-bold mb-2 group-hover:text-primary transition-colors duration-300">
-                        {content.name}
-                      </h4>
-                      <p className="text-sm text-muted-foreground font-medium mb-4">
-                        {content.role}
-                      </p>
-                      <p className="text-muted-foreground leading-relaxed">
-                        {content.description}
-                      </p>
-                    </div>
-                  </CardContent>
-                </Card>
-              );
-            })}
-          </div>
-        </div>
-
-        <div>
-          <h3 className="text-2xl md:text-3xl font-bold text-center mb-12">
-            {t.team.developersTitle}
-          </h3>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {developers.map((member) => {
-              const content = getMemberContent(member);
-              return (
-                <Card
-                  key={member.id}
-                  className="group hover:shadow-xl transition-all duration-300 border-border/50 hover:border-primary/30 overflow-hidden"
-                >
-                  <div className="h-2 bg-gradient-to-r from-accent to-primary" />
-                  <CardContent className="p-6">
-                    <div className="w-24 h-24 mx-auto mb-6 rounded-full bg-gradient-to-br from-accent/20 to-primary/20 flex items-center justify-center overflow-hidden group-hover:scale-105 transition-transform duration-300">
-                      {member.avatar ? (
-                        <Image
-                          src={member.avatar}
-                          alt={content.name}
-                          width={96}
-                          height={96}
-                          className="w-full h-full object-cover"
-                        />
-                      ) : (
-                        <div className="text-4xl">👤</div>
-                      )}
-                    </div>
-
-                    <div className="text-center">
-                      <h4 className="text-lg font-bold mb-2 group-hover:text-primary transition-colors duration-300">
-                        {content.name}
-                      </h4>
-                      <p className="text-sm text-muted-foreground font-medium mb-4">
-                        {content.role}
-                      </p>
-                      <p className="text-sm text-muted-foreground leading-relaxed">
-                        {content.description}
-                      </p>
-                    </div>
-                  </CardContent>
-                </Card>
-              );
-            })}
-          </div>
+        <div className="font-mono text-[11px] uppercase tracking-[0.08em] text-[color:var(--brand-cyan)] mt-9 mb-4">— {t.team.developersTitle}</div>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          {developers.map((m, i) => {
+            const c = tr(m);
+            return (
+              <ScrollReveal key={m.id} delay={i * 0.08} className="h-full">
+                <MemberCard name={c.name} role={c.role} description={c.description} avatarUrl={m.avatar} />
+              </ScrollReveal>
+            );
+          })}
         </div>
       </div>
     </section>
+  );
+}
+
+function MemberCard({ name, role, description, avatarUrl }: { name: string; role: string; description: string; avatarUrl: string | null }) {
+  return (
+    <div className="h-full bg-[color:var(--ink-bg-2)] border border-[color:var(--ink-line)] rounded-2xl p-6">
+      <div className="flex items-center gap-3.5 mb-3.5">
+        <div className="size-[52px] rounded-full shrink-0 bg-gradient-to-br from-[oklch(0.4_0.15_180)] to-[oklch(0.5_0.18_155)] shadow-[0_0_16px_oklch(0.5_0.15_180_/_0.3)] overflow-hidden">
+          {avatarUrl && <img src={avatarUrl} alt={name} className="w-full h-full object-cover" />}
+        </div>
+        <div>
+          <h5 className="text-[15px] font-semibold leading-tight">{name}</h5>
+          <span className="font-mono text-[10px] text-[color:var(--brand-cyan)] tracking-[0.04em]">{role}</span>
+        </div>
+      </div>
+      <p className="text-[12.5px] text-[color:var(--ink-muted)] leading-[1.55]">{description}</p>
+    </div>
   );
 }

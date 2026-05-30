@@ -117,6 +117,36 @@ export async function getReviews(): Promise<Review[]> {
 }
 
 /**
+ * Fetch all team members from the database
+ */
+export async function getTeamMembers(): Promise<TeamMember[]> {
+  if (!supabaseAdmin) {
+    console.error("Supabase admin client not configured");
+    return [];
+  }
+
+  try {
+    const { data, error } = await supabaseAdmin
+      .from("team_members")
+      .select("*")
+      .eq("published", true)
+      .order("category", { ascending: true })
+      .order("order", { ascending: true })
+      .order("created_at", { ascending: true });
+
+    if (error) {
+      console.error("Error fetching team members:", error);
+      return [];
+    }
+
+    return data || [];
+  } catch (error) {
+    console.error("Error fetching team members:", error);
+    return [];
+  }
+}
+
+/**
  * Fetch contact info from the database
  */
 export async function getContactInfo(): Promise<ContactInfo | null> {
@@ -150,49 +180,22 @@ export async function getContactInfo(): Promise<ContactInfo | null> {
 }
 
 /**
- * Fetch all team members from the database
- */
-export async function getTeamMembers(): Promise<TeamMember[]> {
-  if (!supabaseAdmin) {
-    console.error("Supabase admin client not configured");
-    return [];
-  }
-
-  try {
-    const { data, error } = await supabaseAdmin
-      .from("team_members")
-      .select("*")
-      .order("order", { ascending: true });
-
-    if (error) {
-      console.error("Error fetching team members:", error);
-      return [];
-    }
-
-    return data || [];
-  } catch (error) {
-    console.error("Error fetching team members:", error);
-    return [];
-  }
-}
-
-/**
  * Fetch all data needed for the homepage
  */
 export async function getHomePageData() {
-  const [projects, technologies, reviews, teamMembers, contactInfo] = await Promise.all([
+  const [projects, technologies, reviews, contactInfo, teamMembers] = await Promise.all([
     getProjects(),
     getTechnologies(),
     getReviews(),
-    getTeamMembers(),
     getContactInfo(),
+    getTeamMembers(),
   ]);
 
   return {
     projects,
     technologies,
     reviews,
-    teamMembers,
     contactInfo,
+    teamMembers,
   };
 }

@@ -1,123 +1,84 @@
 "use client";
 
-import { Card, CardContent } from "@/components/ui/card";
-import { Users, Target, Lightbulb, Rocket } from "lucide-react";
+import { SectionHeader } from "@/components/ui/section-header";
+import { ScrollReveal } from "@/components/motion/scroll-reveal";
 import { useLanguage } from "@/hooks/use-language";
 
 export function AboutSection() {
   const { t } = useLanguage();
 
+  const titleWords = t.about.title.split(" ");
+  const lastWord = titleWords[titleWords.length - 1];
+  const leadingWords = titleWords.slice(0, -1).join(" ");
+
   const values = [
     {
-      icon: <Target className="w-8 h-8 text-primary" />,
       title: t.about.values.precision.title,
       description: t.about.values.precision.description,
     },
     {
-      icon: <Lightbulb className="w-8 h-8 text-secondary" />,
       title: t.about.values.innovation.title,
       description: t.about.values.innovation.description,
     },
     {
-      icon: <Rocket className="w-8 h-8 text-accent" />,
       title: t.about.values.speed.title,
       description: t.about.values.speed.description,
     },
     {
-      icon: <Users className="w-8 h-8 text-primary" />,
       title: t.about.values.collaboration.title,
       description: t.about.values.collaboration.description,
     },
   ];
 
   return (
-    <section id="about" className="py-20 bg-muted/30 scroll-mt-24">
-      <div className="container mx-auto px-4">
-        <div className="text-center mb-16">
-          <h2 className="text-3xl md:text-4xl font-bold mb-4">
-            {t.about.title.split(" ")[0]}{" "}
-            <span className="bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
-              {t.about.title.split(" ").slice(1).join(" ")}
-            </span>
-          </h2>
-          <p className="text-xl text-muted-foreground max-w-3xl mx-auto text-pretty">
-            {t.about.subtitle}
+    <section
+      id="about"
+      className="py-[90px] px-4 lg:px-12 border-t border-[color:var(--ink-line)]"
+    >
+      <SectionHeader
+        eyebrow="— 01 / About"
+        title={
+          <>
+            {leadingWords}
+            {leadingWords && " "}
+            <em className="not-italic text-brand-grad">{lastWord}</em>
+          </>
+        }
+        lead={t.about.subtitle}
+      />
+
+      <div className="mt-12 lg:mt-16 grid grid-cols-1 lg:grid-cols-[1fr_1.1fr] gap-12 lg:gap-14 lg:items-start">
+        <ScrollReveal>
+          <h3 className="text-2xl font-semibold tracking-[-0.02em] mb-5">
+            {t.about.mission.title}
+          </h3>
+          <p className="text-[15px] leading-[1.65] text-[color:var(--ink-muted)] mb-4">
+            {t.about.mission.paragraph1}
           </p>
-        </div>
+          <p className="text-[15px] leading-[1.65] text-[color:var(--ink-muted)] mb-4">
+            {t.about.mission.paragraph2}
+          </p>
+          <p className="text-[15px] leading-[1.65] text-[color:var(--ink-muted)]">
+            {t.about.mission.paragraph3}
+          </p>
+        </ScrollReveal>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center mb-16">
-          <div>
-            <h3 className="text-2xl font-bold mb-6">{t.about.mission.title}</h3>
-            <p className="text-lg text-muted-foreground mb-6 leading-relaxed">
-              {t.about.mission.paragraph1}
-            </p>
-            <p className="text-lg text-muted-foreground mb-6 leading-relaxed">
-              {t.about.mission.paragraph2}
-            </p>
-            <p className="text-lg text-muted-foreground leading-relaxed">
-              {t.about.mission.paragraph3}
-            </p>
-          </div>
-          <div className="relative">
-            <div className="w-full h-80 bg-gradient-to-br from-primary/20 to-secondary/20 rounded-2xl flex items-center justify-center overflow-hidden">
-              {/* Dragon */}
-              <div className="text-6xl animate-float z-10 relative">🐉</div>
-
-              {/* Code lines coming from dragon */}
-              <div className="absolute inset-0 pointer-events-none">
-                {/* Line 1 */}
-                <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 animate-code-flow-1">
-                  <div className="text-xs font-mono text-primary/80 whitespace-nowrap">
-                    const code = {"{"}...{"}"};
-                  </div>
-                </div>
-
-                {/* Line 2 */}
-                <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 animate-code-flow-2">
-                  <div className="text-xs font-mono text-secondary/80 whitespace-nowrap">
-                    {"<"}Component {"/>"}
-                  </div>
-                </div>
-
-                {/* Line 3 */}
-                <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 animate-code-flow-3">
-                  <div className="text-xs font-mono text-accent/80 whitespace-nowrap">
-                    function() {"{"}...{"}"}
-                  </div>
-                </div>
-
-                {/* Line 4 */}
-                <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 animate-code-flow-4">
-                  <div className="text-xs font-mono text-primary/80 whitespace-nowrap">
-                    export default
-                  </div>
-                </div>
-
-                {/* Line 5 */}
-                <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 animate-code-flow-5">
-                  <div className="text-xs font-mono text-secondary/80 whitespace-nowrap">
-                    import React
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           {values.map((value, index) => (
-            <Card
-              key={index}
-              className="border-border/50 hover:border-primary/50 transition-colors duration-300"
-            >
-              <CardContent className="p-6 text-center">
-                <div className="flex justify-center mb-4">{value.icon}</div>
-                <h4 className="text-xl font-semibold mb-3">{value.title}</h4>
-                <p className="text-muted-foreground text-sm leading-relaxed">
+            <ScrollReveal key={value.title} delay={index * 0.08}>
+              <div className="relative h-full overflow-hidden bg-[color:var(--ink-bg-2)] border border-[color:var(--ink-line)] rounded-2xl p-6">
+                <div className="absolute -top-8 -right-8 w-32 h-32 bg-[radial-gradient(circle,oklch(0.5_0.15_180_/_0.2),transparent_70%)] blur-2xl pointer-events-none" />
+                <div className="relative z-[2] w-9 h-9 rounded-xl bg-gradient-to-b from-[oklch(0.3_0.08_180)] to-[oklch(0.2_0.05_170)] border border-[color:oklch(0.5_0.12_180_/_0.5)] mb-4 flex items-center justify-center shadow-[0_0_16px_oklch(0.5_0.15_180_/_0.2)]">
+                  <div className="w-[14px] h-[14px] rounded-[4px] brand-grad" />
+                </div>
+                <h4 className="relative z-[2] text-[15px] font-semibold tracking-[-0.01em] mb-2">
+                  {value.title}
+                </h4>
+                <p className="relative z-[2] text-[12.5px] leading-[1.55] text-[color:var(--ink-muted)]">
                   {value.description}
                 </p>
-              </CardContent>
-            </Card>
+              </div>
+            </ScrollReveal>
           ))}
         </div>
       </div>

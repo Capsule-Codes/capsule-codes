@@ -35,7 +35,7 @@ export function SimpleLanguageSwitcher() {
       <Button
         variant="ghost"
         size="sm"
-        className="gap-2"
+        className="h-9 px-3 gap-2 rounded-full"
         onClick={() => setIsOpen(!isOpen)}
       >
         <Globe className="h-4 w-4" />
