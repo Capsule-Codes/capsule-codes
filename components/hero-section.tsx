@@ -20,13 +20,13 @@ export function HeroSection() {
 
       {/* constellation — 6 on md+, 2 on mobile */}
       <ParallaxConstellation className="absolute inset-0 pointer-events-none">
-        <Capsule size="sm" className="absolute top-[85%] md:top-[18%] left-[6%] md:left-[8%] rotate-[-6deg] animate-capsule-drift opacity-90">web platforms</Capsule>
-        <Capsule size="sm" className="absolute top-[90%] md:top-[14%] right-[6%] md:right-[12%] rotate-[5deg] animate-capsule-drift opacity-90" style={{ animationDelay: "1s" }}>mobile apps</Capsule>
+        <Capsule size="sm" className="absolute top-[85%] md:top-[18%] left-[6%] md:left-[8%] rotate-[-6deg] animate-capsule-drift opacity-100 dark:opacity-90">web platforms</Capsule>
+        <Capsule size="sm" className="absolute top-[90%] md:top-[14%] right-[6%] md:right-[12%] rotate-[5deg] animate-capsule-drift opacity-100 dark:opacity-90" style={{ animationDelay: "1s" }}>mobile apps</Capsule>
         {/* the remaining 4 are hidden on mobile */}
-        <Capsule size="sm" className="absolute top-[70%] left-[6%] rotate-[2deg] opacity-60 hidden md:inline-flex animate-capsule-drift" style={{ animationDelay: "2s" }}>fintech</Capsule>
-        <Capsule size="sm" className="absolute top-[75%] right-[9%] rotate-[-4deg] opacity-60 hidden md:inline-flex animate-capsule-drift" style={{ animationDelay: "3s" }}>edtech</Capsule>
-        <Capsule size="sm" dot={false} className="absolute top-[42%] left-[14%] rotate-[3deg] opacity-30 hidden md:inline-flex animate-capsule-drift" style={{ animationDelay: "1.5s" }}>react native</Capsule>
-        <Capsule size="sm" dot={false} className="absolute top-[38%] right-[16%] rotate-[-3deg] opacity-30 hidden md:inline-flex animate-capsule-drift" style={{ animationDelay: "2.5s" }}>next.js</Capsule>
+        <Capsule size="sm" className="absolute top-[70%] left-[6%] rotate-[2deg] opacity-85 dark:opacity-60 hidden md:inline-flex animate-capsule-drift" style={{ animationDelay: "2s" }}>fintech</Capsule>
+        <Capsule size="sm" className="absolute top-[75%] right-[9%] rotate-[-4deg] opacity-85 dark:opacity-60 hidden md:inline-flex animate-capsule-drift" style={{ animationDelay: "3s" }}>edtech</Capsule>
+        <Capsule size="sm" dot={false} className="absolute top-[42%] left-[14%] rotate-[3deg] opacity-60 dark:opacity-30 hidden md:inline-flex animate-capsule-drift" style={{ animationDelay: "1.5s" }}>react native</Capsule>
+        <Capsule size="sm" dot={false} className="absolute top-[38%] right-[16%] rotate-[-3deg] opacity-60 dark:opacity-30 hidden md:inline-flex animate-capsule-drift" style={{ animationDelay: "2.5s" }}>next.js</Capsule>
       </ParallaxConstellation>
 
       <div className="container mx-auto px-4 lg:px-12 py-[100px] lg:py-[120px] text-center relative z-10">
