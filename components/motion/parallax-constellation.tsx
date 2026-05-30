@@ -43,7 +43,12 @@ export function ParallaxConstellation({ children, className }: ParallaxConstella
 
   return (
     <div ref={ref} className={className}>
-      <motion.div style={{ x: sx, y: sy }}>{children}</motion.div>
+      <motion.div
+        style={{ x: sx, y: sy }}
+        className="absolute inset-0 pointer-events-none"
+      >
+        {children}
+      </motion.div>
     </div>
   );
 }
