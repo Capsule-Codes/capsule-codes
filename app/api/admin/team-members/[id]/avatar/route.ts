@@ -3,6 +3,7 @@ import {
   processAndUploadAvatar,
   deleteImageFromStorage,
 } from "@/lib/server/media";
+import { supabaseAdmin } from "@/lib/server/supabase-admin";
 
 const ALLOWED_MIME = new Set([
   "image/jpeg",
@@ -17,7 +18,14 @@ export async function POST(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const { id: reviewId } = await params;
+    if (!supabaseAdmin) {
+      return NextResponse.json(
+        { message: "Service role key not configured" },
+        { status: 500 }
+      );
+    }
+
+    const { id: memberId } = await params;
     const form = await req.formData();
     const file = form.get("avatar") as File;
 
@@ -36,22 +44,39 @@ export async function POST(
     }
 
     const { avatarUrl, path } = await processAndUploadAvatar(
-      reviewId,
+      memberId,
       file,
-      "reviews"
+      "team"
     );
+
+    // Persist directly so callers can refresh state without an extra PUT.
+    const { error: updateError } = await supabaseAdmin
+      .from("team_members")
+      .update({
+        avatar: avatarUrl,
+        avatar_blob_key: path,
+        updated_at: new Date().toISOString(),
+      })
+      .eq("id", memberId);
+
+    if (updateError) {
+      console.error(
+        "Error updating team_members.avatar after upload:",
+        updateError
+      );
+      // Still return the URL — caller can decide how to recover.
+    }
 
     return NextResponse.json(
       {
         ok: true,
         avatarUrl,
-        // Kept under `blobKey` for backward-compat with any existing caller.
-        blobKey: path,
+        avatar_blob_key: path,
       },
       { status: 201 }
     );
   } catch (err: any) {
-    console.error("Error uploading avatar:", err);
+    console.error("Error uploading team avatar:", err);
     return NextResponse.json(
       { message: err?.message || "Unexpected error" },
       { status: 500 }
@@ -61,9 +86,17 @@ export async function POST(
 
 export async function DELETE(
   req: Request,
-  { params: _params }: { params: Promise<{ id: string }> }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    if (!supabaseAdmin) {
+      return NextResponse.json(
+        { message: "Service role key not configured" },
+        { status: 500 }
+      );
+    }
+
+    const { id: memberId } = await params;
     const { searchParams } = new URL(req.url);
     const blobKey =
       searchParams.get("blobKey") || searchParams.get("path");
@@ -77,6 +110,15 @@ export async function DELETE(
 
     await deleteImageFromStorage(blobKey);
 
+    await supabaseAdmin
+      .from("team_members")
+      .update({
+        avatar: null,
+        avatar_blob_key: null,
+        updated_at: new Date().toISOString(),
+      })
+      .eq("id", memberId);
+
     return NextResponse.json(
       {
         ok: true,
@@ -85,7 +127,7 @@ export async function DELETE(
       { status: 200 }
     );
   } catch (err: any) {
-    console.error("Error deleting avatar:", err);
+    console.error("Error deleting team avatar:", err);
     return NextResponse.json(
       { message: err?.message || "Unexpected error" },
       { status: 500 }

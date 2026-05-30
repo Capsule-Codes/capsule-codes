@@ -32,7 +32,7 @@ export interface Project {
     it: ProjectTranslations;
   };
   image: string; // Deprecated - kept for backward compatibility
-  images?: ProjectImage[]; // New field for Azure Blob Storage images
+  images?: ProjectImage[]; // Public URLs in Supabase Storage (blobKey holds full URL)
   technologies: string[];
   liveUrl?: string;
   githubUrl?: string;

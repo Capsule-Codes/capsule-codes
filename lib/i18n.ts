@@ -704,7 +704,7 @@ export const translations: Record<Language, Translations> = {
         updateError: "Error updating",
       },
       projects: {
-        images: "Project Images (Azure)",
+        images: "Project Images",
         imageDescription:
           "Max 10 images. Will be automatically converted to WebP.",
         selectedImages: "selected",
@@ -1089,7 +1089,7 @@ export const translations: Record<Language, Translations> = {
         updateError: "Error al actualizar",
       },
       projects: {
-        images: "Imágenes del Proyecto (Azure)",
+        images: "Imágenes del Proyecto",
         imageDescription:
           "Máximo 10 imágenes. Se convertirán a WebP automáticamente.",
         selectedImages: "seleccionadas",
@@ -1473,7 +1473,7 @@ export const translations: Record<Language, Translations> = {
         updateError: "Errore nell'aggiornamento",
       },
       projects: {
-        images: "Immagini del Progetto (Azure)",
+        images: "Immagini del Progetto",
         imageDescription:
           "Massimo 10 immagini. Saranno convertite in WebP automaticamente.",
         selectedImages: "selezionate",

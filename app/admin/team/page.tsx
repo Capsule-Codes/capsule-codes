@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, type ChangeEvent } from "react";
 import {
   Dialog,
   DialogContent,
@@ -14,7 +14,7 @@ import {
   type LangCode,
 } from "@/components/admin/multilingual-tabs";
 import { useSupabase } from "@/lib/supabase-context";
-import { Plus, Pencil, Trash2, Save, X, Loader2 } from "lucide-react";
+import { Plus, Pencil, Trash2, Save, X, Loader2, Upload } from "lucide-react";
 import type { TeamMember } from "@/lib/data-context";
 
 type TeamCategory = "cofounder" | "developer";
@@ -82,6 +82,11 @@ export default function AdminTeamPage() {
   const [form, setForm] = useState<TeamForm>(EMPTY_FORM);
   const [isSaving, setIsSaving] = useState(false);
 
+  // Avatar upload state (mirrors Reviews admin)
+  const [selectedAvatar, setSelectedAvatar] = useState<File | null>(null);
+  const [uploadingAvatar, setUploadingAvatar] = useState(false);
+  const [avatarPreview, setAvatarPreview] = useState<string>("");
+
   // ------------- sorting -------------
   const sortedMembers = useMemo(() => {
     const categoryRank: Record<TeamCategory, number> = {
@@ -129,40 +134,96 @@ export default function AdminTeamPage() {
         },
       },
     });
+    setAvatarPreview(member.avatar ?? "");
+    setSelectedAvatar(null);
     setIsDialogOpen(true);
   };
 
   const handleNewMember = () => {
     setEditingMember(null);
     setForm(EMPTY_FORM);
+    setAvatarPreview("");
+    setSelectedAvatar(null);
     setIsDialogOpen(true);
   };
 
   const resetForm = () => {
     setEditingMember(null);
     setForm(EMPTY_FORM);
+    setAvatarPreview("");
+    setSelectedAvatar(null);
     setIsDialogOpen(false);
+  };
+
+  const handleAvatarSelect = (e: ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setSelectedAvatar(file);
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      setAvatarPreview(reader.result as string);
+    };
+    reader.readAsDataURL(file);
   };
 
   const handleSave = async () => {
     setIsSaving(true);
+    setUploadingAvatar(true);
     try {
+      let avatarUrl = form.avatar.trim() || null;
+      let avatarBlobKey = editingMember?.avatar_blob_key ?? null;
+
       const payload = {
         category: form.category,
-        avatar: form.avatar.trim() || null,
-        avatar_blob_key: editingMember?.avatar_blob_key ?? null,
+        avatar: avatarUrl,
+        avatar_blob_key: avatarBlobKey,
         order: form.order,
         published: form.published,
         translations: form.translations,
       };
+
+      let memberId: string;
       if (editingMember) {
         await updateTeamMember(editingMember.id, payload);
+        memberId = editingMember.id;
       } else {
         // Server sets id/created_at/updated_at.
-        await addTeamMember(
+        const created = await addTeamMember(
           payload as Omit<TeamMember, "id" | "created_at" | "updated_at">,
         );
+        memberId = (created as TeamMember | undefined)?.id ?? "";
       }
+
+      // Upload avatar after the row exists, then sync the URL back.
+      if (selectedAvatar && memberId) {
+        const formData = new FormData();
+        formData.append("avatar", selectedAvatar);
+
+        const response = await fetch(
+          `/api/admin/team-members/${memberId}/avatar`,
+          {
+            method: "POST",
+            body: formData,
+          },
+        );
+
+        if (!response.ok) {
+          const errorData = await response.json();
+          throw new Error(errorData.message || "Error uploading avatar");
+        }
+
+        const result = await response.json();
+        avatarUrl = result.avatarUrl;
+        avatarBlobKey = result.avatar_blob_key;
+
+        // The route already persisted these, but mirror locally too so any
+        // stale form state stays consistent.
+        await updateTeamMember(memberId, {
+          avatar: avatarUrl,
+          avatar_blob_key: avatarBlobKey,
+        });
+      }
+
       await refreshData();
       resetForm();
     } catch (err) {
@@ -171,6 +232,7 @@ export default function AdminTeamPage() {
       alert(`Error saving: ${msg}`);
     } finally {
       setIsSaving(false);
+      setUploadingAvatar(false);
     }
   };
 
@@ -420,14 +482,55 @@ export default function AdminTeamPage() {
                   id="team-avatar"
                   type="url"
                   value={form.avatar}
-                  onChange={(e) =>
-                    setForm({ ...form, avatar: e.target.value })
-                  }
+                  onChange={(e) => {
+                    setForm({ ...form, avatar: e.target.value });
+                    if (!selectedAvatar) setAvatarPreview(e.target.value);
+                  }}
                   placeholder="https://..."
                   className={inputClass}
                 />
                 <p className="font-mono text-[10px] text-[color:var(--ink-muted)] mt-1.5">
                   Optional. Public URL for the profile picture.
+                </p>
+              </div>
+
+              {/* Avatar upload */}
+              <div>
+                <span className={labelClass}>Avatar Upload</span>
+                <div className="flex items-center gap-3">
+                  <label className={`${ghostBtn} cursor-pointer`}>
+                    <Upload className="w-4 h-4" />
+                    Choose file
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={handleAvatarSelect}
+                      disabled={uploadingAvatar}
+                      className="hidden"
+                    />
+                  </label>
+                  {avatarPreview && (
+                    <div className="size-12 rounded-full overflow-hidden border border-[color:var(--ink-line)] shrink-0">
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img
+                        src={avatarPreview}
+                        alt="Avatar preview"
+                        className="w-full h-full object-cover"
+                      />
+                    </div>
+                  )}
+                  {selectedAvatar && (
+                    <span className="font-mono text-[11px] text-[color:var(--ink-muted)] truncate">
+                      {selectedAvatar.name}
+                    </span>
+                  )}
+                </div>
+                <p className="font-mono text-[10px] text-[color:var(--ink-muted)] mt-1.5">
+                  Optional. Uploads to{" "}
+                  <span className="text-foreground">
+                    /api/admin/team-members/[id]/avatar
+                  </span>{" "}
+                  after the member is saved.
                 </p>
               </div>
 

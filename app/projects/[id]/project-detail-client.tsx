@@ -25,10 +25,11 @@ export function ProjectDetailClient({ project }: ProjectDetailClientProps) {
 
   const content = getProjectContent(project);
   
-  // Get all images (use images array if available, otherwise fallback to single image)
+  // Get all images (use images array if available, otherwise fallback to single image).
+  // blobKey now stores a full public URL (Supabase Storage), so use it as-is.
   const images = project.images && project.images.length > 0
-    ? project.images.sort((a, b) => a.sortOrder - b.sortOrder).map(img => `/api/images/${img.blobKey}`)
-    : project.image 
+    ? project.images.sort((a, b) => a.sortOrder - b.sortOrder).map(img => img.blobKey)
+    : project.image
       ? [project.image]
       : [];
 

@@ -1,6 +1,8 @@
 import { NextResponse } from "next/server";
-import { processAndUploadImages, deleteImageFromAzure } from "@/lib/server/media";
-import type { ProjectImage } from "@/lib/data-context";
+import {
+  processAndUploadImages,
+  deleteImageFromStorage,
+} from "@/lib/server/media";
 
 const MAX_IMAGES = 10;
 const ALLOWED_MIME = new Set([
@@ -54,12 +56,13 @@ export async function POST(
     // Get alt text from form or use default
     const altText = (form.get("altText") as string) || "Project image";
 
-    // Process and upload images
+    // Process and upload images to Supabase Storage
     const uploadedImages = await processAndUploadImages(
       projectId,
       files,
       0,
-      altText
+      altText,
+      "projects"
     );
 
     return NextResponse.json(
@@ -81,11 +84,13 @@ export async function POST(
 
 export async function DELETE(
   req: Request,
-  { params }: { params: Promise<{ id: string }> }
+  { params: _params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const { searchParams } = new URL(req.url);
-    const blobKey = searchParams.get("blobKey");
+    // Accept either ?blobKey=... (legacy field name) or ?path=...
+    const blobKey =
+      searchParams.get("blobKey") || searchParams.get("path");
     const mediaId = searchParams.get("mediaId");
 
     if (!blobKey) {
@@ -95,8 +100,9 @@ export async function DELETE(
       );
     }
 
-    // Delete from Azure
-    await deleteImageFromAzure(blobKey);
+    // deleteImageFromStorage handles full URLs, legacy /api/images/...,
+    // or bare storage paths.
+    await deleteImageFromStorage(blobKey);
 
     return NextResponse.json(
       {

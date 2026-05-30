@@ -214,7 +214,7 @@ export default function AdminProjectsPage() {
 
       const primaryImage =
         projectImages.length > 0
-          ? `/api/images/${projectImages[0].blobKey}`
+          ? projectImages[0].blobKey
           : projectForm.image;
 
       const projectData = {
@@ -282,7 +282,7 @@ export default function AdminProjectsPage() {
         const updatedImages = [...projectImages, ...result.images];
         const newPrimaryImage =
           updatedImages.length > 0
-            ? `/api/images/${updatedImages[0].blobKey}`
+            ? updatedImages[0].blobKey
             : projectForm.image;
 
         await updateProject(projectId, {
@@ -346,9 +346,7 @@ export default function AdminProjectsPage() {
       setProjectImages(updatedImages);
 
       const newPrimaryImage =
-        updatedImages.length > 0
-          ? `/api/images/${updatedImages[0].blobKey}`
-          : "";
+        updatedImages.length > 0 ? updatedImages[0].blobKey : "";
 
       await updateProject(editingProject.id, {
         images: updatedImages,
@@ -402,7 +400,7 @@ export default function AdminProjectsPage() {
     <div className="p-8 lg:p-12 max-w-7xl">
       <Topbar
         title="Projects"
-        subtitle={`${projects.length} items · multilingual · azure images`}
+        subtitle={`${projects.length} items · multilingual · supabase images`}
         actions={
           <button
             type="button"
@@ -630,7 +628,7 @@ export default function AdminProjectsPage() {
               <div className="space-y-3">
                 <div>
                   <label className={labelClass} htmlFor="images">
-                    Project Images (Azure)
+                    Project Images
                   </label>
                   <div className="flex items-center gap-3">
                     <label className={`${ghostBtn} cursor-pointer`}>
@@ -668,7 +666,7 @@ export default function AdminProjectsPage() {
                         >
                           {/* eslint-disable-next-line @next/next/no-img-element */}
                           <img
-                            src={`/api/images/${img.blobKey}`}
+                            src={img.blobKey}
                             alt={img.alt}
                             className="w-full h-full object-cover"
                           />
