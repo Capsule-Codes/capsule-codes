@@ -127,7 +127,7 @@ export function Header() {
           {/* Center pill nav (desktop) */}
           <nav
             aria-label="Primary"
-            className="hidden md:flex items-center bg-[color:var(--hover-bg)] border border-[color:var(--ink-line)] rounded-full p-1"
+            className="hidden lg:flex items-center bg-[color:var(--hover-bg)] border border-[color:var(--ink-line)] rounded-full p-1"
           >
             {navItems.map((item) => {
               const active = isActive(item.id);
@@ -149,7 +149,7 @@ export function Header() {
           </nav>
 
           {/* Right: language + CTA (desktop) */}
-          <div className="hidden md:flex items-center gap-2 shrink-0">
+          <div className="hidden lg:flex items-center gap-2 shrink-0">
             <SimpleLanguageSwitcher />
             <Magnetic>
               <button
@@ -163,7 +163,7 @@ export function Header() {
           </div>
 
           {/* Mobile: language + hamburger */}
-          <div className="flex md:hidden items-center gap-1">
+          <div className="flex lg:hidden items-center gap-1">
             <SimpleLanguageSwitcher />
             <button
               type="button"
@@ -185,7 +185,7 @@ export function Header() {
       {/* Mobile overlay panel */}
       {isMenuOpen && (
         <div
-          className="md:hidden fixed inset-x-0 bottom-0 bg-background/95 backdrop-blur-xl border-t border-[color:var(--ink-line)] overflow-y-auto"
+          className="lg:hidden fixed inset-x-0 bottom-0 bg-background/95 backdrop-blur-xl border-t border-[color:var(--ink-line)] overflow-y-auto"
           style={{ top: 60 }}
         >
           <nav
