@@ -134,7 +134,7 @@ export function ProjectsCarousel({ projects }: ProjectsCarouselProps) {
                           "linear-gradient(180deg, transparent 50%, oklch(0.05 0 0 / 0.95))",
                       }}
                     />
-                    <div className="absolute left-5 right-5 bottom-5 z-[2] flex flex-col gap-2">
+                    <div className="absolute left-5 right-5 bottom-5 z-[2] flex flex-col items-start gap-2">
                       <Capsule size="sm" dot={false}>
                         {getCategoryLabel(project.category, t)}
                       </Capsule>

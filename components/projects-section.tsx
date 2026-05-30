@@ -107,7 +107,7 @@ function BentoCard({ project, featured = false, language, t }: BentoCardProps) {
           }}
         />
         <div
-          className={`absolute left-5 right-5 bottom-5 z-[2] flex flex-col ${
+          className={`absolute left-5 right-5 bottom-5 z-[2] flex flex-col items-start ${
             featured ? "gap-3" : "gap-2"
           }`}
         >
