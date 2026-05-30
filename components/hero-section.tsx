@@ -20,8 +20,8 @@ export function HeroSection() {
 
       {/* constellation — 6 on md+, 2 on mobile */}
       <ParallaxConstellation className="absolute inset-0 pointer-events-none">
-        <Capsule size="sm" className="absolute top-[18%] left-[8%] rotate-[-6deg] animate-capsule-drift opacity-90">web platforms</Capsule>
-        <Capsule size="sm" className="absolute top-[14%] right-[12%] rotate-[5deg] animate-capsule-drift opacity-90" style={{ animationDelay: "1s" }}>mobile apps</Capsule>
+        <Capsule size="sm" className="absolute top-[85%] md:top-[18%] left-[6%] md:left-[8%] rotate-[-6deg] animate-capsule-drift opacity-90">web platforms</Capsule>
+        <Capsule size="sm" className="absolute top-[90%] md:top-[14%] right-[6%] md:right-[12%] rotate-[5deg] animate-capsule-drift opacity-90" style={{ animationDelay: "1s" }}>mobile apps</Capsule>
         {/* the remaining 4 are hidden on mobile */}
         <Capsule size="sm" className="absolute top-[70%] left-[6%] rotate-[2deg] opacity-60 hidden md:inline-flex animate-capsule-drift" style={{ animationDelay: "2s" }}>fintech</Capsule>
         <Capsule size="sm" className="absolute top-[75%] right-[9%] rotate-[-4deg] opacity-60 hidden md:inline-flex animate-capsule-drift" style={{ animationDelay: "3s" }}>edtech</Capsule>
@@ -57,7 +57,7 @@ export function HeroSection() {
 
           <div className="flex flex-col sm:flex-row gap-3 justify-center">
             <Magnetic>
-              <button onClick={() => scroll("projects")} className="brand-grad text-black rounded-full px-6 py-3 text-sm font-semibold shadow-[0_6px_22px_oklch(0.5_0.16_180_/_0.4)] inline-flex items-center gap-2">
+              <button onClick={() => scroll("projects")} className="brand-grad text-on-grad rounded-full px-6 py-3 text-sm font-semibold shadow-[0_6px_22px_oklch(0.5_0.16_180_/_0.4)] inline-flex items-center gap-2">
                 {t.hero.cta.viewProjects} <ArrowRight className="w-4 h-4" />
               </button>
             </Magnetic>

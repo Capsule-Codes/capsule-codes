@@ -75,7 +75,7 @@ export function ContactSection({ contactInfo }: ContactSectionProps) {
   const formLabelClass =
     "font-mono text-[10px] uppercase tracking-[0.06em] text-[color:var(--ink-muted)] mb-1.5 block";
   const inputClass =
-    "w-full bg-[color:oklch(0.06_0_0)] border border-[color:var(--ink-line)] rounded-[10px] px-3.5 py-3 text-sm text-foreground placeholder:text-[color:var(--ink-muted)] focus:outline-none focus:border-[color:var(--brand-cyan)]/50";
+    "w-full bg-[color:var(--input-bg)] border border-[color:var(--ink-line)] rounded-[10px] px-3.5 py-3 text-sm text-foreground placeholder:text-[color:var(--ink-muted)] focus:outline-none focus:border-[color:var(--brand-cyan)]/50";
   const errorClass = "text-[11px] text-[color:oklch(0.65_0.2_25)] mt-1";
 
   return (
@@ -207,7 +207,7 @@ export function ContactSection({ contactInfo }: ContactSectionProps) {
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className="brand-grad text-black rounded-full px-6 py-3 text-sm font-semibold inline-flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="brand-grad text-on-grad rounded-full px-6 py-3 text-sm font-semibold inline-flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {isSubmitting ? (
                     <>

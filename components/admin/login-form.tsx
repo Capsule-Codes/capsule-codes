@@ -45,7 +45,7 @@ export function LoginForm() {
               required
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="w-full bg-[color:oklch(0.06_0_0)] border border-[color:var(--ink-line)] rounded-[10px] px-3.5 py-3 text-sm text-foreground placeholder:text-[color:var(--ink-muted)] focus:outline-none focus:border-[color:var(--brand-cyan)]/50"
+              className="w-full bg-[color:var(--input-bg)] border border-[color:var(--ink-line)] rounded-[10px] px-3.5 py-3 text-sm text-foreground placeholder:text-[color:var(--ink-muted)] focus:outline-none focus:border-[color:var(--brand-cyan)]/50"
               placeholder="you@capsulecodes.com"
             />
           </div>
@@ -57,13 +57,13 @@ export function LoginForm() {
               required
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="w-full bg-[color:oklch(0.06_0_0)] border border-[color:var(--ink-line)] rounded-[10px] px-3.5 py-3 text-sm text-foreground placeholder:text-[color:var(--ink-muted)] focus:outline-none focus:border-[color:var(--brand-cyan)]/50"
+              className="w-full bg-[color:var(--input-bg)] border border-[color:var(--ink-line)] rounded-[10px] px-3.5 py-3 text-sm text-foreground placeholder:text-[color:var(--ink-muted)] focus:outline-none focus:border-[color:var(--brand-cyan)]/50"
             />
           </div>
           {error && <p className="text-[12px] text-[color:oklch(0.65_0.2_25)]">{error}</p>}
           <div className="flex justify-end mt-2">
             <Magnetic>
-              <button type="submit" disabled={submitting} className="brand-grad text-black rounded-full px-5 py-2.5 text-sm font-semibold inline-flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed">
+              <button type="submit" disabled={submitting} className="brand-grad text-on-grad rounded-full px-5 py-2.5 text-sm font-semibold inline-flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed">
                 {submitting && <Loader2 className="w-4 h-4 animate-spin" />}
                 {submitting ? "Signing in…" : "Sign in →"}
               </button>

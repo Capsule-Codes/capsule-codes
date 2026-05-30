@@ -17,7 +17,7 @@ const labelClass =
   "font-mono text-[10px] uppercase tracking-[0.06em] text-[color:var(--ink-muted)] mb-1.5 block";
 
 const selectClass =
-  "w-full bg-[color:oklch(0.06_0_0)] border border-[color:var(--ink-line)] rounded-[10px] px-3.5 py-3 text-sm text-foreground placeholder:text-[color:var(--ink-muted)] focus:outline-none focus:border-[color:var(--brand-cyan)]/50";
+  "w-full bg-[color:var(--input-bg)] border border-[color:var(--ink-line)] rounded-[10px] px-3.5 py-3 text-sm text-foreground placeholder:text-[color:var(--ink-muted)] focus:outline-none focus:border-[color:var(--brand-cyan)]/50";
 
 type CapsuleVariant = "default" | "info" | "success" | "warning";
 
@@ -190,7 +190,7 @@ export function ContactMessages() {
                         <span className={labelClass}>
                           {t.admin.contactMessages.message}
                         </span>
-                        <div className="bg-[color:oklch(0.06_0_0)] border border-[color:var(--ink-line)] rounded-[10px] px-3.5 py-3 text-sm whitespace-pre-wrap">
+                        <div className="bg-[color:var(--input-bg)] border border-[color:var(--ink-line)] rounded-[10px] px-3.5 py-3 text-sm whitespace-pre-wrap">
                           {message.message}
                         </div>
                       </div>
