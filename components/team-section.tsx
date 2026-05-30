@@ -30,7 +30,7 @@ export function TeamSection({ teamMembers }: TeamSectionProps) {
           {cofounders.map((m, i) => {
             const c = tr(m);
             return (
-              <ScrollReveal key={m.id} delay={i * 0.08}>
+              <ScrollReveal key={m.id} delay={i * 0.08} className="h-full">
                 <MemberCard name={c.name} role={c.role} description={c.description} avatarUrl={m.avatar} />
               </ScrollReveal>
             );
@@ -42,7 +42,7 @@ export function TeamSection({ teamMembers }: TeamSectionProps) {
           {developers.map((m, i) => {
             const c = tr(m);
             return (
-              <ScrollReveal key={m.id} delay={i * 0.08}>
+              <ScrollReveal key={m.id} delay={i * 0.08} className="h-full">
                 <MemberCard name={c.name} role={c.role} description={c.description} avatarUrl={m.avatar} />
               </ScrollReveal>
             );
@@ -55,7 +55,7 @@ export function TeamSection({ teamMembers }: TeamSectionProps) {
 
 function MemberCard({ name, role, description, avatarUrl }: { name: string; role: string; description: string; avatarUrl: string | null }) {
   return (
-    <div className="bg-[color:var(--ink-bg-2)] border border-[color:var(--ink-line)] rounded-2xl p-6">
+    <div className="h-full bg-[color:var(--ink-bg-2)] border border-[color:var(--ink-line)] rounded-2xl p-6">
       <div className="flex items-center gap-3.5 mb-3.5">
         <div className="size-[52px] rounded-full shrink-0 bg-gradient-to-br from-[oklch(0.4_0.15_180)] to-[oklch(0.5_0.18_155)] shadow-[0_0_16px_oklch(0.5_0.15_180_/_0.3)] overflow-hidden">
           {avatarUrl && <img src={avatarUrl} alt={name} className="w-full h-full object-cover" />}
