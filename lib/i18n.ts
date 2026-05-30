@@ -324,6 +324,27 @@ export interface Translations {
       currentImages: string;
       maxImages: string;
     };
+    teamMembers: {
+      title: string;
+      newMember: string;
+      editMember: string;
+      name: string;
+      role: string;
+      description: string;
+      avatar: string;
+      category: string;
+      order: string;
+      published: string;
+      selectCategory: string;
+      categories: {
+        cofounder: string;
+        developer: string;
+      };
+      requiredFields: string;
+      deleteConfirm: string;
+      saveError: string;
+      deleteError: string;
+    };
   };
 }
 
@@ -711,6 +732,27 @@ export const translations: Record<Language, Translations> = {
         currentImages: "Current Images",
         maxImages: "Maximum 10 images allowed",
       },
+      teamMembers: {
+        title: "Team Management",
+        newMember: "New Team Member",
+        editMember: "Edit Team Member",
+        name: "Name",
+        role: "Role",
+        description: "Description",
+        avatar: "Avatar URL",
+        category: "Category",
+        order: "Order",
+        published: "Published",
+        selectCategory: "Select category",
+        categories: {
+          cofounder: "Co-Founder",
+          developer: "Developer",
+        },
+        requiredFields: "Please fill all required fields",
+        deleteConfirm: "Are you sure you want to delete this team member?",
+        saveError: "Error saving team member",
+        deleteError: "Error deleting team member",
+      },
     },
   },
   es: {
@@ -1096,6 +1138,27 @@ export const translations: Record<Language, Translations> = {
         currentImages: "Imágenes Actuales",
         maxImages: "Máximo 10 imágenes permitidas",
       },
+      teamMembers: {
+        title: "Gestión de Equipo",
+        newMember: "Nuevo Miembro del Equipo",
+        editMember: "Editar Miembro del Equipo",
+        name: "Nombre",
+        role: "Rol",
+        description: "Descripción",
+        avatar: "URL del Avatar",
+        category: "Categoría",
+        order: "Orden",
+        published: "Publicado",
+        selectCategory: "Seleccionar categoría",
+        categories: {
+          cofounder: "Co-Fundador",
+          developer: "Desarrollador",
+        },
+        requiredFields: "Por favor completa todos los campos requeridos",
+        deleteConfirm: "¿Estás seguro de que quieres eliminar este miembro del equipo?",
+        saveError: "Error al guardar el miembro del equipo",
+        deleteError: "Error al eliminar el miembro del equipo",
+      },
     },
   },
   it: {
@@ -1479,6 +1542,27 @@ export const translations: Record<Language, Translations> = {
         selectedImages: "selezionate",
         currentImages: "Immagini Attuali",
         maxImages: "Massimo 10 immagini consentite",
+      },
+      teamMembers: {
+        title: "Gestione Team",
+        newMember: "Nuovo Membro del Team",
+        editMember: "Modifica Membro del Team",
+        name: "Nome",
+        role: "Ruolo",
+        description: "Descrizione",
+        avatar: "URL Avatar",
+        category: "Categoria",
+        order: "Ordine",
+        published: "Pubblicato",
+        selectCategory: "Seleziona categoria",
+        categories: {
+          cofounder: "Co-Fondatore",
+          developer: "Sviluppatore",
+        },
+        requiredFields: "Compila tutti i campi obbligatori",
+        deleteConfirm: "Sei sicuro di voler eliminare questo membro del team?",
+        saveError: "Errore nel salvataggio del membro del team",
+        deleteError: "Errore nell'eliminazione del membro del team",
       },
     },
   },
