@@ -18,7 +18,7 @@ export function OverviewCard({ href, title, description, count }: OverviewCardPr
     >
       <h3 className="text-lg font-semibold tracking-[-0.01em] mb-2">{title}</h3>
       <p className="text-[12.5px] leading-[1.55] text-[color:var(--ink-muted)]">{description}</p>
-      <div className="mt-6 flex items-center justify-between text-[color:var(--ink-muted)] group-hover:text-foreground transition">
+      <div className="mt-auto pt-6 flex items-center justify-between text-[color:var(--ink-muted)] group-hover:text-foreground transition">
         {typeof count === "number" ? (
           <Capsule size="sm" dot={false} className="!text-[10px]">{count} items</Capsule>
         ) : (
