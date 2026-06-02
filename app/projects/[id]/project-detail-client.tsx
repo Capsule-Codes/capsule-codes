@@ -38,7 +38,7 @@ export function ProjectDetailClient({ project }: ProjectDetailClientProps) {
       {/* Back Button */}
       <div className="mb-8">
         <Button asChild variant="outline" size="sm">
-          <Link href="/projects">
+          <Link href="/#projects">
             <ArrowLeft className="w-4 h-4 mr-2" />
             {t.projects.backToProjects}
           </Link>
