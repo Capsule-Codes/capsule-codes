@@ -18,6 +18,7 @@ import { useSupabase } from "@/lib/supabase-context";
 import { useLanguage } from "@/hooks/use-language";
 import type { Project, ProjectImage } from "@/lib/data-context";
 import { compressImages, validateImageFiles } from "@/lib/image-compression";
+import { GRADIENT_PRESETS, CUSTOM_GRADIENT_KEY } from "@/lib/gradient-presets";
 import {
   Plus,
   Edit,
@@ -44,9 +45,15 @@ interface ProjectForm {
   technologies: string;
   category: ProjectCategory;
   liveUrl: string;
-  githubUrl: string;
+  appStoreUrl: string;
+  playStoreUrl: string;
+  gradientPreset: string;
+  gradientFrom: string;
+  gradientTo: string;
+  coverMediaId: string;
   featured: boolean;
   published: boolean;
+  showOnHome: boolean;
 }
 
 const EMPTY_FORM: ProjectForm = {
@@ -61,9 +68,15 @@ const EMPTY_FORM: ProjectForm = {
   technologies: "",
   category: "web",
   liveUrl: "",
-  githubUrl: "",
+  appStoreUrl: "",
+  playStoreUrl: "",
+  gradientPreset: "",
+  gradientFrom: "",
+  gradientTo: "",
+  coverMediaId: "",
   featured: false,
   published: false,
+  showOnHome: true,
 };
 
 const inputClass =
@@ -163,9 +176,15 @@ export default function AdminProjectsPage() {
       technologies: project.technologies.join(", "),
       category: project.category,
       liveUrl: project.liveUrl || "",
-      githubUrl: project.githubUrl || "",
+      appStoreUrl: project.appStoreUrl || "",
+      playStoreUrl: project.playStoreUrl || "",
+      gradientPreset: project.gradientPreset || "",
+      gradientFrom: project.gradientFrom || "",
+      gradientTo: project.gradientTo || "",
+      coverMediaId: project.coverMediaId || "",
       featured: project.featured || false,
       published: project.published || false,
+      showOnHome: project.showOnHome !== false,
     });
     setProjectImages(project.images || []);
     setSelectedImages([]);
@@ -229,9 +248,15 @@ export default function AdminProjectsPage() {
           .filter((tech) => tech),
         category: projectForm.category,
         liveUrl: projectForm.liveUrl,
-        githubUrl: projectForm.githubUrl,
+        appStoreUrl: projectForm.appStoreUrl,
+        playStoreUrl: projectForm.playStoreUrl,
+        gradientPreset: projectForm.gradientPreset,
+        gradientFrom: projectForm.gradientFrom,
+        gradientTo: projectForm.gradientTo,
+        coverMediaId: projectForm.coverMediaId,
         featured: projectForm.featured,
         published: projectForm.published,
+        showOnHome: projectForm.showOnHome,
       };
 
       let projectId: string;
@@ -348,9 +373,20 @@ export default function AdminProjectsPage() {
       const newPrimaryImage =
         updatedImages.length > 0 ? updatedImages[0].blobKey : "";
 
+      // If the deleted image was the selected cover, reset it (avoids a stale
+      // cover_media_id pointing at a now-missing image).
+      const coverCleared = projectForm.coverMediaId === image.mediaId;
+      const nextCoverMediaId = coverCleared
+        ? updatedImages[0]?.mediaId ?? ""
+        : projectForm.coverMediaId;
+      if (coverCleared) {
+        setProjectForm((f) => ({ ...f, coverMediaId: nextCoverMediaId }));
+      }
+
       await updateProject(editingProject.id, {
         images: updatedImages,
         image: newPrimaryImage,
+        ...(coverCleared ? { coverMediaId: nextCoverMediaId } : {}),
       } as Partial<Project>);
       await refreshData();
     } catch (error) {
@@ -657,29 +693,61 @@ export default function AdminProjectsPage() {
 
                 {projectImages.length > 0 && (
                   <div>
-                    <span className={labelClass}>Current Images</span>
+                    <span className={labelClass}>
+                      Current Images · click to set cover
+                    </span>
                     <div className="grid grid-cols-3 sm:grid-cols-4 gap-2 mt-1">
-                      {projectImages.map((img) => (
-                        <div
-                          key={img.mediaId}
-                          className="relative group rounded-lg overflow-hidden border border-[color:var(--ink-line)] aspect-square"
-                        >
-                          {/* eslint-disable-next-line @next/next/no-img-element */}
-                          <img
-                            src={img.blobKey}
-                            alt={img.alt}
-                            className="w-full h-full object-cover"
-                          />
-                          <button
-                            type="button"
-                            onClick={() => handleDeleteImage(img)}
-                            className="absolute top-1 right-1 size-6 inline-flex items-center justify-center rounded-md bg-black/70 text-white opacity-0 group-hover:opacity-100 transition"
-                            aria-label="Delete image"
+                      {projectImages.map((img, idx) => {
+                        const isCover = projectForm.coverMediaId
+                          ? projectForm.coverMediaId === img.mediaId
+                          : idx === 0;
+                        return (
+                          <div
+                            key={img.mediaId}
+                            className={`relative group rounded-lg overflow-hidden border border-[color:var(--ink-line)] aspect-square ${
+                              isCover
+                                ? "ring-2 ring-[color:var(--brand-cyan)]"
+                                : ""
+                            }`}
                           >
-                            <Trash2 className="w-3 h-3" />
-                          </button>
-                        </div>
-                      ))}
+                            {/* eslint-disable-next-line @next/next/no-img-element */}
+                            <img
+                              src={img.blobKey}
+                              alt={img.alt}
+                              className="w-full h-full object-cover"
+                            />
+                            {/* Set-as-cover: covers the image, keyboard focusable */}
+                            <button
+                              type="button"
+                              onClick={() =>
+                                setProjectForm({
+                                  ...projectForm,
+                                  coverMediaId: img.mediaId,
+                                })
+                              }
+                              title="Set as cover"
+                              aria-pressed={isCover}
+                              className="absolute inset-0 w-full h-full focus:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--brand-cyan)]"
+                            >
+                              <span className="sr-only">Set as cover</span>
+                            </button>
+                            {isCover && (
+                              <span className="absolute top-1 left-1 z-10 px-1.5 py-0.5 rounded-md bg-[color:var(--brand-cyan)] text-on-grad font-mono text-[9px] uppercase tracking-[0.06em] leading-none pointer-events-none">
+                                Cover
+                              </span>
+                            )}
+                            {/* Delete: sibling button on top, keyboard focusable */}
+                            <button
+                              type="button"
+                              onClick={() => handleDeleteImage(img)}
+                              className="absolute top-1 right-1 z-10 size-6 inline-flex items-center justify-center rounded-md bg-black/70 text-white opacity-0 group-hover:opacity-100 focus-visible:opacity-100 transition cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-white"
+                              aria-label="Delete image"
+                            >
+                              <Trash2 className="w-3 h-3" />
+                            </button>
+                          </div>
+                        );
+                      })}
                     </div>
                   </div>
                 )}
@@ -712,47 +780,187 @@ export default function AdminProjectsPage() {
               </div>
 
               {/* URLs */}
+              <div>
+                <label className={labelClass} htmlFor="liveUrl">
+                  Web URL
+                </label>
+                <input
+                  id="liveUrl"
+                  type="url"
+                  value={projectForm.liveUrl}
+                  onChange={(e) =>
+                    setProjectForm({
+                      ...projectForm,
+                      liveUrl: e.target.value,
+                    })
+                  }
+                  placeholder="https://example.com"
+                  className={inputClass}
+                />
+              </div>
+
+              {/* Store URLs */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
-                  <label className={labelClass} htmlFor="liveUrl">
-                    Demo URL
+                  <label className={labelClass} htmlFor="appStoreUrl">
+                    App Store URL
                   </label>
                   <input
-                    id="liveUrl"
+                    id="appStoreUrl"
                     type="url"
-                    value={projectForm.liveUrl}
+                    value={projectForm.appStoreUrl}
                     onChange={(e) =>
                       setProjectForm({
                         ...projectForm,
-                        liveUrl: e.target.value,
+                        appStoreUrl: e.target.value,
                       })
                     }
-                    placeholder="https://demo.example.com"
+                    placeholder="https://apps.apple.com/app/..."
                     className={inputClass}
                   />
                 </div>
                 <div>
-                  <label className={labelClass} htmlFor="githubUrl">
-                    GitHub URL
+                  <label className={labelClass} htmlFor="playStoreUrl">
+                    Google Play URL
                   </label>
                   <input
-                    id="githubUrl"
+                    id="playStoreUrl"
                     type="url"
-                    value={projectForm.githubUrl}
+                    value={projectForm.playStoreUrl}
                     onChange={(e) =>
                       setProjectForm({
                         ...projectForm,
-                        githubUrl: e.target.value,
+                        playStoreUrl: e.target.value,
                       })
                     }
-                    placeholder="https://github.com/user/repo"
+                    placeholder="https://play.google.com/store/apps/..."
                     className={inputClass}
                   />
                 </div>
               </div>
 
+              {/* Gradient preset */}
+              <div>
+                <span className={labelClass}>Gradient Preset</span>
+                <div className="flex flex-wrap items-center gap-2 mt-1">
+                  <button
+                    type="button"
+                    onClick={() =>
+                      setProjectForm({ ...projectForm, gradientPreset: "" })
+                    }
+                    title="Default (Cyan)"
+                    aria-pressed={!projectForm.gradientPreset}
+                    className={`size-9 rounded-lg border border-[color:var(--ink-line)] text-[color:var(--ink-muted)] inline-flex items-center justify-center text-[10px] font-mono uppercase tracking-[0.04em] hover:text-foreground transition ${
+                      !projectForm.gradientPreset
+                        ? "ring-2 ring-[color:var(--brand-cyan)]"
+                        : ""
+                    }`}
+                  >
+                    Def
+                  </button>
+                  {GRADIENT_PRESETS.map((preset) => (
+                    <button
+                      key={preset.key}
+                      type="button"
+                      onClick={() =>
+                        setProjectForm({
+                          ...projectForm,
+                          gradientPreset: preset.key,
+                        })
+                      }
+                      title={preset.label}
+                      aria-pressed={projectForm.gradientPreset === preset.key}
+                      style={{ background: preset.swatch }}
+                      className={`size-9 rounded-lg border border-[color:var(--ink-line)] transition ${
+                        projectForm.gradientPreset === preset.key
+                          ? "ring-2 ring-[color:var(--brand-cyan)]"
+                          : ""
+                      }`}
+                    />
+                  ))}
+                  <button
+                    type="button"
+                    onClick={() =>
+                      setProjectForm({
+                        ...projectForm,
+                        gradientPreset: CUSTOM_GRADIENT_KEY,
+                        gradientFrom: projectForm.gradientFrom || "#22d3ee",
+                        gradientTo: projectForm.gradientTo || "#0e7490",
+                      })
+                    }
+                    title="Custom"
+                    aria-pressed={
+                      projectForm.gradientPreset === CUSTOM_GRADIENT_KEY
+                    }
+                    style={{
+                      background: `linear-gradient(135deg, ${
+                        projectForm.gradientFrom || "#22d3ee"
+                      }, ${projectForm.gradientTo || "#0e7490"})`,
+                    }}
+                    className={`size-9 rounded-lg border border-[color:var(--ink-line)] inline-flex items-center justify-center text-[10px] font-mono uppercase tracking-[0.04em] text-white/80 transition ${
+                      projectForm.gradientPreset === CUSTOM_GRADIENT_KEY
+                        ? "ring-2 ring-[color:var(--brand-cyan)]"
+                        : ""
+                    }`}
+                  >
+                    +
+                  </button>
+                </div>
+                {projectForm.gradientPreset === CUSTOM_GRADIENT_KEY && (
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-3">
+                    <div>
+                      <label className={labelClass} htmlFor="gradientFrom">
+                        From color
+                      </label>
+                      <div className="flex items-center gap-2">
+                        <input
+                          id="gradientFrom"
+                          type="color"
+                          value={projectForm.gradientFrom || "#22d3ee"}
+                          onChange={(e) =>
+                            setProjectForm({
+                              ...projectForm,
+                              gradientFrom: e.target.value,
+                            })
+                          }
+                          className="size-9 rounded-lg border border-[color:var(--ink-line)] bg-transparent cursor-pointer"
+                        />
+                        <span className="font-mono text-[11px] text-[color:var(--ink-muted)] uppercase">
+                          {projectForm.gradientFrom || "#22d3ee"}
+                        </span>
+                      </div>
+                    </div>
+                    <div>
+                      <label className={labelClass} htmlFor="gradientTo">
+                        To color
+                      </label>
+                      <div className="flex items-center gap-2">
+                        <input
+                          id="gradientTo"
+                          type="color"
+                          value={projectForm.gradientTo || "#0e7490"}
+                          onChange={(e) =>
+                            setProjectForm({
+                              ...projectForm,
+                              gradientTo: e.target.value,
+                            })
+                          }
+                          className="size-9 rounded-lg border border-[color:var(--ink-line)] bg-transparent cursor-pointer"
+                        />
+                        <span className="font-mono text-[11px] text-[color:var(--ink-muted)] uppercase">
+                          {projectForm.gradientTo || "#0e7490"}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                )}
+                <p className="font-mono text-[10px] text-[color:var(--ink-muted)] mt-1.5">
+                  Card background when no cover image · default is Cyan
+                </p>
+              </div>
+
               {/* Flags */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                 <label className="flex items-center gap-2.5 cursor-pointer bg-[color:var(--hover-bg)] border border-[color:var(--ink-line)] rounded-[10px] px-3.5 py-3 hover:bg-[color:var(--hover-bg-strong)] transition">
                   <input
                     type="checkbox"
@@ -766,6 +974,20 @@ export default function AdminProjectsPage() {
                     className="size-4 accent-[color:var(--brand-cyan)]"
                   />
                   <span className="text-sm">Feature on homepage</span>
+                </label>
+                <label className="flex items-center gap-2.5 cursor-pointer bg-[color:var(--hover-bg)] border border-[color:var(--ink-line)] rounded-[10px] px-3.5 py-3 hover:bg-[color:var(--hover-bg-strong)] transition">
+                  <input
+                    type="checkbox"
+                    checked={projectForm.showOnHome}
+                    onChange={(e) =>
+                      setProjectForm({
+                        ...projectForm,
+                        showOnHome: e.target.checked,
+                      })
+                    }
+                    className="size-4 accent-[color:var(--brand-cyan)]"
+                  />
+                  <span className="text-sm">Show on home</span>
                 </label>
                 <label className="flex items-center gap-2.5 cursor-pointer bg-[color:var(--hover-bg)] border border-[color:var(--ink-line)] rounded-[10px] px-3.5 py-3 hover:bg-[color:var(--hover-bg-strong)] transition">
                   <input

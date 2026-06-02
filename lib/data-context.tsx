@@ -36,8 +36,19 @@ export interface Project {
   technologies: string[];
   liveUrl?: string;
   githubUrl?: string;
+  appStoreUrl?: string;
+  playStoreUrl?: string;
+  /** Curated gradient preset key (see lib/gradient-presets.ts), or "custom". */
+  gradientPreset?: string;
+  /** Custom gradient colors, used when gradientPreset === "custom". */
+  gradientFrom?: string;
+  gradientTo?: string;
+  /** mediaId of the image used as the home-card preview/cover. */
+  coverMediaId?: string;
   category: "web" | "mobile" | "fullstack";
   featured?: boolean;
+  /** Whether the project appears in the home projects grid (default true). */
+  showOnHome?: boolean;
   published?: boolean;
 }
 

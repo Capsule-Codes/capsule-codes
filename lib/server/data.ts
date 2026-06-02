@@ -4,6 +4,37 @@ import type { Project, Technology, Review, TeamMember } from "@/lib/data-context
 import type { ContactInfo } from "@/lib/types/contact";
 
 /**
+ * Map a raw `projects` row (snake_case columns) to the camelCase `Project`
+ * shape the app consumes. `.select("*")` returns snake_case, so without this
+ * the camelCase fields (liveUrl, githubUrl, appStoreUrl, …) read as undefined
+ * and their UI never renders. jsonb columns (translations, images) already
+ * carry the correct internal shape and pass through untouched.
+ */
+export function mapProjectRow(row: Record<string, unknown>): Project {
+  return {
+    id: row.id as string,
+    title: row.title as string,
+    description: row.description as string,
+    translations: row.translations as Project["translations"],
+    image: row.image as string,
+    images: (row.images as Project["images"]) ?? undefined,
+    technologies: (row.technologies as string[]) ?? [],
+    liveUrl: (row.live_url as string) || undefined,
+    githubUrl: (row.github_url as string) || undefined,
+    appStoreUrl: (row.app_store_url as string) || undefined,
+    playStoreUrl: (row.play_store_url as string) || undefined,
+    gradientPreset: (row.gradient_preset as string) || undefined,
+    gradientFrom: (row.gradient_from as string) || undefined,
+    gradientTo: (row.gradient_to as string) || undefined,
+    coverMediaId: (row.cover_media_id as string) || undefined,
+    category: row.category as Project["category"],
+    featured: (row.featured as boolean) ?? undefined,
+    showOnHome: (row.show_on_home as boolean) ?? undefined,
+    published: (row.published as boolean) ?? undefined,
+  };
+}
+
+/**
  * Fetch all projects from the database
  */
 export async function getProjects(): Promise<Project[]> {
@@ -23,7 +54,7 @@ export async function getProjects(): Promise<Project[]> {
       return [];
     }
 
-    return data || [];
+    return (data || []).map(mapProjectRow);
   } catch (error) {
     console.error("Error fetching projects:", error);
     return [];
@@ -55,7 +86,7 @@ export async function getProject(id: string): Promise<Project | null> {
       return null;
     }
 
-    return data;
+    return mapProjectRow(data);
   } catch (error) {
     console.error("Error fetching project:", error);
     return null;

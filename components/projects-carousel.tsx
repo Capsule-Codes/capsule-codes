@@ -7,6 +7,7 @@ import { Capsule } from "@/components/ui/capsule";
 import { useLanguage } from "@/hooks/use-language";
 import type { Project } from "@/lib/data-context";
 import type { Language } from "@/lib/i18n";
+import { resolveProjectGradient } from "@/lib/gradient-presets";
 
 interface ProjectsCarouselProps {
   projects: Project[];
@@ -42,15 +43,41 @@ export function getCategoryLabel(
   }
 }
 
-const FALLBACK_BG =
-  "radial-gradient(ellipse at 30% 30%, oklch(0.4 0.18 180 / 0.5), transparent 60%), oklch(0.12 0.02 200)";
-
 export function getProjectImage(project: Project): string | null {
   if (project.image) return project.image;
   if (project.images && project.images.length > 0) {
     return project.images[0].blobKey ?? null;
   }
   return null;
+}
+
+export function isPortraitImage(
+  img?: { width?: number; height?: number } | null
+): boolean {
+  return !!img?.width && !!img?.height && img.height > img.width;
+}
+
+export function getProjectThumb(project: Project): {
+  url: string | null;
+  portrait: boolean;
+} {
+  // Prefer the dimensioned images[] (the source of truth the detail page uses)
+  // so card and detail agree on orientation. The legacy `project.image` mirrors
+  // images[0]'s URL but carries no dimensions, so it can't drive orientation.
+  if (project.images && project.images.length > 0) {
+    // Honor the admin-selected cover image when one is set and present in
+    // images[]; orientation follows that image so the card matches the cover.
+    const cover = project.coverMediaId
+      ? project.images.find((img) => img.mediaId === project.coverMediaId)
+      : undefined;
+    const chosen = cover ?? project.images[0];
+    return {
+      url: chosen.blobKey ?? project.image ?? null,
+      portrait: isPortraitImage(chosen),
+    };
+  }
+  if (project.image) return { url: project.image, portrait: false };
+  return { url: null, portrait: false };
 }
 
 export function ProjectsCarousel({ projects }: ProjectsCarouselProps) {
@@ -116,23 +143,43 @@ export function ProjectsCarousel({ projects }: ProjectsCarouselProps) {
         <div className="flex">
           {projects.map((project) => {
             const content = getProjectContent(project, language);
-            const image = getProjectImage(project);
+            const thumb = getProjectThumb(project);
+            const image = thumb.url;
+            const preset = resolveProjectGradient(
+              project.gradientPreset,
+              project.gradientFrom,
+              project.gradientTo,
+            );
 
             return (
               <div key={project.id} className="flex-[0_0_100%] min-w-0 px-1.5">
                 <Link href={`/projects/${project.id}`} className="block">
                   <article
-                    className="relative overflow-hidden rounded-2xl aspect-[4/3] bg-cover bg-center border border-[color:var(--ink-line)]"
+                    className={`relative overflow-hidden rounded-2xl aspect-[4/3] bg-center border border-[color:var(--ink-line)] ${
+                      thumb.portrait ? "" : "bg-cover"
+                    }`}
                     style={{
-                      backgroundImage: image ? `url(${image})` : FALLBACK_BG,
+                      backgroundImage:
+                        !thumb.portrait && image
+                          ? `url(${image})`
+                          : preset.background,
                     }}
                   >
+                    {thumb.portrait && image && (
+                      <>
+                        <div
+                          className="absolute inset-0 bg-cover bg-center blur-2xl scale-125"
+                          style={{ backgroundImage: `url(${image})` }}
+                        />
+                        <div
+                          className="absolute inset-0 bg-contain bg-center bg-no-repeat"
+                          style={{ backgroundImage: `url(${image})` }}
+                        />
+                      </>
+                    )}
                     <div
                       className="absolute inset-0 z-[1]"
-                      style={{
-                        background:
-                          "linear-gradient(180deg, transparent 50%, oklch(0.05 0 0 / 0.95))",
-                      }}
+                      style={{ background: preset.overlay }}
                     />
                     <div className="absolute left-5 right-5 bottom-5 z-[2] flex flex-col items-start gap-2">
                       <Capsule size="sm" dot={false}>
