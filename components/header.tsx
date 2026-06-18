@@ -2,7 +2,6 @@
 
 import { useState, useEffect, useCallback } from "react";
 import Image from "next/image";
-import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Menu, X, ArrowUpRight } from "lucide-react";
 import { useLanguage } from "@/hooks/use-language";
@@ -21,14 +20,12 @@ export function Header() {
   const [hidden, setHidden] = useState(false);
 
   const navItems = [
-    { href: "#home", label: t.nav.home, id: "home" },
     { href: "#about", label: t.nav.about, id: "about" },
     { href: "#services", label: t.nav.services, id: "services" },
     { href: "#technologies", label: t.nav.technologies, id: "technologies" },
     { href: "#team", label: t.nav.team, id: "team" },
     { href: "#projects", label: t.nav.projects, id: "projects" },
     { href: "#reviews", label: t.nav.reviews, id: "reviews" },
-    { href: "#contact", label: t.nav.contact, id: "contact" },
   ];
 
   // Hide-on-scroll-down + active section detection (throttled via rAF)
@@ -115,10 +112,11 @@ export function Header() {
       <div className="bg-background/70 backdrop-blur-xl border-b border-[color:var(--ink-line)]">
         <div className="container mx-auto px-4 sm:px-6 py-3 flex items-center justify-between gap-4">
           {/* Brand */}
-          <Link
-            href="/"
-            className="shrink-0"
-            aria-label="capsule.codes home"
+          <button
+            type="button"
+            onClick={() => handleNavClick("#home")}
+            className="shrink-0 cursor-pointer"
+            aria-label="Go to home"
           >
             <Image
               src="/images/capsule-codes-logo-transparent-cropped.png"
@@ -128,7 +126,7 @@ export function Header() {
               className="h-12 w-auto object-contain sm:h-14"
               priority
             />
-          </Link>
+          </button>
 
           {/* Center pill nav (desktop) */}
           <nav

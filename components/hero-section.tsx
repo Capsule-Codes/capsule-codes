@@ -11,7 +11,7 @@ export function HeroSection() {
     document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
 
   return (
-    <section className="relative overflow-hidden">
+    <section id="home" className="relative scroll-mt-20 overflow-hidden">
       {/* atmospheric background */}
       <div className="pointer-events-none absolute inset-0">
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_60%_50%_at_50%_30%,oklch(0.45_0.22_185_/_0.45),transparent_70%)]" />

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import Image from "next/image";
 import { useTheme } from "next-themes";
 import { Sun, Moon, Linkedin, Github } from "lucide-react";
@@ -23,6 +23,15 @@ export function Footer() {
     { label: t.nav.projects, href: "#projects" },
     { label: t.nav.contact, href: "#contact" },
   ];
+
+  const handleNavClick = useCallback((href: string) => {
+    if (window.location.pathname !== "/") {
+      window.location.href = `/${href}`;
+      return;
+    }
+
+    document.querySelector(href)?.scrollIntoView({ behavior: "smooth" });
+  }, []);
 
   return (
     <footer className="px-4 lg:px-12 py-[50px] pb-8 border-t border-[color:var(--ink-line)]">
@@ -48,13 +57,14 @@ export function Footer() {
               — {t.footer.quickLinks}
             </h6>
             {quickLinks.map((link) => (
-              <a
+              <button
+                type="button"
                 key={link.href}
-                href={link.href}
-                className="block text-[13px] text-[color:var(--ink-muted)] py-1 hover:text-foreground transition"
+                onClick={() => handleNavClick(link.href)}
+                className="block cursor-pointer py-1 text-left text-[13px] text-[color:var(--ink-muted)] transition hover:text-foreground"
               >
                 {link.label}
-              </a>
+              </button>
             ))}
           </div>
 
