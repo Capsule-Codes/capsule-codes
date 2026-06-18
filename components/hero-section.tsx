@@ -7,7 +7,8 @@ import { Zap, ArrowRight } from "lucide-react";
 
 export function HeroSection() {
   const { t } = useLanguage();
-  const scroll = (id: string) => document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
+  const scroll = (id: string) =>
+    document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
 
   return (
     <section className="relative overflow-hidden">
@@ -20,26 +21,71 @@ export function HeroSection() {
 
       {/* constellation — 6 on md+, 2 on mobile */}
       <ParallaxConstellation className="absolute inset-0 pointer-events-none">
-        <Capsule size="sm" className="absolute top-[85%] lg:top-[18%] left-[6%] lg:left-[8%] rotate-[-6deg] animate-capsule-drift opacity-100 dark:opacity-90">web platforms</Capsule>
-        <Capsule size="sm" className="absolute top-[90%] lg:top-[14%] right-[6%] lg:right-[12%] rotate-[5deg] animate-capsule-drift opacity-100 dark:opacity-90" style={{ animationDelay: "1s" }}>mobile apps</Capsule>
+        <Capsule
+          size="sm"
+          className="absolute top-[85%] lg:top-[18%] left-[6%] lg:left-[8%] rotate-[-6deg] animate-capsule-drift opacity-100 dark:opacity-90"
+        >
+          web platforms
+        </Capsule>
+        <Capsule
+          size="sm"
+          className="absolute top-[90%] lg:top-[14%] right-[6%] lg:right-[12%] rotate-[5deg] animate-capsule-drift opacity-100 dark:opacity-90"
+          style={{ animationDelay: "1s" }}
+        >
+          mobile apps
+        </Capsule>
         {/* the remaining 4 are hidden below lg */}
-        <Capsule size="sm" className="absolute top-[70%] left-[6%] rotate-[2deg] opacity-85 dark:opacity-60 hidden lg:inline-flex animate-capsule-drift" style={{ animationDelay: "2s" }}>fintech</Capsule>
-        <Capsule size="sm" className="absolute top-[75%] right-[9%] rotate-[-4deg] opacity-85 dark:opacity-60 hidden lg:inline-flex animate-capsule-drift" style={{ animationDelay: "3s" }}>edtech</Capsule>
-        <Capsule size="sm" dot={false} className="absolute top-[42%] left-[14%] rotate-[3deg] opacity-60 dark:opacity-30 hidden lg:inline-flex animate-capsule-drift" style={{ animationDelay: "1.5s" }}>react native</Capsule>
-        <Capsule size="sm" dot={false} className="absolute top-[38%] right-[16%] rotate-[-3deg] opacity-60 dark:opacity-30 hidden lg:inline-flex animate-capsule-drift" style={{ animationDelay: "2.5s" }}>next.js</Capsule>
+        <Capsule
+          size="sm"
+          className="absolute top-[70%] left-[6%] rotate-[2deg] opacity-85 dark:opacity-60 hidden lg:inline-flex animate-capsule-drift"
+          style={{ animationDelay: "2s" }}
+        >
+          fintech
+        </Capsule>
+        <Capsule
+          size="sm"
+          className="absolute top-[75%] right-[9%] rotate-[-4deg] opacity-85 dark:opacity-60 hidden lg:inline-flex animate-capsule-drift"
+          style={{ animationDelay: "3s" }}
+        >
+          edtech
+        </Capsule>
+        <Capsule
+          size="sm"
+          dot={false}
+          className="absolute top-[42%] left-[14%] rotate-[3deg] opacity-60 dark:opacity-30 hidden lg:inline-flex animate-capsule-drift"
+          style={{ animationDelay: "1.5s" }}
+        >
+          react native
+        </Capsule>
+        <Capsule
+          size="sm"
+          dot={false}
+          className="absolute top-[38%] right-[16%] rotate-[-3deg] opacity-60 dark:opacity-30 hidden lg:inline-flex animate-capsule-drift"
+          style={{ animationDelay: "2.5s" }}
+        >
+          next.js
+        </Capsule>
       </ParallaxConstellation>
 
       <div className="container mx-auto px-4 lg:px-12 py-[100px] lg:py-[120px] text-center relative z-10">
         <div className="max-w-4xl mx-auto">
-          <Capsule icon={<Zap className="w-3 h-3" />} className="mb-7">{t.hero.badge}</Capsule>
+          <Capsule icon={<Zap className="w-3 h-3" />} className="mb-7">
+            {t.hero.badge}
+          </Capsule>
 
           <h1 className="font-sans text-4xl md:text-6xl lg:text-[60px] leading-[1.02] font-semibold tracking-[-0.045em] mb-6 text-balance max-w-[920px] mx-auto">
             {t.hero.title.firstCommonText}{" "}
-            <em className="not-italic text-brand-grad">{t.hero.title.firstKeyword}</em>{" "}
+            <em className="not-italic text-brand-grad">
+              {t.hero.title.firstKeyword}
+            </em>{" "}
             {t.hero.title.secondCommonText}{" "}
-            <em className="not-italic text-brand-grad">{t.hero.title.secondKeyword}</em>{" "}
+            <em className="not-italic text-brand-grad">
+              {t.hero.title.secondKeyword}
+            </em>{" "}
             {t.hero.title.thirdCommonText}{" "}
-            <em className="not-italic text-brand-grad">{t.hero.title.thirdKeyword}</em>
+            <em className="not-italic text-brand-grad">
+              {t.hero.title.thirdKeyword}
+            </em>
           </h1>
 
           <p className="text-base md:text-lg text-[color:var(--ink-muted)] mb-10 max-w-[620px] mx-auto text-pretty leading-relaxed">
@@ -48,21 +94,42 @@ export function HeroSection() {
 
           {/* stats pill bar */}
           <div className="inline-flex items-stretch gap-2 mb-10 p-2 bg-white/[0.03] border border-[color:var(--ink-line)] rounded-full backdrop-blur-md">
-            <div className="inline-flex items-center gap-2 px-4 py-1.5 text-xs text-[color:var(--ink-muted)]"><span className="font-mono font-semibold text-[color:var(--ink-fg)]">10+</span> {t.hero.stats.projects}</div>
+            <div className="inline-flex items-center gap-2 px-4 py-1.5 text-xs text-[color:var(--ink-muted)]">
+              <span className="font-mono font-semibold text-[color:var(--ink-fg)]">
+                6+
+              </span>{" "}
+              {t.hero.stats.projects}
+            </div>
             <div className="w-px self-center h-4 bg-[color:var(--ink-line)]" />
-            <div className="inline-flex items-center gap-2 px-4 py-1.5 text-xs text-[color:var(--ink-muted)]"><span className="font-mono font-semibold text-[color:var(--ink-fg)]">8</span> {t.hero.stats.countries}</div>
+            <div className="inline-flex items-center gap-2 px-4 py-1.5 text-xs text-[color:var(--ink-muted)]">
+              <span className="font-mono font-semibold text-[color:var(--ink-fg)]">
+                6
+              </span>{" "}
+              {t.hero.stats.countries}
+            </div>
             <div className="w-px self-center h-4 bg-[color:var(--ink-line)]" />
-            <div className="inline-flex items-center gap-2 px-4 py-1.5 text-xs text-[color:var(--ink-muted)]"><span className="font-mono font-semibold text-[color:var(--ink-fg)]">2</span> {t.hero.stats.apps}</div>
+            <div className="inline-flex items-center gap-2 px-4 py-1.5 text-xs text-[color:var(--ink-muted)]">
+              <span className="font-mono font-semibold text-[color:var(--ink-fg)]">
+                2
+              </span>{" "}
+              {t.hero.stats.apps}
+            </div>
           </div>
 
           <div className="flex flex-col sm:flex-row gap-3 justify-center">
             <Magnetic>
-              <button onClick={() => scroll("projects")} className="brand-grad text-on-grad rounded-full px-6 py-3 text-sm font-semibold shadow-[0_6px_22px_oklch(0.5_0.16_180_/_0.4)] inline-flex items-center gap-2">
+              <button
+                onClick={() => scroll("projects")}
+                className="brand-grad text-on-grad rounded-full px-6 py-3 text-sm font-semibold shadow-[0_6px_22px_oklch(0.5_0.16_180_/_0.4)] inline-flex items-center gap-2"
+              >
                 {t.hero.cta.viewProjects} <ArrowRight className="w-4 h-4" />
               </button>
             </Magnetic>
             <Magnetic>
-              <button onClick={() => scroll("contact")} className="bg-[color:var(--hover-bg)] text-[color:var(--ink-fg)] border border-[color:var(--ink-line)] rounded-full px-6 py-3 text-sm font-medium inline-flex items-center gap-2 hover:bg-[color:var(--hover-bg-strong)] transition">
+              <button
+                onClick={() => scroll("contact")}
+                className="bg-[color:var(--hover-bg)] text-[color:var(--ink-fg)] border border-[color:var(--ink-line)] rounded-full px-6 py-3 text-sm font-medium inline-flex items-center gap-2 hover:bg-[color:var(--hover-bg-strong)] transition"
+              >
                 {t.hero.cta.contact}
               </button>
             </Magnetic>

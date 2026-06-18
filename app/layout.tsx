@@ -26,17 +26,21 @@ const jetbrainsMono = JetBrains_Mono({
 export const metadata: Metadata = {
   title: "Capsule Codes - Web & App Development",
   description:
-    "Transforming ideas into digital reality with cutting-edge technology. Expert web and mobile app development services.",
+    "React Native & Next.js development agency. We build production-ready mobile apps and web platforms for startups. 6+ projects across 6 countries. Direct access to senior developers.",
   generator: "v0.app",
   keywords: [
-    "web development",
-    "app development",
-    "mobile apps",
-    "fullstack development",
-    "Next.js",
-    "React",
+    "React Native development",
+    "Next.js development",
+    "mobile app development",
+    "web platform development",
+    "startup development",
     "TypeScript",
+    "Node.js",
     "Supabase",
+    "full-stack development",
+    "mobile app agency",
+    "fintech development",
+    "edtech development",
   ],
   authors: [{ name: "Capsule Codes" }],
   creator: "Capsule Codes",
@@ -54,13 +58,13 @@ export const metadata: Metadata = {
     siteName: "Capsule Codes",
     title: "Capsule Codes - Web & App Development",
     description:
-      "Transforming ideas into digital reality with cutting-edge technology. Expert web and mobile app development services.",
+      "React Native & Next.js development agency. We build production-ready mobile apps and web platforms for startups. 6+ projects across 6 countries. Direct access to senior developers.",
     images: [
       {
-        url: "/logo.svg",
+        url: "https://capsulecodes.com/og-image.png",
         width: 1200,
         height: 630,
-        alt: "Capsule Codes Logo",
+        alt: "Capsule Codes — Mobile & Web Development for Startups",
       },
     ],
   },
@@ -68,8 +72,8 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "Capsule Codes - Web & App Development",
     description:
-      "Transforming ideas into digital reality with cutting-edge technology",
-    images: ["/logo.svg"],
+      "React Native & Next.js development agency. We build production-ready mobile apps and web platforms for startups. 6+ projects across 6 countries. Direct access to senior developers.",
+    images: ["https://capsulecodes.com/og-image.png"],
   },
   robots: {
     index: true,
@@ -93,10 +97,19 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${inter.variable} ${jetbrainsMono.variable}`} suppressHydrationWarning>
+    <html
+      lang="en"
+      className={`${inter.variable} ${jetbrainsMono.variable}`}
+      suppressHydrationWarning
+    >
       <body className="font-sans">
         <Suspense fallback={null}>
-          <ThemeProvider attribute="class" defaultTheme="dark" enableSystem disableTransitionOnChange>
+          <ThemeProvider
+            attribute="class"
+            defaultTheme="dark"
+            enableSystem
+            disableTransitionOnChange
+          >
             <AmbientCursorGlow />
             <LanguageProvider>{children}</LanguageProvider>
             <Toaster richColors position="bottom-right" />

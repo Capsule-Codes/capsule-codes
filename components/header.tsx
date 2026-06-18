@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
+import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Menu, X, ArrowUpRight } from "lucide-react";
@@ -108,7 +109,7 @@ export function Header() {
     <header
       className={cn(
         "fixed top-0 left-0 right-0 z-50 transition-transform duration-300 ease-out",
-        hidden && !isMenuOpen ? "-translate-y-full" : "translate-y-0"
+        hidden && !isMenuOpen ? "-translate-y-full" : "translate-y-0",
       )}
     >
       <div className="bg-background/70 backdrop-blur-xl border-b border-[color:var(--ink-line)]">
@@ -116,12 +117,17 @@ export function Header() {
           {/* Brand */}
           <Link
             href="/"
-            className="font-mono font-semibold text-sm sm:text-base tracking-tight shrink-0"
+            className="shrink-0"
             aria-label="capsule.codes home"
           >
-            <span className="text-foreground">capsule</span>
-            <span className="text-[color:var(--brand-cyan)]">.</span>
-            <span className="text-foreground">codes</span>
+            <Image
+              src="/images/capsule-codes-logo-transparent-cropped.png"
+              alt="Capsule Codes"
+              width={795}
+              height={908}
+              className="h-12 w-auto object-contain sm:h-14"
+              priority
+            />
           </Link>
 
           {/* Center pill nav (desktop) */}
@@ -139,7 +145,7 @@ export function Header() {
                     "text-xs px-3.5 py-1.5 rounded-full transition cursor-pointer",
                     active
                       ? "bg-[color:var(--hover-bg-strong)] text-foreground"
-                      : "text-[color:var(--ink-muted)] hover:bg-[color:var(--hover-bg)] hover:text-foreground"
+                      : "text-[color:var(--ink-muted)] hover:bg-[color:var(--hover-bg)] hover:text-foreground",
                   )}
                 >
                   {item.label}
@@ -202,7 +208,7 @@ export function Header() {
                     "text-left text-base px-4 py-3 rounded-2xl transition cursor-pointer border border-transparent",
                     active
                       ? "bg-[color:var(--hover-bg-strong)] text-foreground border-[color:var(--ink-line)]"
-                      : "text-[color:var(--ink-muted)] hover:bg-[color:var(--hover-bg)] hover:text-foreground"
+                      : "text-[color:var(--ink-muted)] hover:bg-[color:var(--hover-bg)] hover:text-foreground",
                   )}
                 >
                   {item.label}

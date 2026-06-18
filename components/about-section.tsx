@@ -44,7 +44,6 @@ export function AboutSection() {
             <em className="not-italic text-brand-grad">{lastWord}</em>
           </>
         }
-        lead={t.about.subtitle}
       />
 
       <div className="mt-12 lg:mt-16 grid grid-cols-1 lg:grid-cols-[1fr_1.1fr] gap-12 lg:gap-14 lg:items-start">

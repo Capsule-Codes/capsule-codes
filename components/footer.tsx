@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Image from "next/image";
 import { useTheme } from "next-themes";
 import { Sun, Moon, Linkedin, Github } from "lucide-react";
 import { useLanguage } from "@/hooks/use-language";
@@ -29,9 +30,13 @@ export function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
           {/* Column 1: Brand + tagline */}
           <div>
-            <div className="font-mono text-sm font-semibold">
-              capsule<span className="text-[color:var(--brand-cyan)]">.</span>codes
-            </div>
+            <Image
+              src="/images/capsule-codes-logo-transparent-cropped.png"
+              alt="Capsule Codes"
+              width={795}
+              height={908}
+              className="mx-auto h-auto w-[180px] sm:w-[170px] md:mx-0 md:w-[160px]"
+            />
             <p className="text-[12.5px] text-[color:var(--ink-muted)] leading-[1.5] mt-3 max-w-xs">
               {t.footer.description}
             </p>
@@ -87,7 +92,7 @@ export function Footer() {
               LinkedIn
             </a>
             <a
-              href="#"
+              href="https://github.com/facupascale"
               target="_blank"
               rel="noopener noreferrer"
               className="flex items-center gap-2 text-[13px] text-[color:var(--ink-muted)] py-1 hover:text-foreground transition"
