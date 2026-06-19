@@ -1,20 +1,13 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback } from "react";
 import Image from "next/image";
-import { useTheme } from "next-themes";
-import { Sun, Moon, Linkedin, Github } from "lucide-react";
+import { Linkedin, Github } from "lucide-react";
 import { useLanguage } from "@/hooks/use-language";
 
 export function Footer() {
   const { t } = useLanguage();
-  const { theme, setTheme } = useTheme();
-  const [mounted, setMounted] = useState(false);
   const currentYear = new Date().getFullYear();
-
-  useEffect(() => {
-    setMounted(true);
-  }, []);
 
   const quickLinks = [
     { label: t.nav.about, href: "#about" },
@@ -120,20 +113,6 @@ export function Footer() {
           </span>
           <div className="flex items-center gap-3">
             <span className="font-mono">{t.footer.quote}</span>
-            {mounted && (
-              <button
-                type="button"
-                onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-                aria-label="Toggle theme"
-                className="inline-flex items-center justify-center w-8 h-8 rounded-md border border-[color:var(--ink-line)] text-[color:var(--ink-muted)] hover:bg-[color:var(--hover-bg)] hover:text-foreground transition"
-              >
-                {theme === "dark" ? (
-                  <Sun className="w-3.5 h-3.5" />
-                ) : (
-                  <Moon className="w-3.5 h-3.5" />
-                )}
-              </button>
-            )}
           </div>
         </div>
       </div>

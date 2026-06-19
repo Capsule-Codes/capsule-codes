@@ -1,11 +1,11 @@
 "use client"
 
-import { useCallback, useEffect } from "react"
+import { useCallback, useEffect, useState } from "react"
 import useEmblaCarousel from "embla-carousel-react"
 import { ChevronLeft, ChevronRight } from "lucide-react"
 import Image from "next/image"
 
-import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog"
+import { Dialog, DialogClose, DialogContent, DialogTitle } from "@/components/ui/dialog"
 import { cn } from "@/lib/utils"
 
 interface ProjectLightboxImage {
@@ -28,26 +28,35 @@ export function ProjectLightbox({
 }: ProjectLightboxProps) {
   const isOpen = index !== null
   const hasMultiple = images.length > 1
+  const [displayIndex, setDisplayIndex] = useState(index ?? 0)
+
+  useEffect(() => {
+    if (index !== null) {
+      setDisplayIndex(index)
+    }
+  }, [index])
 
   const [emblaRef, emblaApi] = useEmblaCarousel({
     loop: true,
     align: "center",
-    startIndex: index ?? 0,
+    startIndex: displayIndex,
   })
 
   // Sync embla to the externally controlled `index`.
   useEffect(() => {
-    if (!emblaApi || index === null) return
-    if (emblaApi.selectedScrollSnap() !== index) {
-      emblaApi.scrollTo(index, true)
+    if (!emblaApi || !isOpen) return
+    if (emblaApi.selectedScrollSnap() !== displayIndex) {
+      emblaApi.scrollTo(displayIndex, true)
     }
-  }, [emblaApi, index])
+  }, [displayIndex, emblaApi, isOpen])
 
   // Report slide changes back up.
   const onSelect = useCallback(() => {
-    if (!emblaApi) return
-    onIndexChange(emblaApi.selectedScrollSnap())
-  }, [emblaApi, onIndexChange])
+    if (!emblaApi || !isOpen) return
+    const nextIndex = emblaApi.selectedScrollSnap()
+    setDisplayIndex(nextIndex)
+    onIndexChange(nextIndex)
+  }, [emblaApi, isOpen, onIndexChange])
 
   useEffect(() => {
     if (!emblaApi) return
@@ -81,11 +90,23 @@ export function ProjectLightbox({
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
       <DialogContent
-        showCloseButton
+        showCloseButton={false}
         className="max-w-[100vw] w-screen h-screen max-h-screen border-0 bg-black/95 p-0 sm:rounded-none grid-rows-1"
       >
         <DialogTitle className="sr-only">Image viewer</DialogTitle>
         <div className="relative flex h-full w-full items-center justify-center overflow-hidden">
+          <DialogClose
+            aria-label="Close image viewer"
+            className={cn(
+              "absolute right-4 top-4 z-20 inline-flex size-11 items-center justify-center rounded-full",
+              "border border-white/20 bg-black/70 text-white shadow-lg backdrop-blur-md",
+              "transition hover:bg-black/85 focus:outline-none focus:ring-2 focus:ring-white/80 focus:ring-offset-0",
+            )}
+          >
+            <span aria-hidden="true" className="text-xl leading-none">
+              ×
+            </span>
+          </DialogClose>
           <div className="h-full w-full overflow-hidden" ref={emblaRef}>
             <div className="flex h-full touch-pan-y">
               {images.map((image, i) => (
@@ -98,7 +119,7 @@ export function ProjectLightbox({
                     alt={image.alt}
                     fill
                     sizes="100vw"
-                    priority={i === index}
+                    priority={i === displayIndex}
                     className="object-contain"
                   />
                 </div>

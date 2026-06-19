@@ -6,6 +6,7 @@ import { usePathname } from "next/navigation";
 import { Menu, X, ArrowUpRight } from "lucide-react";
 import { useLanguage } from "@/hooks/use-language";
 import { SimpleLanguageSwitcher } from "@/components/simple-language-switcher";
+import { ThemeToggle } from "@/components/theme-toggle";
 import { Magnetic } from "@/components/motion/magnetic";
 import { cn } from "@/lib/utils";
 
@@ -155,6 +156,7 @@ export function Header() {
           {/* Right: language + CTA (desktop) */}
           <div className="hidden lg:flex items-center gap-2 shrink-0">
             <SimpleLanguageSwitcher />
+            <ThemeToggle />
             <Magnetic>
               <button
                 onClick={() => handleNavClick("#contact")}
@@ -169,6 +171,7 @@ export function Header() {
           {/* Mobile: language + hamburger */}
           <div className="flex lg:hidden items-center gap-1">
             <SimpleLanguageSwitcher />
+            <ThemeToggle />
             <button
               type="button"
               aria-label={isMenuOpen ? "Close menu" : "Open menu"}
