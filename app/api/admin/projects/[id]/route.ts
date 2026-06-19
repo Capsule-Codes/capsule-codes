@@ -79,6 +79,7 @@ export async function PUT(
     if (body.coverMediaId !== undefined) updateData.cover_media_id = body.coverMediaId;
     if (body.cover_media_id !== undefined) updateData.cover_media_id = body.cover_media_id;
     if (body.category !== undefined) updateData.category = body.category;
+    if (body.imageOrientation !== undefined) updateData.image_orientation = body.imageOrientation || null;
     if (body.featured !== undefined) updateData.featured = body.featured;
     if (body.published !== undefined) updateData.published = body.published;
     if (body.showOnHome !== undefined) updateData.show_on_home = body.showOnHome;

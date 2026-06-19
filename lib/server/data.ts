@@ -28,6 +28,7 @@ export function mapProjectRow(row: Record<string, unknown>): Project {
     gradientTo: (row.gradient_to as string) || undefined,
     coverMediaId: (row.cover_media_id as string) || undefined,
     category: row.category as Project["category"],
+    imageOrientation: (row.image_orientation as Project["imageOrientation"]) || undefined,
     featured: (row.featured as boolean) ?? undefined,
     showOnHome: (row.show_on_home as boolean) ?? undefined,
     published: (row.published as boolean) ?? undefined,

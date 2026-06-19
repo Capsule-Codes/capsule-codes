@@ -44,6 +44,7 @@ interface ProjectForm {
   image: string;
   technologies: string;
   category: ProjectCategory;
+  imageOrientation: "horizontal" | "vertical" | "";
   liveUrl: string;
   appStoreUrl: string;
   playStoreUrl: string;
@@ -67,6 +68,7 @@ const EMPTY_FORM: ProjectForm = {
   image: "",
   technologies: "",
   category: "web",
+  imageOrientation: "",
   liveUrl: "",
   appStoreUrl: "",
   playStoreUrl: "",
@@ -175,6 +177,7 @@ export default function AdminProjectsPage() {
       image: project.image,
       technologies: project.technologies.join(", "),
       category: project.category,
+      imageOrientation: project.imageOrientation || "",
       liveUrl: project.liveUrl || "",
       appStoreUrl: project.appStoreUrl || "",
       playStoreUrl: project.playStoreUrl || "",
@@ -247,6 +250,7 @@ export default function AdminProjectsPage() {
           .map((tech) => tech.trim())
           .filter((tech) => tech),
         category: projectForm.category,
+        imageOrientation: (projectForm.imageOrientation || undefined) as Project["imageOrientation"],
         liveUrl: projectForm.liveUrl,
         appStoreUrl: projectForm.appStoreUrl,
         playStoreUrl: projectForm.playStoreUrl,
@@ -657,6 +661,28 @@ export default function AdminProjectsPage() {
                   <option value="web">Web</option>
                   <option value="mobile">Mobile</option>
                   <option value="fullstack">Full Stack</option>
+                </select>
+              </div>
+
+              {/* Image orientation */}
+              <div>
+                <label className={labelClass} htmlFor="imageOrientation">
+                  Image orientation
+                </label>
+                <select
+                  id="imageOrientation"
+                  value={projectForm.imageOrientation}
+                  onChange={(e) =>
+                    setProjectForm({
+                      ...projectForm,
+                      imageOrientation: e.target.value as ProjectForm["imageOrientation"],
+                    })
+                  }
+                  className={inputClass}
+                >
+                  <option value="">Auto (from category)</option>
+                  <option value="horizontal">Horizontal (browser frame)</option>
+                  <option value="vertical">Vertical (phone frame)</option>
                 </select>
               </div>
 

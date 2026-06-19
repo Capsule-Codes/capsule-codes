@@ -1,4 +1,5 @@
 "use client";
+import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useTheme } from "next-themes";
@@ -39,8 +40,17 @@ export function Sidebar() {
 
   return (
     <aside className="flex flex-col h-screen sticky top-0 bg-[color:var(--sidebar-bg)] border-r border-[color:var(--ink-line)] p-4">
-      <div className="font-mono text-sm font-semibold tracking-tight pb-5 mb-3 border-b border-[color:var(--ink-line)] text-foreground">
-        capsule<span className="text-[color:var(--brand-cyan)]">.</span>admin
+      <div className="mb-3 flex justify-center border-b border-[color:var(--ink-line)] pb-5">
+        <Link href="/admin" className="inline-flex">
+          <Image
+            src="/images/capsule-codes-logo-transparent-cropped.png"
+            alt="Capsule Codes Admin"
+            width={795}
+            height={908}
+            priority
+            className="h-12 w-auto object-contain"
+          />
+        </Link>
       </div>
 
       <nav className="flex flex-col gap-1 flex-1">

@@ -57,6 +57,7 @@ export async function POST(request: Request) {
           gradient_to: body.gradientTo ?? body.gradient_to,
           cover_media_id: body.coverMediaId ?? body.cover_media_id,
           category: body.category,
+          image_orientation: body.imageOrientation || null,
           featured: body.featured || false,
           published: body.published || false,
           show_on_home: (body.showOnHome ?? body.show_on_home) ?? true,

@@ -2,7 +2,6 @@
 
 import { useCallback, useEffect, useState } from "react";
 import useEmblaCarousel from "embla-carousel-react";
-import Link from "next/link";
 import { Capsule } from "@/components/ui/capsule";
 import { useLanguage } from "@/hooks/use-language";
 import type { Project } from "@/lib/data-context";
@@ -153,7 +152,7 @@ export function ProjectsCarousel({ projects }: ProjectsCarouselProps) {
 
             return (
               <div key={project.id} className="flex-[0_0_100%] min-w-0 px-1.5">
-                <Link href={`/projects/${project.id}`} className="block">
+                <div className="block">
                   <article
                     className={`relative overflow-hidden rounded-2xl aspect-[4/3] bg-center border border-[color:var(--ink-line)] ${
                       thumb.portrait ? "" : "bg-cover"
@@ -190,7 +189,7 @@ export function ProjectsCarousel({ projects }: ProjectsCarouselProps) {
                       </h3>
                     </div>
                   </article>
-                </Link>
+                </div>
               </div>
             );
           })}

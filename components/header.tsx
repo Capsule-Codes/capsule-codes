@@ -192,8 +192,7 @@ export function Header() {
       {/* Mobile overlay panel */}
       {isMenuOpen && (
         <div
-          className="lg:hidden fixed inset-x-0 bottom-0 bg-background/95 backdrop-blur-xl border-t border-[color:var(--ink-line)] overflow-y-auto"
-          style={{ top: 60 }}
+          className="lg:hidden absolute left-0 right-0 top-full h-[calc(100dvh-60px)] overflow-y-auto border-t border-[color:var(--ink-line)] bg-background/95 backdrop-blur-xl"
         >
           <nav
             aria-label="Mobile primary"

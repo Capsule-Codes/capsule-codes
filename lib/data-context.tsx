@@ -46,6 +46,7 @@ export interface Project {
   /** mediaId of the image used as the home-card preview/cover. */
   coverMediaId?: string;
   category: "web" | "mobile" | "fullstack";
+  imageOrientation?: "horizontal" | "vertical";
   featured?: boolean;
   /** Whether the project appears in the home projects grid (default true). */
   showOnHome?: boolean;
