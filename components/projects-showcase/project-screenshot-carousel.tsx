@@ -69,7 +69,7 @@ export function ProjectScreenshotCarousel({
   }
 
   return (
-    <div className="w-full">
+    <div className="w-full min-w-0">
       <Carousel setApi={setApi} opts={{ align: "center", loop }} className="w-full">
         <CarouselContent className={isPhone ? "-ml-6" : "-ml-8"}>
           {images.map((image, index) => (
@@ -99,7 +99,7 @@ export function ProjectScreenshotCarousel({
                     alt={image.alt}
                     fill
                     sizes={isPhone ? "200px" : "(min-width: 640px) 70vw, 88vw"}
-                    className="object-cover"
+                    className={cn(isPhone ? "object-cover" : "object-contain")}
                     priority={index === 0}
                   />
                 </Frame>

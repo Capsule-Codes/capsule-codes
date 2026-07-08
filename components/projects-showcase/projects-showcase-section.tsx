@@ -114,10 +114,10 @@ export function ProjectsShowcaseSection({
     >
       {header}
 
-      <div className="mt-12 grid overflow-hidden rounded-3xl border border-[color:var(--ink-line)] bg-[color:var(--ink-bg-2)] md:grid-cols-[380px_1fr] lg:mt-14">
+      <div className="mt-12 grid overflow-hidden rounded-3xl border border-[color:var(--ink-line)] bg-[color:var(--ink-bg-2)] lg:grid-cols-[380px_1fr] lg:mt-14">
         <ProjectsList projects={projects} activeId={active.id} onSelect={setActiveId} />
 
-        <div className="relative grid gap-7 p-6 md:p-9">
+        <div className="relative grid gap-7 p-6 lg:p-9">
           <div
             aria-hidden
             className="pointer-events-none absolute -right-24 -top-24 h-80 w-80 rounded-full opacity-50"
@@ -133,7 +133,7 @@ export function ProjectsShowcaseSection({
             />
           </div>
 
-          <div className="relative grid items-end gap-5 md:grid-cols-[1fr_auto]">
+          <div className="relative grid items-end gap-5 lg:grid-cols-[1fr_auto]">
             <div>
               <h3 className="mb-3 text-3xl font-semibold tracking-[-0.03em]">{content.title}</h3>
               {content.description && (
@@ -151,7 +151,7 @@ export function ProjectsShowcaseSection({
             </div>
 
             {active.technologies.length > 0 && (
-              <div className="flex flex-wrap gap-2 md:justify-end">
+              <div className="flex flex-wrap gap-2 lg:justify-end">
                 {active.technologies.slice(0, 4).map((tech) => (
                   <Capsule key={tech} size="sm" dot={false}>
                     {tech}

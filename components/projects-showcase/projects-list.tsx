@@ -19,8 +19,8 @@ export function ProjectsList({ projects, activeId, onSelect }: ProjectsListProps
     <div
       className={cn(
         "border-[color:var(--ink-line)]",
-        "max-md:flex max-md:gap-2 max-md:overflow-x-auto max-md:border-b max-md:p-3",
-        "md:block md:border-r md:p-[18px]",
+        "max-lg:flex max-lg:gap-2 max-lg:overflow-x-auto max-lg:border-b max-lg:p-3",
+        "lg:block lg:border-r lg:p-[18px]",
       )}
     >
       {projects.map((project, index) => {
@@ -34,28 +34,28 @@ export function ProjectsList({ projects, activeId, onSelect }: ProjectsListProps
             onClick={() => onSelect(project.id)}
             className={cn(
               "text-left transition-colors duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--ring)]",
-              "max-md:shrink-0 max-md:whitespace-nowrap max-md:rounded-xl max-md:border max-md:px-4 max-md:py-2.5",
-              "md:grid md:grid-cols-[42px_1fr_auto] md:items-center md:gap-4 md:rounded-2xl md:border md:px-3.5 md:py-5",
-              "md:[&+button]:mt-2",
+              "max-lg:shrink-0 max-lg:whitespace-nowrap max-lg:rounded-xl max-lg:border max-lg:px-4 max-lg:py-2.5",
+              "lg:grid lg:grid-cols-[42px_1fr_auto] lg:items-center lg:gap-4 lg:rounded-2xl lg:border lg:px-3.5 lg:py-5",
+              "lg:[&+button]:mt-2",
               isActive
                 ? "border-[color:var(--ink-line)] bg-[color:var(--hover-bg)] text-[color:var(--ink-fg)]"
                 : "border-transparent text-[color:var(--ink-muted)] hover:bg-[color:var(--hover-bg)] hover:text-[color:var(--ink-fg)]",
             )}
           >
-            <span className="hidden text-[13px] text-[color:var(--ink-muted)] md:block">
+            <span className="hidden text-[13px] text-[color:var(--ink-muted)] lg:block">
               {String(index + 1).padStart(2, "0")}
             </span>
             <span className="block min-w-0">
-              <span className="block truncate text-base font-semibold tracking-[-0.01em] md:mb-1.5">
+              <span className="block truncate text-base font-semibold tracking-[-0.01em] lg:mb-1.5">
                 {content.title}
               </span>
               {content.subtitle && (
-                <span className="hidden truncate text-[13px] text-[color:var(--ink-muted)] md:block">
+                <span className="hidden truncate text-[13px] text-[color:var(--ink-muted)] lg:block">
                   {content.subtitle}
                 </span>
               )}
             </span>
-            <span className="hidden md:block">
+            <span className="hidden lg:block">
               <Capsule size="sm" dot={false}>
                 {getCategoryLabel(project.category, t)}
               </Capsule>
