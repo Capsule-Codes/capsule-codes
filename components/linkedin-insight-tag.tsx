@@ -28,16 +28,17 @@ export function LinkedInInsightTag() {
         strategy="afterInteractive"
         src="https://snap.licdn.com/li.lms-analytics/insight.min.js"
       />
-      <noscript>
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img
-          height="1"
-          width="1"
-          style={{ display: "none" }}
-          alt=""
-          src={`https://px.ads.linkedin.com/collect/?pid=${PARTNER_ID}&fmt=gif`}
-        />
-      </noscript>
+      {/*
+        Written as raw HTML on purpose. Rendered as a React <img>, Next hoists a
+        <link rel="preload" as="image"> for it into <head>, and the browser then
+        fetches the no-JS fallback for every visitor — including the ones the JS
+        tag already counted. One install, two page views per load.
+      */}
+      <noscript
+        dangerouslySetInnerHTML={{
+          __html: `<img height="1" width="1" style="display:none" alt="" src="https://px.ads.linkedin.com/collect/?pid=${PARTNER_ID}&fmt=gif" />`,
+        }}
+      />
     </>
   );
 }
