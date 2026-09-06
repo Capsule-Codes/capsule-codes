@@ -12,6 +12,10 @@ import {
   type ContactFormData,
 } from "@/lib/validations/contact";
 import type { ContactInfo } from "@/lib/types/contact";
+import {
+  CONTACT_CONVERSION_ID,
+  trackLinkedInConversion,
+} from "@/lib/analytics/linkedin";
 
 interface ContactSectionProps {
   contactInfo: ContactInfo | null;
@@ -50,6 +54,10 @@ export function ContactSection({ contactInfo }: ContactSectionProps) {
         const errorData = await response.json().catch(() => ({}));
         throw new Error(errorData.error || "Failed to send message");
       }
+
+      // Only once the API accepted the message, so the conversion count tracks
+      // leads that actually arrived rather than submit attempts.
+      trackLinkedInConversion(CONTACT_CONVERSION_ID);
 
       toast.success(t.contact.form.successMessage);
       reset();

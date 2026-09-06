@@ -1,7 +1,6 @@
 import Script from "next/script";
 
-// LinkedIn Campaign Manager account 515845001 (Capsule Codes).
-const PARTNER_ID = "10790593";
+import { PARTNER_ID } from "@/lib/analytics/linkedin";
 
 /**
  * LinkedIn Insight Tag. Renders only in production so local and test traffic
