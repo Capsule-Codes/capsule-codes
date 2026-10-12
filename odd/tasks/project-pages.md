@@ -17,11 +17,11 @@ Re-enable the project detail pages (`/projects/[id]`) and project cards so each 
 - Route: delegated writer (single writer).
 
 ## Tasks
-- [ ] T1 RED/GREEN pure logic `lib/project-pages.ts` (visibility filter, lookup, metadata builder)
-- [ ] T2 Re-enable `/projects/[id]` (server fetch, generateMetadata, 404 for unknown/unpublished)
-- [ ] T3 `/projects` index with cover cards; sitemap entries
-- [ ] T4 Link showcase items to detail page (i18n label)
-- [ ] T5 Local verification with Playwright screenshots (1440x900, 390x844)
+- [x] T1 RED/GREEN pure logic `lib/project-pages.ts` (visibility filter, lookup, metadata builder)
+- [x] T2 Re-enable `/projects/[id]` (server fetch, generateMetadata, 404 for unknown/unpublished)
+- [x] T3 `/projects` index with cover cards; sitemap entries
+- [x] T4 Link showcase items to detail page (i18n label)
+- [x] T5 Local verification with Playwright screenshots (1440x900, 390x844)
 
 ## Checks
 `npm test`, `npx tsc --noEmit`, `RESEND_API_KEY=re_dummy npm run build`, screenshots.
