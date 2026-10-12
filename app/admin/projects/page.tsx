@@ -21,6 +21,12 @@ import { compressImages, validateImageFiles } from "@/lib/image-compression";
 import { GRADIENT_PRESETS, CUSTOM_GRADIENT_KEY } from "@/lib/gradient-presets";
 import { resolvePrimaryImage } from "@/lib/project-media";
 import {
+  buildCoverPatch,
+  validateCoverFile,
+  COVER_WIDTH,
+  COVER_HEIGHT,
+} from "@/lib/project-cover";
+import {
   Plus,
   Edit,
   Trash2,
@@ -122,6 +128,10 @@ export default function AdminProjectsPage() {
   const [imageUploadError, setImageUploadError] = useState("");
   const [projectImages, setProjectImages] = useState<ProjectImage[]>([]);
 
+  // Cover (projects.image) state
+  const [coverBusy, setCoverBusy] = useState(false);
+  const [coverError, setCoverError] = useState("");
+
   // ------------- helpers -------------
   const getProjectContent = (project: Project) => {
     if (
@@ -206,6 +216,7 @@ export default function AdminProjectsPage() {
   };
 
   const resetProjectForm = () => {
+    setCoverError("");
     setEditingProject(null);
     setProjectForm(EMPTY_FORM);
     setSelectedImages([]);
@@ -357,6 +368,60 @@ export default function AdminProjectsPage() {
     if (files && files.length > 0) {
       setSelectedImages(Array.from(files));
       setImageUploadError("");
+    }
+  };
+
+  // The cover is saved immediately and independently of the form: it only ever
+  // writes `projects.image`, never `images[]`. The previous cover file stays in
+  // storage on purpose.
+  const saveCover = async (url: string | null) => {
+    if (!editingProject) return;
+    await updateProject(editingProject.id, buildCoverPatch(url) as Partial<Project>);
+    setProjectForm((f) => ({ ...f, image: url ?? "" }));
+    await refreshData();
+  };
+
+  const handleCoverSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    e.target.value = "";
+    if (!file || !editingProject) return;
+    const check = validateCoverFile(file);
+    if (!check.ok) {
+      setCoverError(check.message);
+      return;
+    }
+    setCoverBusy(true);
+    setCoverError("");
+    try {
+      const formData = new FormData();
+      formData.append("cover", file);
+      const response = await fetch(
+        `/api/admin/projects/${editingProject.id}/cover`,
+        { method: "POST", body: formData },
+      );
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.message || "Error uploading cover");
+      }
+      const { url } = await response.json();
+      await saveCover(url);
+    } catch (error) {
+      console.error("Error uploading cover:", error);
+      setCoverError(getErrorMessage(error));
+    } finally {
+      setCoverBusy(false);
+    }
+  };
+
+  const handleClearCover = async () => {
+    setCoverBusy(true);
+    setCoverError("");
+    try {
+      await saveCover(null);
+    } catch (error) {
+      setCoverError(getErrorMessage(error));
+    } finally {
+      setCoverBusy(false);
     }
   };
 
@@ -692,11 +757,81 @@ export default function AdminProjectsPage() {
                 </select>
               </div>
 
+              {/* Cover (projects.image, 16:10) */}
+              <div className="space-y-2">
+                <span className={labelClass}>Cover</span>
+                {editingProject ? (
+                  <>
+                    <div
+                      className="relative w-full max-w-sm overflow-hidden rounded-lg border border-[color:var(--ink-line)] bg-[color:var(--ink-line)]/20"
+                      style={{ aspectRatio: "16 / 10" }}
+                    >
+                      {projectForm.image ? (
+                        // eslint-disable-next-line @next/next/no-img-element
+                        <img
+                          src={projectForm.image}
+                          alt="Project cover"
+                          className="w-full h-full object-cover"
+                        />
+                      ) : (
+                        <div className="w-full h-full flex items-center justify-center font-mono text-[10px] text-[color:var(--ink-muted)]">
+                          No cover
+                        </div>
+                      )}
+                    </div>
+                    <div className="flex items-center gap-3">
+                      <label
+                        className={`${ghostBtn} cursor-pointer ${
+                          coverBusy ? "opacity-60 pointer-events-none" : ""
+                        }`}
+                      >
+                        <Upload className="w-4 h-4" />
+                        {coverBusy
+                          ? "Uploading..."
+                          : projectForm.image
+                          ? "Replace cover"
+                          : "Upload cover"}
+                        <input
+                          type="file"
+                          accept="image/*"
+                          onChange={handleCoverSelect}
+                          disabled={coverBusy}
+                          className="hidden"
+                        />
+                      </label>
+                      {projectForm.image && (
+                        <button
+                          type="button"
+                          onClick={handleClearCover}
+                          disabled={coverBusy}
+                          className={ghostBtn}
+                        >
+                          Remove cover
+                        </button>
+                      )}
+                    </div>
+                    <p className="font-mono text-[10px] text-[color:var(--ink-muted)]">
+                      {COVER_WIDTH}x{COVER_HEIGHT} (16:10) WebP, cropped to fit ·
+                      saved immediately · the previous file is kept in storage
+                    </p>
+                    {coverError && (
+                      <p className="text-[12px] text-[color:oklch(0.65_0.2_25)]">
+                        {coverError}
+                      </p>
+                    )}
+                  </>
+                ) : (
+                  <p className="font-mono text-[10px] text-[color:var(--ink-muted)]">
+                    Save the project first, then edit it to upload a cover.
+                  </p>
+                )}
+              </div>
+
               {/* Images */}
               <div className="space-y-3">
                 <div>
                   <label className={labelClass} htmlFor="images">
-                    Project Images
+                    Screenshots (gallery)
                   </label>
                   <div className="flex items-center gap-3">
                     <label className={`${ghostBtn} cursor-pointer`}>
@@ -726,21 +861,14 @@ export default function AdminProjectsPage() {
                 {projectImages.length > 0 && (
                   <div>
                     <span className={labelClass}>
-                      Current Images · click to set cover
+                      Current Screenshots
                     </span>
                     <div className="grid grid-cols-3 sm:grid-cols-4 gap-2 mt-1">
-                      {projectImages.map((img, idx) => {
-                        const isCover = projectForm.coverMediaId
-                          ? projectForm.coverMediaId === img.mediaId
-                          : idx === 0;
+                      {projectImages.map((img) => {
                         return (
                           <div
                             key={img.mediaId}
-                            className={`relative group rounded-lg overflow-hidden border border-[color:var(--ink-line)] aspect-square ${
-                              isCover
-                                ? "ring-2 ring-[color:var(--brand-cyan)]"
-                                : ""
-                            }`}
+                            className="relative group rounded-lg overflow-hidden border border-[color:var(--ink-line)] aspect-square"
                           >
                             {/* eslint-disable-next-line @next/next/no-img-element */}
                             <img
@@ -748,26 +876,6 @@ export default function AdminProjectsPage() {
                               alt={img.alt}
                               className="w-full h-full object-cover"
                             />
-                            {/* Set-as-cover: covers the image, keyboard focusable */}
-                            <button
-                              type="button"
-                              onClick={() =>
-                                setProjectForm({
-                                  ...projectForm,
-                                  coverMediaId: img.mediaId,
-                                })
-                              }
-                              title="Set as cover"
-                              aria-pressed={isCover}
-                              className="absolute inset-0 w-full h-full focus:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--brand-cyan)]"
-                            >
-                              <span className="sr-only">Set as cover</span>
-                            </button>
-                            {isCover && (
-                              <span className="absolute top-1 left-1 z-10 px-1.5 py-0.5 rounded-md bg-[color:var(--brand-cyan)] text-on-grad font-mono text-[9px] uppercase tracking-[0.06em] leading-none pointer-events-none">
-                                Cover
-                              </span>
-                            )}
                             {/* Delete: sibling button on top, keyboard focusable */}
                             <button
                               type="button"

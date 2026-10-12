@@ -2,6 +2,12 @@ import "server-only";
 import sharp from "sharp";
 import { randomUUID } from "node:crypto";
 import { supabaseAdmin } from "./supabase-admin";
+import {
+  COVER_HEIGHT,
+  COVER_WIDTH,
+  buildCoverPath,
+  coverShortId,
+} from "../project-cover";
 
 export type MediaFolder = "projects" | "reviews" | "team";
 
@@ -139,6 +145,26 @@ export async function processAndUploadImage(
     );
     throw e;
   }
+}
+
+/**
+ * Process a File as a project cover (16:10, 1600x1000 WebP) and upload it to
+ * `projects/<id>/cover-<shortid>.webp`. Never deletes or overwrites anything.
+ */
+export async function processAndUploadCover(
+  projectId: string,
+  file: File
+): Promise<{ url: string; path: string; width: number; height: number }> {
+  const input = Buffer.from(await file.arrayBuffer());
+  const optimized = await sharp(input)
+    .rotate()
+    .resize({ width: COVER_WIDTH, height: COVER_HEIGHT, fit: "cover" })
+    .webp({ quality: 82 })
+    .toBuffer();
+
+  const path = buildCoverPath(projectId, coverShortId(randomUUID()));
+  const url = await uploadBuffer(path, optimized, "image/webp");
+  return { url, path, width: COVER_WIDTH, height: COVER_HEIGHT };
 }
 
 /**
