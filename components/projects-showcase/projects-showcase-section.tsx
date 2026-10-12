@@ -10,6 +10,7 @@ import { useLanguage } from "@/hooks/use-language";
 import type { Project } from "@/lib/data-context";
 import { resolveProjectGradient } from "@/lib/gradient-presets";
 import { getProjectContent } from "@/components/projects-carousel";
+import { getProjectScreenshots } from "@/lib/project-media";
 import { ProjectsList } from "./projects-list";
 import {
   ProjectScreenshotCarousel,
@@ -20,24 +21,13 @@ interface ProjectsShowcaseSectionProps {
   projects?: Project[];
 }
 
+// Screenshots only: the marketing cover (`project.image`) must never appear
+// inside a device frame.
 function getProjectImages(project: Project): CarouselImage[] {
-  if (project.images && project.images.length > 0) {
-    return [...project.images]
-      .sort((a, b) => {
-        const aIsCover = a.mediaId === project.coverMediaId ? -1 : 0;
-        const bIsCover = b.mediaId === project.coverMediaId ? -1 : 0;
-        if (aIsCover !== bIsCover) return aIsCover - bIsCover;
-        return a.sortOrder - b.sortOrder;
-      })
-      .map((img, index) => ({
-        src: img.blobKey,
-        alt: img.alt || `${project.title} - ${index + 1}`,
-      }));
-  }
-  if (project.image) {
-    return [{ src: project.image, alt: project.title }];
-  }
-  return [];
+  return getProjectScreenshots(project).map((img, index) => ({
+    src: img.blobKey,
+    alt: img.alt || `${project.title} - ${index + 1}`,
+  }));
 }
 
 export function ProjectsShowcaseSection({
