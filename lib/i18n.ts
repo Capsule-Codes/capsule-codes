@@ -439,7 +439,7 @@ export const translations: Record<Language, Translations> = {
         secondPart: "Team",
       },
       subtitle:
-        "Our team is led by Facundo and composed of specialized senior developers",
+        "A senior team led by Facundo, with engineering and marketing under one roof",
       coFoundersTitle: "Co-Founders",
       marketingTitle: "Marketing",
       developersTitle: "Developers",
@@ -848,7 +848,7 @@ export const translations: Record<Language, Translations> = {
         secondPart: "Equipo",
       },
       subtitle:
-        "Nuestro equipo está liderado por Facundo y compuesto por desarrolladores senior especializados",
+        "Un equipo senior liderado por Facundo, con ingeniería y marketing bajo el mismo techo",
       coFoundersTitle: "Co-Fundadores",
       marketingTitle: "Marketing",
       developersTitle: "Desarrolladores",
@@ -1257,7 +1257,7 @@ export const translations: Record<Language, Translations> = {
         secondPart: "Team",
       },
       subtitle:
-        "Il nostro team è guidato da Facundo e composto da sviluppatori senior specializzati",
+        "Un team senior guidato da Facundo, con ingegneria e marketing sotto lo stesso tetto",
       coFoundersTitle: "Co-Fondatori",
       marketingTitle: "Marketing",
       developersTitle: "Sviluppatori",
