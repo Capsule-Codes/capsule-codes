@@ -83,6 +83,7 @@ export interface Translations {
     };
     subtitle: string;
     coFoundersTitle: string;
+    marketingTitle: string;
     developersTitle: string;
   };
   // Projects Section
@@ -438,6 +439,7 @@ export const translations: Record<Language, Translations> = {
       subtitle:
         "Our team is led by Facundo and composed of specialized senior developers",
       coFoundersTitle: "Co-Founders",
+      marketingTitle: "Marketing",
       developersTitle: "Developers",
     },
     projects: {
@@ -844,6 +846,7 @@ export const translations: Record<Language, Translations> = {
       subtitle:
         "Nuestro equipo está liderado por Facundo y compuesto por desarrolladores senior especializados",
       coFoundersTitle: "Co-Fundadores",
+      marketingTitle: "Marketing",
       developersTitle: "Desarrolladores",
     },
     projects: {
@@ -1250,6 +1253,7 @@ export const translations: Record<Language, Translations> = {
       subtitle:
         "Il nostro team è guidato da Facundo e composto da sviluppatori senior specializzati",
       coFoundersTitle: "Co-Fondatori",
+      marketingTitle: "Marketing",
       developersTitle: "Sviluppatori",
     },
     projects: {

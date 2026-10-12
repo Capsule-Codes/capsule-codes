@@ -17,7 +17,7 @@ import { useSupabase } from "@/lib/supabase-context";
 import { Plus, Pencil, Trash2, Save, X, Loader2, Upload } from "lucide-react";
 import type { TeamMember } from "@/lib/data-context";
 
-type TeamCategory = "cofounder" | "developer";
+type TeamCategory = "cofounder" | "marketing" | "developer";
 
 interface TeamForm {
   category: TeamCategory;
@@ -91,7 +91,8 @@ export default function AdminTeamPage() {
   const sortedMembers = useMemo(() => {
     const categoryRank: Record<TeamCategory, number> = {
       cofounder: 0,
-      developer: 1,
+      marketing: 1,
+      developer: 2,
     };
     return [...teamMembers].sort((a, b) => {
       const catDiff =
@@ -436,6 +437,7 @@ export default function AdminTeamPage() {
                     className={inputClass}
                   >
                     <option value="cofounder">Cofounder</option>
+                    <option value="marketing">Marketing</option>
                     <option value="developer">Developer</option>
                   </select>
                 </div>
