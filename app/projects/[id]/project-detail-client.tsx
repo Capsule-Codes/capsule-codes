@@ -66,7 +66,7 @@ export function ProjectDetailClient({ project }: ProjectDetailClientProps) {
       {/* Back Button */}
       <div className="mb-8">
         <Button asChild variant="outline" size="sm">
-          <Link href="/#projects">
+          <Link href="/projects">
             <ArrowLeft className="w-4 h-4 mr-2" />
             {t.projects.backToProjects}
           </Link>
@@ -77,15 +77,6 @@ export function ProjectDetailClient({ project }: ProjectDetailClientProps) {
       <div className="mb-12">
         <div className="flex gap-2 mb-4">
           <Badge className="capitalize">{project.category}</Badge>
-          {project.published && (
-            <Badge className="bg-green-500 text-white hover:bg-green-600">
-              {language === "es"
-                ? "Publicado"
-                : language === "it"
-                ? "Pubblicato"
-                : "Published"}
-            </Badge>
-          )}
         </div>
         <h1 className="text-3xl md:text-4xl font-bold mb-4">
           {content.title.split(" ")[0]}{" "}

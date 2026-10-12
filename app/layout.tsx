@@ -7,7 +7,6 @@ import { LanguageProvider } from "@/hooks/use-language";
 import { ThemeProvider } from "@/components/theme-provider";
 import { Toaster } from "@/components/ui/sonner";
 import { AmbientCursorGlow } from "@/components/motion/ambient-cursor-glow";
-import { Suspense } from "react";
 import "./globals.css";
 
 const inter = Inter({
@@ -104,18 +103,16 @@ export default function RootLayout({
       suppressHydrationWarning
     >
       <body className="font-sans">
-        <Suspense fallback={null}>
-          <ThemeProvider
-            attribute="class"
-            defaultTheme="dark"
-            enableSystem
-            disableTransitionOnChange
-          >
-            <AmbientCursorGlow />
-            <LanguageProvider>{children}</LanguageProvider>
-            <Toaster richColors position="bottom-right" />
-          </ThemeProvider>
-        </Suspense>
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="dark"
+          enableSystem
+          disableTransitionOnChange
+        >
+          <AmbientCursorGlow />
+          <LanguageProvider>{children}</LanguageProvider>
+          <Toaster richColors position="bottom-right" />
+        </ThemeProvider>
         <Analytics />
         <LinkedInInsightTag />
       </body>

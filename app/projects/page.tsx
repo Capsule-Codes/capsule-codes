@@ -1,9 +1,30 @@
-import { redirect } from "next/navigation"
+import type { Metadata } from "next";
+import { Header } from "@/components/header";
+import { Footer } from "@/components/footer";
+import { getProjects } from "@/lib/server/data";
+import { getPublishedProjects } from "@/lib/project-pages";
+import { ProjectsIndexClient } from "./projects-index-client";
 
-// La página standalone de listado (grid) quedó parkeada en ./_disabled hasta que
-// tengamos suficientes proyectos para justificar una página dedicada con grid +
-// filtros. Por ahora /projects redirige a la sección de la landing.
-// Para reactivarla: restaurar el contenido de _disabled/page.tsx acá.
-export default function ProjectsPage() {
-  redirect("/#projects")
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
+export const metadata: Metadata = {
+  title: "Projects",
+  description:
+    "Selected web platforms and mobile apps built by Capsule Codes for startups and companies.",
+  alternates: { canonical: "/projects" },
+};
+
+export default async function ProjectsPage() {
+  const projects = getPublishedProjects(await getProjects());
+
+  return (
+    <div className="min-h-screen bg-background">
+      <Header />
+      <main className="px-4 pb-16 pt-28 lg:px-12">
+        <ProjectsIndexClient projects={projects} />
+      </main>
+      <Footer />
+    </div>
+  );
 }
