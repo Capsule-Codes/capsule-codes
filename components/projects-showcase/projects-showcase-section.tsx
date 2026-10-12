@@ -94,8 +94,6 @@ export function ProjectsShowcaseSection({
   );
   const orientation = active.imageOrientation ?? (active.category === "mobile" ? "vertical" : "horizontal");
   const frame = orientation === "vertical" ? "phone" : "browser";
-  const viewLabel =
-    language === "es" ? "Ver proyecto" : language === "it" ? "Vedi progetto" : "View project";
 
   return (
     <section
@@ -131,13 +129,13 @@ export function ProjectsShowcaseSection({
                   {content.description}
                 </p>
               )}
-              {/* <Link
+              <Link
                 href={`/projects/${active.id}`}
                 className="mt-4 inline-flex items-center gap-1.5 text-sm font-medium text-[color:var(--brand-cyan)] transition-opacity hover:opacity-80"
               >
-                {viewLabel}
+                {t.projects.viewProject}
                 <ArrowUpRight className="size-4" />
-              </Link> */}
+              </Link>
             </div>
 
             {active.technologies.length > 0 && (
@@ -151,6 +149,16 @@ export function ProjectsShowcaseSection({
             )}
           </div>
         </div>
+      </div>
+
+      <div className="mt-8 flex justify-center">
+        <Link
+          href="/projects"
+          className="inline-flex items-center gap-1.5 text-sm font-medium text-[color:var(--brand-cyan)] transition-opacity hover:opacity-80"
+        >
+          {t.projects.viewAll}
+          <ArrowUpRight className="size-4" />
+        </Link>
       </div>
 
       {images.length > 0 && (

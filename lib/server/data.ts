@@ -1,6 +1,7 @@
 import "server-only";
 import { supabaseAdmin } from "./supabase-admin";
 import type { Project, Technology, Review, TeamMember } from "@/lib/data-context";
+import { isProjectPublished } from "@/lib/project-pages";
 import type { ContactInfo } from "@/lib/types/contact";
 
 /**
@@ -230,4 +231,13 @@ export async function getHomePageData() {
     contactInfo,
     teamMembers,
   };
+}
+
+/**
+ * Fetch a project for public pages: unknown ids and unpublished projects both
+ * resolve to null so the caller can 404.
+ */
+export async function getPublishedProject(id: string): Promise<Project | null> {
+  const project = await getProject(id);
+  return project && isProjectPublished(project) ? project : null;
 }

@@ -94,6 +94,8 @@ export interface Translations {
     viewLive: string;
     backToHome: string;
     backToProjects: string;
+    viewProject: string;
+    noProjects: string;
     projectTitles: {
       ecommerce: string;
       fitness: string;
@@ -449,6 +451,8 @@ export const translations: Record<Language, Translations> = {
       viewLive: "View Live",
       backToHome: "Back to Home",
       backToProjects: "Back to Projects",
+      viewProject: "View project",
+      noProjects: "No projects available",
       projectTitles: {
         ecommerce: "Futuristic E-Commerce",
         fitness: "Social Fitness App",
@@ -855,6 +859,8 @@ export const translations: Record<Language, Translations> = {
       viewLive: "Ver en Vivo",
       backToHome: "Volver al Inicio",
       backToProjects: "Volver a Proyectos",
+      viewProject: "Ver proyecto",
+      noProjects: "No hay proyectos disponibles",
       projectTitles: {
         ecommerce: "E-Commerce Futurista",
         fitness: "App de Fitness Social",
@@ -1261,6 +1267,8 @@ export const translations: Record<Language, Translations> = {
       viewLive: "Vedi Live",
       backToHome: "Torna alla Home",
       backToProjects: "Torna ai Progetti",
+      viewProject: "Vedi progetto",
+      noProjects: "Nessun progetto disponibile",
       projectTitles: {
         ecommerce: "E-Commerce Futuristico",
         fitness: "App Fitness Sociale",
