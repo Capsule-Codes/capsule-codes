@@ -2,6 +2,7 @@
 import { useLanguage } from "@/hooks/use-language";
 import { ScrollReveal } from "@/components/motion/scroll-reveal";
 import { SectionHeader } from "@/components/ui/section-header";
+import { groupTeamMembers } from "@/lib/team-groups";
 import type { TeamMember } from "@/lib/data-context";
 
 interface TeamSectionProps {
@@ -11,8 +12,12 @@ interface TeamSectionProps {
 export function TeamSection({ teamMembers }: TeamSectionProps) {
   const { t, language } = useLanguage();
 
-  const cofounders = teamMembers.filter((m) => m.category === "cofounder");
-  const developers = teamMembers.filter((m) => m.category === "developer");
+  const groups = groupTeamMembers(teamMembers);
+  const titles = {
+    cofounder: t.team.coFoundersTitle,
+    marketing: t.team.marketingTitle,
+    developer: t.team.developersTitle,
+  };
 
   const tr = (m: TeamMember) => m.translations?.[language] ?? m.translations.en;
 
@@ -24,30 +29,24 @@ export function TeamSection({ teamMembers }: TeamSectionProps) {
         lead={t.team.subtitle}
       />
 
-      <div className="mt-12">
-        <div className="font-mono text-[11px] uppercase tracking-[0.08em] text-[color:var(--brand-cyan)] mb-4">— {t.team.coFoundersTitle}</div>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {cofounders.map((m, i) => {
-            const c = tr(m);
-            return (
-              <ScrollReveal key={m.id} delay={i * 0.08} className="h-full">
-                <MemberCard name={c.name} role={c.role} description={c.description} avatarUrl={m.avatar} />
-              </ScrollReveal>
-            );
-          })}
-        </div>
-
-        <div className="font-mono text-[11px] uppercase tracking-[0.08em] text-[color:var(--brand-cyan)] mt-9 mb-4">— {t.team.developersTitle}</div>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          {developers.map((m, i) => {
-            const c = tr(m);
-            return (
-              <ScrollReveal key={m.id} delay={i * 0.08} className="h-full">
-                <MemberCard name={c.name} role={c.role} description={c.description} avatarUrl={m.avatar} />
-              </ScrollReveal>
-            );
-          })}
-        </div>
+      <div className="mt-12 space-y-9">
+        {groups.map((group) => (
+          <div key={group.category}>
+            <div className="font-mono text-[11px] uppercase tracking-[0.08em] text-[color:var(--brand-cyan)] mb-4">
+              — {titles[group.category]}
+            </div>
+            <div className={group.category === "developer" ? "grid grid-cols-1 md:grid-cols-3 gap-4" : "grid grid-cols-1 md:grid-cols-2 gap-4"}>
+              {group.members.map((m, i) => {
+                const c = tr(m);
+                return (
+                  <ScrollReveal key={m.id} delay={i * 0.08} className="h-full">
+                    <MemberCard name={c.name} role={c.role} description={c.description} avatarUrl={m.avatar} />
+                  </ScrollReveal>
+                );
+              })}
+            </div>
+          </div>
+        ))}
       </div>
     </section>
   );

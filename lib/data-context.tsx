@@ -109,7 +109,7 @@ export type TeamMemberTranslations = {
 
 export type TeamMember = {
   id: string;
-  category: "cofounder" | "developer";
+  category: "cofounder" | "marketing" | "developer";
   avatar: string | null;
   avatar_blob_key: string | null;
   order: number | null;

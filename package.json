@@ -7,7 +7,7 @@
     "dev": "next dev",
     "lint": "next lint",
     "start": "next start",
-    "test": "node --test lib/project-media.test.ts lib/project-pages.test.ts"
+    "test": "node --test lib/project-media.test.ts lib/project-pages.test.ts lib/team-groups.test.ts"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.10.0",
