@@ -19,6 +19,7 @@ import { useLanguage } from "@/hooks/use-language";
 import type { Project, ProjectImage } from "@/lib/data-context";
 import { compressImages, validateImageFiles } from "@/lib/image-compression";
 import { GRADIENT_PRESETS, CUSTOM_GRADIENT_KEY } from "@/lib/gradient-presets";
+import { resolvePrimaryImage } from "@/lib/project-media";
 import {
   Plus,
   Edit,
@@ -234,10 +235,11 @@ export default function AdminProjectsPage() {
         return;
       }
 
-      const primaryImage =
-        projectImages.length > 0
-          ? projectImages[0].blobKey
-          : projectForm.image;
+      // `image` is the marketing cover: keep it unless empty.
+      const primaryImage = resolvePrimaryImage(
+        projectForm.image,
+        projectImages,
+      );
 
       const projectData = {
         title: projectForm.translations.en.title || projectForm.title,
@@ -309,10 +311,10 @@ export default function AdminProjectsPage() {
 
         const result = await response.json();
         const updatedImages = [...projectImages, ...result.images];
-        const newPrimaryImage =
-          updatedImages.length > 0
-            ? updatedImages[0].blobKey
-            : projectForm.image;
+        const newPrimaryImage = resolvePrimaryImage(
+          projectForm.image,
+          updatedImages,
+        );
 
         await updateProject(projectId, {
           images: updatedImages,
@@ -374,8 +376,12 @@ export default function AdminProjectsPage() {
       );
       setProjectImages(updatedImages);
 
-      const newPrimaryImage =
-        updatedImages.length > 0 ? updatedImages[0].blobKey : "";
+      // Keep the marketing cover; only re-point `image` if it was this screenshot.
+      const newPrimaryImage = resolvePrimaryImage(
+        projectForm.image,
+        updatedImages,
+        image.blobKey,
+      );
 
       // If the deleted image was the selected cover, reset it (avoids a stale
       // cover_media_id pointing at a now-missing image).

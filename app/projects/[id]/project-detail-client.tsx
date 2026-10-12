@@ -8,7 +8,11 @@ import Image from "next/image"
 import Link from "next/link"
 import { useLanguage } from "@/hooks/use-language"
 import type { Project } from "@/lib/data-context"
-import { isPortraitImage } from "@/components/projects-carousel"
+import {
+  getProjectCover,
+  getProjectScreenshots,
+  isPortraitImage,
+} from "@/lib/project-media"
 import { ProjectLightbox } from "@/components/project-lightbox"
 
 interface ProjectDetailClientProps {
@@ -29,18 +33,12 @@ export function ProjectDetailClient({ project }: ProjectDetailClientProps) {
 
   const content = getProjectContent(project);
   
-  // Get all images (use images array if available, otherwise fallback to single image).
-  // blobKey now stores a full public URL (Supabase Storage), so use it as-is.
-  // Keep full ProjectImage objects (sorted by sortOrder) so we retain real dimensions.
-  const imageObjects =
-    project.images && project.images.length > 0
-      ? [...project.images].sort((a, b) => a.sortOrder - b.sortOrder)
-      : [];
-  const images = imageObjects.length > 0
-    ? imageObjects.map((img) => img.blobKey)
-    : project.image
-      ? [project.image]
-      : [];
+  // Screenshots only (sorted by sortOrder, cover excluded). The marketing cover
+  // (`project.image`) is rendered as a hero banner and never joins the gallery.
+  // blobKey stores a full public URL (Supabase Storage), so use it as-is.
+  const cover = getProjectCover(project)
+  const imageObjects = getProjectScreenshots(project)
+  const images = imageObjects.map((img) => img.blobKey)
 
   // A project is "portrait" when at least half of its images are portrait.
   const portraitCount = imageObjects.filter((img) => isPortraitImage(img)).length;
@@ -101,6 +99,20 @@ export function ProjectDetailClient({ project }: ProjectDetailClientProps) {
           </p>
         )}
       </div>
+
+      {/* Marketing cover (16:10) */}
+      {cover && (
+        <div className="relative mb-12 w-full aspect-[16/10] rounded-xl overflow-hidden border border-border animate-in fade-in slide-in-from-bottom-4 duration-700">
+          <Image
+            src={cover}
+            alt={content.title}
+            fill
+            sizes="(min-width: 1024px) 1024px, 100vw"
+            className="object-cover"
+            priority
+          />
+        </div>
+      )}
 
       {/* Content Row - Foto y Descripción lado a lado */}
       {isPortraitProject ? (
