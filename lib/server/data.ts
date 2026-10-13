@@ -16,6 +16,7 @@ export function mapProjectRow(row: Record<string, unknown>): Project {
     id: row.id as string,
     title: row.title as string,
     description: row.description as string,
+    subtitle: (row.subtitle as string) || undefined,
     translations: row.translations as Project["translations"],
     image: row.image as string,
     images: (row.images as Project["images"]) ?? undefined,

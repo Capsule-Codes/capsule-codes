@@ -26,6 +26,8 @@ export interface Project {
   id: string;
   title: string; // Fallback para compatibilidad
   description: string; // Fallback para compatibilidad
+  /** Top-level DB subtitle; fallback when a locale has no translated subtitle. */
+  subtitle?: string;
   translations: {
     en: ProjectTranslations;
     es: ProjectTranslations;

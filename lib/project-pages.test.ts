@@ -5,6 +5,7 @@ import {
   findPublishedProject,
   getPublishedProjects,
   isProjectPublished,
+  resolveProjectSubtitle,
 } from "./project-pages.ts";
 
 const tr = (title: string, description = "d") => ({ title, subtitle: "s", description });
@@ -66,4 +67,16 @@ test("buildProjectMetadata truncates long descriptions", () => {
   const m = buildProjectMetadata(project("a", { translations: undefined, description: "x".repeat(400) }));
   assert.ok((m.description as string).length <= 200);
   assert.ok((m.description as string).endsWith("…"));
+});
+
+test("resolveProjectSubtitle prefers the localized subtitle, then the DB column", () => {
+  const p = project("a", { subtitle: "Column subtitle" });
+  assert.equal(resolveProjectSubtitle(p, "es"), "s");
+  const noTr = project("b", {
+    subtitle: "Column subtitle",
+    translations: { en: tr("E"), es: { title: "x", subtitle: "", description: "d" }, it: tr("I") },
+  });
+  assert.equal(resolveProjectSubtitle(noTr, "es"), "Column subtitle");
+  assert.equal(resolveProjectSubtitle(project("c", { translations: undefined }), "en"), undefined);
+  assert.equal(resolveProjectSubtitle(project("d", { subtitle: "  " , translations: { en: { title: "t", description: "d" } } }), "en"), undefined);
 });

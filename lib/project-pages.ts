@@ -26,6 +26,19 @@ function truncate(text: string, max: number): string {
   return clean.length <= max ? clean : `${clean.slice(0, max - 1).trimEnd()}…`;
 }
 
+/**
+ * Subtitle for a locale: the localized value, else the project's top-level
+ * `subtitle` column (some projects only fill that one), else undefined.
+ */
+export function resolveProjectSubtitle(
+  project: Partial<Pick<Project, "translations" | "subtitle">>,
+  language: "en" | "es" | "it",
+): string | undefined {
+  const localized = project.translations?.[language]?.subtitle?.trim();
+  if (localized) return localized;
+  return project.subtitle?.trim() || undefined;
+}
+
 export interface ProjectPageMetadata {
   title: string;
   description: string;
