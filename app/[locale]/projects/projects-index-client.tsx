@@ -5,11 +5,12 @@ import { ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { SectionHeader } from "@/components/ui/section-header";
 import { ProjectCard } from "@/components/project-card";
-import { useLanguage } from "@/hooks/use-language";
+import { useLanguage, useLocalePath } from "@/hooks/use-language";
 import type { Project } from "@/lib/data-context";
 
 export function ProjectsIndexClient({ projects }: { projects: Project[] }) {
   const { t } = useLanguage();
+  const localePath = useLocalePath();
   const titleWords = t.projects.title.split(" ");
   const lastWord = titleWords[titleWords.length - 1];
   const leadingWords = titleWords.slice(0, -1).join(" ");
@@ -18,7 +19,7 @@ export function ProjectsIndexClient({ projects }: { projects: Project[] }) {
     <>
       <div className="mb-10">
         <Button asChild variant="outline" size="sm">
-          <Link href="/">
+          <Link href={localePath("/")}>
             <ArrowLeft className="mr-2 h-4 w-4" />
             {t.projects.backToHome}
           </Link>

@@ -1,15 +1,16 @@
 import type { Metadata } from "next";
 import { Header } from "@/components/header";
 import { Footer } from "@/components/footer";
+import { isLocale } from "@/lib/locale";
+import { buildPageMetadata } from "@/lib/page-metadata";
 import { TermsOfServiceClient } from "./terms-client";
 
-export const metadata: Metadata = {
-  title: "Terms of Service | Capsule Codes",
-  description:
-    "The terms that govern your access to and use of the Capsule Codes website and services.",
-  alternates: { canonical: "/terms" },
-  openGraph: { type: "website", title: "Terms of Service | Capsule Codes", url: "/terms" },
-};
+type PageProps = { params: Promise<{ locale: string }> };
+
+export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
+  const { locale } = await params;
+  return isLocale(locale) ? buildPageMetadata(locale, "terms") : {};
+}
 
 export default function TermsOfServicePage() {
   return (

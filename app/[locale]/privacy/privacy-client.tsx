@@ -1,20 +1,21 @@
 "use client"
 
-import { useLanguage } from "@/hooks/use-language";
+import { useLanguage, useLocalePath } from "@/hooks/use-language";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
 
-export function TermsOfServiceClient() {
+export function PrivacyPolicyClient() {
   const { t } = useLanguage();
-  const content = t.legal.termsOfService;
+  const localePath = useLocalePath();
+  const content = t.legal.privacyPolicy;
 
   return (
     <div className="max-w-4xl mx-auto">
       {/* Back Button */}
       <div className="mb-8">
         <Button asChild variant="outline" size="sm">
-          <Link href="/">
+          <Link href={localePath("/")}>
             <ArrowLeft className="w-4 h-4 mr-2" />
             {t.projects.backToHome}
           </Link>
@@ -35,63 +36,63 @@ export function TermsOfServiceClient() {
       {/* Content */}
       <div className="prose prose-slate dark:prose-invert max-w-none space-y-8">
         <section>
-          <h2 className="text-2xl font-semibold mb-4">1. Introduction</h2>
+          <h2 className="text-2xl font-semibold mb-4">1. {content.headings[0]}</h2>
           <p className="text-muted-foreground leading-relaxed">
             {content.sections.introduction}
           </p>
         </section>
 
         <section>
-          <h2 className="text-2xl font-semibold mb-4">2. Services</h2>
+          <h2 className="text-2xl font-semibold mb-4">2. {content.headings[1]}</h2>
           <p className="text-muted-foreground leading-relaxed">
-            {content.sections.services}
+            {content.sections.dataCollection}
           </p>
         </section>
 
         <section>
-          <h2 className="text-2xl font-semibold mb-4">3. User Obligations</h2>
+          <h2 className="text-2xl font-semibold mb-4">3. {content.headings[2]}</h2>
           <p className="text-muted-foreground leading-relaxed">
-            {content.sections.userObligations}
+            {content.sections.dataUsage}
           </p>
         </section>
 
         <section>
-          <h2 className="text-2xl font-semibold mb-4">4. Intellectual Property</h2>
+          <h2 className="text-2xl font-semibold mb-4">4. {content.headings[3]}</h2>
           <p className="text-muted-foreground leading-relaxed">
-            {content.sections.intellectualProperty}
+            {content.sections.dataProtection}
           </p>
         </section>
 
         <section>
-          <h2 className="text-2xl font-semibold mb-4">5. Payment Terms</h2>
+          <h2 className="text-2xl font-semibold mb-4">5. {content.headings[4]}</h2>
           <p className="text-muted-foreground leading-relaxed">
-            {content.sections.payment}
+            {content.sections.cookies}
           </p>
         </section>
 
         <section>
-          <h2 className="text-2xl font-semibold mb-4">6. Liability</h2>
+          <h2 className="text-2xl font-semibold mb-4">6. {content.headings[5]}</h2>
           <p className="text-muted-foreground leading-relaxed">
-            {content.sections.liability}
+            {content.sections.thirdParty}
           </p>
         </section>
 
         <section>
-          <h2 className="text-2xl font-semibold mb-4">7. Termination</h2>
+          <h2 className="text-2xl font-semibold mb-4">7. {content.headings[6]}</h2>
           <p className="text-muted-foreground leading-relaxed">
-            {content.sections.termination}
+            {content.sections.rights}
           </p>
         </section>
 
         <section>
-          <h2 className="text-2xl font-semibold mb-4">8. Changes to Terms</h2>
+          <h2 className="text-2xl font-semibold mb-4">8. {content.headings[7]}</h2>
           <p className="text-muted-foreground leading-relaxed">
             {content.sections.changes}
           </p>
         </section>
 
         <section>
-          <h2 className="text-2xl font-semibold mb-4">9. Contact Us</h2>
+          <h2 className="text-2xl font-semibold mb-4">9. {content.headings[8]}</h2>
           <p className="text-muted-foreground leading-relaxed">
             {content.sections.contact}
           </p>

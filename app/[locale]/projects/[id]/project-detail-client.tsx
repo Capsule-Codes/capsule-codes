@@ -6,7 +6,7 @@ import { Badge } from "@/components/ui/badge"
 import { Globe, ArrowLeft } from "lucide-react"
 import Image from "next/image"
 import Link from "next/link"
-import { useLanguage } from "@/hooks/use-language"
+import { useLanguage, useLocalePath } from "@/hooks/use-language"
 import type { Project } from "@/lib/data-context"
 import {
   getProjectCover,
@@ -22,6 +22,7 @@ interface ProjectDetailClientProps {
 
 export function ProjectDetailClient({ project }: ProjectDetailClientProps) {
   const { t, language } = useLanguage()
+  const localePath = useLocalePath()
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null)
 
   const content = getProjectContent(project, language);
@@ -59,7 +60,7 @@ export function ProjectDetailClient({ project }: ProjectDetailClientProps) {
       {/* Back Button */}
       <div className="mb-8">
         <Button asChild variant="outline" size="sm">
-          <Link href="/projects">
+          <Link href={localePath("/projects")}>
             <ArrowLeft className="w-4 h-4 mr-2" />
             {t.projects.backToProjects}
           </Link>

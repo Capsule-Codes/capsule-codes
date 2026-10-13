@@ -1,15 +1,16 @@
 import type { Metadata } from "next";
 import { Header } from "@/components/header";
 import { Footer } from "@/components/footer";
+import { isLocale } from "@/lib/locale";
+import { buildPageMetadata } from "@/lib/page-metadata";
 import { PrivacyPolicyClient } from "./privacy-client";
 
-export const metadata: Metadata = {
-  title: "Privacy Policy | Capsule Codes",
-  description:
-    "How Capsule Codes collects, uses and protects your personal information when you visit our website or use our services.",
-  alternates: { canonical: "/privacy" },
-  openGraph: { type: "website", title: "Privacy Policy | Capsule Codes", url: "/privacy" },
-};
+type PageProps = { params: Promise<{ locale: string }> };
+
+export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
+  const { locale } = await params;
+  return isLocale(locale) ? buildPageMetadata(locale, "privacy") : {};
+}
 
 export default function PrivacyPolicyPage() {
   return (

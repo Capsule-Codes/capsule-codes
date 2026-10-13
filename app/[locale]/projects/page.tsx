@@ -3,18 +3,19 @@ import { Header } from "@/components/header";
 import { Footer } from "@/components/footer";
 import { getProjects } from "@/lib/server/data";
 import { getPublishedProjects } from "@/lib/project-pages";
+import { isLocale } from "@/lib/locale";
+import { buildPageMetadata } from "@/lib/page-metadata";
 import { ProjectsIndexClient } from "./projects-index-client";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
 
-export const metadata: Metadata = {
-  title: "Projects",
-  description:
-    "Selected web platforms and mobile apps built by Capsule Codes for startups and companies.",
-  alternates: { canonical: "/projects" },
-  openGraph: { type: "website", title: "Projects | Capsule Codes", url: "/projects" },
-};
+type PageProps = { params: Promise<{ locale: string }> };
+
+export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
+  const { locale } = await params;
+  return isLocale(locale) ? buildPageMetadata(locale, "projects") : {};
+}
 
 export default async function ProjectsPage() {
   const projects = getPublishedProjects(await getProjects());

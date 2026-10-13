@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { ArrowUpRight } from "lucide-react";
 import { Capsule } from "@/components/ui/capsule";
-import { useLanguage } from "@/hooks/use-language";
+import { useLanguage, useLocalePath } from "@/hooks/use-language";
 import type { Project } from "@/lib/data-context";
 import { resolveProjectGradient } from "@/lib/gradient-presets";
 import { getProjectThumb } from "@/lib/project-media";
@@ -12,6 +12,7 @@ import { getCategoryLabel, getProjectContent } from "@/components/projects-carou
 /** Card for a project: 16:10 marketing cover, title, summary and a link to the detail page. */
 export function ProjectCard({ project }: { project: Project }) {
   const { language, t } = useLanguage();
+  const localePath = useLocalePath();
   const content = getProjectContent(project, language);
   const thumb = getProjectThumb(project);
   const preset = resolveProjectGradient(
@@ -22,7 +23,7 @@ export function ProjectCard({ project }: { project: Project }) {
 
   return (
     <Link
-      href={`/projects/${project.id}`}
+      href={localePath(`/projects/${project.id}`)}
       className="group flex h-full flex-col overflow-hidden rounded-3xl border border-[color:var(--ink-line)] bg-[color:var(--ink-bg-2)] transition-colors duration-200 hover:border-[color:var(--brand-cyan)] focus:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--ring)]"
     >
       <div

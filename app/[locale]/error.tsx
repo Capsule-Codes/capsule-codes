@@ -4,6 +4,7 @@ import { useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { AlertCircle } from "lucide-react";
+import { useLanguage, useLocalePath } from "@/hooks/use-language";
 
 export default function Error({
   error,
@@ -12,6 +13,9 @@ export default function Error({
   error: Error & { digest?: string };
   reset: () => void;
 }) {
+  const { t } = useLanguage();
+  const localePath = useLocalePath();
+
   useEffect(() => {
     // Log the error to an error reporting service
     // console.error(error);
@@ -23,12 +27,12 @@ export default function Error({
         <CardHeader>
           <div className="flex items-center gap-2">
             <AlertCircle className="h-6 w-6 text-destructive" />
-            <CardTitle className="text-2xl">Something went wrong</CardTitle>
+            <CardTitle className="text-2xl">{t.errorPage.title}</CardTitle>
           </div>
         </CardHeader>
         <CardContent className="space-y-4">
           <p className="text-muted-foreground">
-            An unexpected error occurred. Please try again.
+            {t.errorPage.message}
           </p>
           {error.message && (
             <div className="bg-muted p-3 rounded-md">
@@ -39,14 +43,14 @@ export default function Error({
           )}
           <div className="flex gap-2">
             <Button onClick={() => reset()} className="flex-1">
-              Try again
+              {t.errorPage.retry}
             </Button>
             <Button
               variant="outline"
-              onClick={() => (window.location.href = "/")}
+              onClick={() => (window.location.href = localePath("/"))}
               className="flex-1"
             >
-              Go home
+              {t.errorPage.home}
             </Button>
           </div>
         </CardContent>

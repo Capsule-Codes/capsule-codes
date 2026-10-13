@@ -219,11 +219,26 @@ export interface Translations {
     termsOfService: string;
     quote: string;
   };
+  // Not-found and error pages
+  notFound: {
+    badge: string;
+    heading: string;
+    body: string;
+    backHome: string;
+  };
+  errorPage: {
+    title: string;
+    message: string;
+    retry: string;
+    home: string;
+  };
   // Legal Pages
   legal: {
     privacyPolicy: {
       title: string;
       lastUpdated: string;
+      /** Section headings, in the order the sections are rendered. */
+      headings: string[];
       sections: {
         introduction: string;
         dataCollection: string;
@@ -239,6 +254,8 @@ export interface Translations {
     termsOfService: {
       title: string;
       lastUpdated: string;
+      /** Section headings, in the order the sections are rendered. */
+      headings: string[];
       sections: {
         introduction: string;
         services: string;
@@ -614,10 +631,23 @@ export const translations: Record<Language, Translations> = {
       termsOfService: "Terms of Service",
       quote: "Building digital products that scale.",
     },
+    notFound: {
+      badge: "404 · Page not found",
+      heading: "Oops! This page doesn't exist.",
+      body: "Looks like you took a wrong turn — but no worries.",
+      backHome: "Back to Home",
+    },
+    errorPage: {
+      title: "Something went wrong",
+      message: "An unexpected error occurred. Please try again.",
+      retry: "Try again",
+      home: "Go home",
+    },
     legal: {
       privacyPolicy: {
         title: "Privacy Policy",
         lastUpdated: "Last updated: January 2024",
+        headings: ["Introduction", "Data Collection", "How We Use Your Data", "Data Protection", "Cookies", "Third-Party Services", "Your Rights", "Changes to This Policy", "Contact Us"],
         sections: {
           introduction:
             "At Capsule Codes, we are committed to protecting your privacy. This Privacy Policy explains how we collect, use, and safeguard your personal information when you visit our website or use our services.",
@@ -642,6 +672,7 @@ export const translations: Record<Language, Translations> = {
       termsOfService: {
         title: "Terms of Service",
         lastUpdated: "Last updated: January 2024",
+        headings: ["Introduction", "Services", "User Obligations", "Intellectual Property", "Payment Terms", "Liability", "Termination", "Changes to Terms", "Contact Us"],
         sections: {
           introduction:
             "These Terms of Service govern your access to and use of Capsule Codes' website and services. By accessing or using our services, you agree to be bound by these Terms.",
@@ -1024,10 +1055,23 @@ export const translations: Record<Language, Translations> = {
       termsOfService: "Términos de Servicio",
       quote: "Construyendo productos digitales que escalan.",
     },
+    notFound: {
+      badge: "404 · Página no encontrada",
+      heading: "¡Ups! Esta página no existe.",
+      body: "Parece que tomaste un camino equivocado, pero no te preocupes.",
+      backHome: "Volver al inicio",
+    },
+    errorPage: {
+      title: "Algo salió mal",
+      message: "Ocurrió un error inesperado. Inténtalo de nuevo.",
+      retry: "Reintentar",
+      home: "Ir al inicio",
+    },
     legal: {
       privacyPolicy: {
         title: "Política de Privacidad",
         lastUpdated: "Última actualización: Enero 2024",
+        headings: ["Introducción", "Recopilación de datos", "Cómo usamos tus datos", "Protección de datos", "Cookies", "Servicios de terceros", "Tus derechos", "Cambios en esta política", "Contacto"],
         sections: {
           introduction:
             "En Capsule Codes, nos comprometemos a proteger su privacidad. Esta Política de Privacidad explica cómo recopilamos, usamos y protegemos su información personal cuando visita nuestro sitio web o utiliza nuestros servicios.",
@@ -1052,6 +1096,7 @@ export const translations: Record<Language, Translations> = {
       termsOfService: {
         title: "Términos de Servicio",
         lastUpdated: "Última actualización: Enero 2024",
+        headings: ["Introducción", "Servicios", "Obligaciones del usuario", "Propiedad intelectual", "Condiciones de pago", "Responsabilidad", "Terminación", "Cambios en los términos", "Contacto"],
         sections: {
           introduction:
             "Estos Términos de Servicio rigen su acceso y uso del sitio web y servicios de Capsule Codes. Al acceder o utilizar nuestros servicios, usted acepta estar sujeto a estos Términos.",
@@ -1433,10 +1478,23 @@ export const translations: Record<Language, Translations> = {
       termsOfService: "Termini di Servizio",
       quote: "Costruendo prodotti digitali che scalano.",
     },
+    notFound: {
+      badge: "404 · Pagina non trovata",
+      heading: "Ops! Questa pagina non esiste.",
+      body: "Sembra che tu abbia sbagliato strada, ma nessun problema.",
+      backHome: "Torna alla Home",
+    },
+    errorPage: {
+      title: "Qualcosa è andato storto",
+      message: "Si è verificato un errore imprevisto. Riprova.",
+      retry: "Riprova",
+      home: "Vai alla home",
+    },
     legal: {
       privacyPolicy: {
         title: "Informativa sulla Privacy",
         lastUpdated: "Ultimo aggiornamento: Gennaio 2024",
+        headings: ["Introduzione", "Raccolta dei dati", "Come utilizziamo i tuoi dati", "Protezione dei dati", "Cookie", "Servizi di terze parti", "I tuoi diritti", "Modifiche a questa informativa", "Contatti"],
         sections: {
           introduction:
             "In Capsule Codes, ci impegniamo a proteggere la tua privacy. Questa Informativa sulla Privacy spiega come raccogliamo, utilizziamo e proteggiamo le tue informazioni personali quando visiti il nostro sito web o utilizzi i nostri servizi.",
@@ -1461,6 +1519,7 @@ export const translations: Record<Language, Translations> = {
       termsOfService: {
         title: "Termini di Servizio",
         lastUpdated: "Ultimo aggiornamento: Gennaio 2024",
+        headings: ["Introduzione", "Servizi", "Obblighi dell'utente", "Proprietà intellettuale", "Condizioni di pagamento", "Responsabilità", "Cessazione", "Modifiche ai termini", "Contatti"],
         sections: {
           introduction:
             "Questi Termini di Servizio disciplinano il tuo accesso e utilizzo del sito web e dei servizi di Capsule Codes. Accedendo o utilizzando i nostri servizi, accetti di essere vincolato da questi Termini.",

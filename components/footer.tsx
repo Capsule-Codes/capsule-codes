@@ -3,10 +3,12 @@
 import { useCallback } from "react";
 import Image from "next/image";
 import { Linkedin, Github } from "lucide-react";
-import { useLanguage } from "@/hooks/use-language";
+import { useLanguage, useLocalePath } from "@/hooks/use-language";
+import { isHomePath } from "@/lib/locale";
 
 export function Footer() {
   const { t } = useLanguage();
+  const localePath = useLocalePath();
   const currentYear = new Date().getFullYear();
 
   const quickLinks = [
@@ -18,13 +20,13 @@ export function Footer() {
   ];
 
   const handleNavClick = useCallback((href: string) => {
-    if (window.location.pathname !== "/") {
-      window.location.href = `/${href}`;
+    if (!isHomePath(window.location.pathname)) {
+      window.location.href = localePath(`/${href}`);
       return;
     }
 
     document.querySelector(href)?.scrollIntoView({ behavior: "smooth" });
-  }, []);
+  }, [localePath]);
 
   return (
     <footer className="px-4 lg:px-12 py-[50px] pb-8 border-t border-[color:var(--ink-line)]">
@@ -67,13 +69,13 @@ export function Footer() {
               — Legal
             </h3>
             <a
-              href="/privacy"
+              href={localePath("/privacy")}
               className="block text-[13px] text-[color:var(--ink-muted)] py-1 hover:text-foreground transition"
             >
               {t.footer.privacyPolicy}
             </a>
             <a
-              href="/terms"
+              href={localePath("/terms")}
               className="block text-[13px] text-[color:var(--ink-muted)] py-1 hover:text-foreground transition"
             >
               {t.footer.termsOfService}

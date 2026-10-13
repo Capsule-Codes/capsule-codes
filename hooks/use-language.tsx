@@ -1,17 +1,12 @@
 "use client";
 
-import {
-  createContext,
-  useContext,
-  useState,
-  useEffect,
-  type ReactNode,
-} from "react";
-import { type Language, getTranslations, type Translations } from "@/lib/i18n";
+import { createContext, useContext, type ReactNode } from "react";
+import { getTranslations, type Language, type Translations } from "@/lib/i18n";
+import { localePath } from "@/lib/locale";
 
 interface LanguageContextType {
+  /** The language of the page, taken from the URL (`/es/...`, `/it/...`, else English). */
   language: Language;
-  setLanguage: (lang: Language) => void;
   t: Translations;
 }
 
@@ -19,36 +14,18 @@ const LanguageContext = createContext<LanguageContextType | undefined>(
   undefined
 );
 
-export function LanguageProvider({ children }: { children: ReactNode }) {
-  const [language, setLanguageState] = useState<Language>("en");
-  const [t, setTranslations] = useState<Translations>(getTranslations("en"));
-
-  useEffect(() => {
-    // Load language from localStorage or default to English
-    const savedLanguage = localStorage.getItem(
-      "capsule-codes-language"
-    ) as Language;
-    if (savedLanguage && ["en", "es", "it"].includes(savedLanguage)) {
-      setLanguageState(savedLanguage);
-      setTranslations(getTranslations(savedLanguage));
-    }
-  }, []);
-
-  const setLanguage = (lang: Language) => {
-    setLanguageState(lang);
-    setTranslations(getTranslations(lang));
-    localStorage.setItem("capsule-codes-language", lang);
-
-    // Dispatch custom event to notify other components
-    window.dispatchEvent(
-      new CustomEvent("languageChanged", {
-        detail: { language: lang },
-      })
-    );
-  };
-
+/** The language comes from the route, never from browser storage. */
+export function LanguageProvider({
+  locale,
+  children,
+}: {
+  locale: Language;
+  children: ReactNode;
+}) {
   return (
-    <LanguageContext.Provider value={{ language, setLanguage, t }}>
+    <LanguageContext.Provider
+      value={{ language: locale, t: getTranslations(locale) }}
+    >
       {children}
     </LanguageContext.Provider>
   );
@@ -60,4 +37,10 @@ export function useLanguage() {
     throw new Error("useLanguage must be used within a LanguageProvider");
   }
   return context;
+}
+
+/** Builds an internal link that stays in the current language ("/projects" -> "/es/projects"). */
+export function useLocalePath() {
+  const { language } = useLanguage();
+  return (path: string) => localePath(language, path);
 }

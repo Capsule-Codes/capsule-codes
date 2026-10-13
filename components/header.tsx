@@ -4,7 +4,8 @@ import { useState, useEffect, useCallback } from "react";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { Menu, X, ArrowUpRight } from "lucide-react";
-import { useLanguage } from "@/hooks/use-language";
+import { useLanguage, useLocalePath } from "@/hooks/use-language";
+import { isHomePath } from "@/lib/locale";
 import { SimpleLanguageSwitcher } from "@/components/simple-language-switcher";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { Magnetic } from "@/components/motion/magnetic";
@@ -15,6 +16,7 @@ const HIDE_THRESHOLD = 200;
 export function Header() {
   const pathname = usePathname();
   const { t } = useLanguage();
+  const localePath = useLocalePath();
 
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [activeSection, setActiveSection] = useState<string>("");
@@ -47,7 +49,7 @@ export function Header() {
       lastY = y;
 
       // Active section detection (only on home)
-      if (pathname === "/") {
+      if (isHomePath(pathname)) {
         const scrollPosition = y + 150;
         let current = "";
         for (let i = navItems.length - 1; i >= 0; i--) {
@@ -90,8 +92,8 @@ export function Header() {
   }, [isMenuOpen]);
 
   const handleNavClick = useCallback((href: string) => {
-    if (window.location.pathname !== "/") {
-      window.location.href = `/${href}`;
+    if (!isHomePath(window.location.pathname)) {
+      window.location.href = localePath(`/${href}`);
       return;
     }
     const el = document.querySelector(href);
@@ -99,7 +101,7 @@ export function Header() {
       el.scrollIntoView({ behavior: "smooth" });
     }
     setIsMenuOpen(false);
-  }, []);
+  }, [localePath]);
 
   const isActive = (id: string) => activeSection === id;
 
@@ -117,7 +119,7 @@ export function Header() {
             type="button"
             onClick={() => handleNavClick("#home")}
             className="shrink-0 cursor-pointer"
-            aria-label="Go to home"
+            aria-label={t.nav.home}
           >
             <Image
               src="/images/capsule-codes-logo-360.webp"

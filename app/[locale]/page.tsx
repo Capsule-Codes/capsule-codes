@@ -11,10 +11,15 @@ import { ContactSection } from "@/components/contact-section";
 import { Footer } from "@/components/footer";
 import { getPublishedProjects } from "@/lib/project-pages";
 import { getHomePageData } from "@/lib/server/data";
+import { isLocale } from "@/lib/locale";
+import { buildPageMetadata } from "@/lib/page-metadata";
 
-export const metadata: Metadata = {
-  alternates: { canonical: "/" },
-};
+type PageProps = { params: Promise<{ locale: string }> };
+
+export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
+  const { locale } = await params;
+  return isLocale(locale) ? buildPageMetadata(locale, "home") : {};
+}
 
 export const dynamic = "force-dynamic";
 export const revalidate = 0;

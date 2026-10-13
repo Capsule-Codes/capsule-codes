@@ -54,13 +54,13 @@ test("buildProjectMetadata uses english copy and the cover as OG image", () => {
   assert.equal(m.alternates?.canonical, "https://www.capsulecodes.com/projects/a");
 });
 
-test("buildProjectMetadata falls back to base fields and omits images without cover", () => {
+test("buildProjectMetadata falls back to base fields and the site card without cover", () => {
   const m = buildProjectMetadata(
     project("a", { translations: undefined, image: "" }),
   );
   assert.equal(m.title, "T-a");
   assert.equal(m.description, "Base description");
-  assert.equal(m.openGraph?.images, undefined);
+  assert.equal(m.openGraph.images[0].url, "https://www.capsulecodes.com/og-image.png");
 });
 
 test("buildProjectMetadata truncates long descriptions", () => {
@@ -79,4 +79,23 @@ test("resolveProjectSubtitle prefers the localized subtitle, then the DB column"
   assert.equal(resolveProjectSubtitle(noTr, "es"), "Column subtitle");
   assert.equal(resolveProjectSubtitle(project("c", { translations: undefined }), "en"), undefined);
   assert.equal(resolveProjectSubtitle(project("d", { subtitle: "  " , translations: { en: { title: "t", description: "d" } } }), "en"), undefined);
+});
+
+test("buildProjectMetadata is localized: es/it copy, locale canonical and hreflang", () => {
+  const es = buildProjectMetadata(project("a"), "es");
+  assert.equal(es.title, "ES-a");
+  assert.equal(es.alternates.canonical, "https://www.capsulecodes.com/es/projects/a");
+  assert.equal(es.openGraph.locale, "es_ES");
+  assert.equal(es.alternates.languages.it, "https://www.capsulecodes.com/it/projects/a");
+  assert.equal(es.alternates.languages["x-default"], "https://www.capsulecodes.com/projects/a");
+  assert.equal(buildProjectMetadata(project("a"), "it").title, "IT-a");
+});
+
+test("buildProjectMetadata falls back from a missing locale to english then base fields", () => {
+  const onlyEn = project("a", { translations: { en: tr("EN-a", "English description") } });
+  const es = buildProjectMetadata(onlyEn, "es");
+  assert.equal(es.title, "EN-a");
+  assert.equal(es.description, "English description");
+  const none = buildProjectMetadata(project("a", { translations: undefined }), "it");
+  assert.equal(none.title, "T-a");
 });

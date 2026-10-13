@@ -6,7 +6,7 @@ import { ArrowUpRight } from "lucide-react";
 import { Capsule } from "@/components/ui/capsule";
 import { SectionHeader } from "@/components/ui/section-header";
 import { ProjectLightbox } from "@/components/project-lightbox";
-import { useLanguage } from "@/hooks/use-language";
+import { useLanguage, useLocalePath } from "@/hooks/use-language";
 import type { Project } from "@/lib/data-context";
 import { resolveProjectGradient } from "@/lib/gradient-presets";
 import { getProjectContent } from "@/components/projects-carousel";
@@ -34,6 +34,7 @@ export function ProjectsShowcaseSection({
   projects: projectsProp,
 }: ProjectsShowcaseSectionProps = {}) {
   const { t, language } = useLanguage();
+  const localePath = useLocalePath();
 
   const projects = (projectsProp ?? []).filter(
     (p) => p.published === true && p.showOnHome !== false,
@@ -130,7 +131,7 @@ export function ProjectsShowcaseSection({
                 </p>
               )}
               <Link
-                href={`/projects/${active.id}`}
+                href={localePath(`/projects/${active.id}`)}
                 className="mt-4 inline-flex items-center gap-1.5 text-sm font-medium text-[color:var(--brand-cyan)] transition-opacity hover:opacity-80"
               >
                 {t.projects.viewProject}
@@ -153,7 +154,7 @@ export function ProjectsShowcaseSection({
 
       <div className="mt-8 flex justify-center">
         <Link
-          href="/projects"
+          href={localePath("/projects")}
           className="inline-flex items-center gap-1.5 text-sm font-medium text-[color:var(--brand-cyan)] transition-opacity hover:opacity-80"
         >
           {t.projects.viewAll}
