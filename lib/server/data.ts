@@ -33,6 +33,7 @@ export function mapProjectRow(row: Record<string, unknown>): Project {
     featured: (row.featured as boolean) ?? undefined,
     showOnHome: (row.show_on_home as boolean) ?? undefined,
     published: (row.published as boolean) ?? undefined,
+    updatedAt: (row.updated_at as string) || undefined,
   };
 }
 

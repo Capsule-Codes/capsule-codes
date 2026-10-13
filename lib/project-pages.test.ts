@@ -50,7 +50,7 @@ test("buildProjectMetadata uses english copy and the cover as OG image", () => {
   assert.equal(m.title, "EN-a");
   assert.equal(m.description, "English description");
   assert.deepEqual(m.openGraph?.images, [{ url: "https://cdn.test/a.webp", alt: "EN-a" }]);
-  assert.equal(m.alternates?.canonical, "/projects/a");
+  assert.equal(m.alternates?.canonical, "https://www.capsulecodes.com/projects/a");
 });
 
 test("buildProjectMetadata falls back to base fields and omits images without cover", () => {

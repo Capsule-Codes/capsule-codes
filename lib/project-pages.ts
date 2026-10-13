@@ -1,5 +1,6 @@
 import type { Project } from "./data-context.tsx";
 import { getProjectCover } from "./project-media.ts";
+import { absoluteUrl } from "./site.ts";
 
 const MAX_DESCRIPTION = 200;
 
@@ -48,7 +49,7 @@ export function buildProjectMetadata(
   const title = en?.title || project.title;
   const description = truncate(en?.description || project.description || "", MAX_DESCRIPTION);
   const cover = getProjectCover(project);
-  const path = `/projects/${project.id}`;
+  const path = absoluteUrl(`/projects/${project.id}`);
   return {
     title,
     description,

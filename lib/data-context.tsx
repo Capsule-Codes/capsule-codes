@@ -51,6 +51,8 @@ export interface Project {
   /** Whether the project appears in the home projects grid (default true). */
   showOnHome?: boolean;
   published?: boolean;
+  /** ISO timestamp of the last DB update (server-mapped; used for sitemap lastmod). */
+  updatedAt?: string;
 }
 
 // Technology interfaces
