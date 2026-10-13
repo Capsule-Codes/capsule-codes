@@ -112,9 +112,9 @@ export function ContactSection({ contactInfo }: ContactSectionProps) {
         >
           {/* Left column — info */}
           <div>
-            <h4 className="text-base font-semibold mb-2">
+            <h3 className="text-base font-semibold mb-2">
               {t.contact.info.title}
-            </h4>
+            </h3>
             <p className="text-[13px] leading-[1.5] text-[color:var(--ink-muted)] mb-6">
               {t.contact.info.description}
             </p>

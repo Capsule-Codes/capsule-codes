@@ -51,9 +51,9 @@ export function ServicesSection() {
                 <div className="w-10 h-10 rounded-xl bg-gradient-to-b from-[oklch(0.3_0.08_180)] to-[oklch(0.2_0.05_170)] border border-[color:oklch(0.5_0.12_180_/_0.5)] mb-[18px] flex items-center justify-center shadow-[0_0_16px_oklch(0.5_0.15_180_/_0.2)]">
                   <div className="w-4 h-4 rounded brand-grad" />
                 </div>
-                <h4 className="text-base font-semibold tracking-[-0.01em] mb-2">
+                <h3 className="text-base font-semibold tracking-[-0.01em] mb-2">
                   {service.title}
-                </h4>
+                </h3>
                 <p className="text-[13px] leading-[1.5] text-[color:var(--ink-muted)] mb-3.5">
                   {service.description}
                 </p>

@@ -119,7 +119,7 @@ export function ProjectScreenshotCarousel({
           >
             <ChevronLeft className="size-4" />
           </button>
-          <div className="flex items-center gap-1.5 px-1.5">
+          <div className="flex items-center">
             {images.map((_, index) => (
               <button
                 key={index}
@@ -127,13 +127,17 @@ export function ProjectScreenshotCarousel({
                 aria-label={`Ir a la imagen ${index + 1}`}
                 aria-pressed={index === selectedIndex}
                 onClick={() => api?.scrollTo(index)}
-                className={cn(
-                  "h-1.5 rounded-full transition-all duration-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--ring)]",
-                  index === selectedIndex
-                    ? "brand-grad w-[18px]"
-                    : "w-1.5 bg-[color:var(--ink-line-strong)]",
-                )}
-              />
+                className="grid h-6 min-w-6 place-items-center rounded-full focus:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--ring)]"
+              >
+                <span
+                  className={cn(
+                    "block h-1.5 rounded-full transition-all duration-300",
+                    index === selectedIndex
+                      ? "brand-grad w-[18px]"
+                      : "w-1.5 bg-[color:var(--ink-line-strong)]",
+                  )}
+                />
+              </button>
             ))}
           </div>
           <button

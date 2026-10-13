@@ -223,7 +223,7 @@ export function ReviewsCarousel({ reviews }: ReviewsCarouselProps) {
           <ChevronLeft className="w-4 h-4" />
         </button>
 
-        <div className="flex items-center gap-1.5">
+        <div className="flex items-center">
           {reviews.map((_, index) => {
             const active = index === currentIndex;
             return (
@@ -232,12 +232,16 @@ export function ReviewsCarousel({ reviews }: ReviewsCarouselProps) {
                 type="button"
                 aria-label={`Go to review ${index + 1}`}
                 onClick={() => goToReview(index)}
-                className={`h-1.5 rounded-full transition-all duration-300 ${
-                  active
-                    ? "w-6 bg-[color:var(--brand-cyan)]"
-                    : "w-1.5 bg-[color:var(--ink-muted)]/40 hover:bg-[color:var(--ink-muted)]/60"
-                }`}
-              />
+                className="grid h-6 min-w-6 place-items-center"
+              >
+                <span
+                  className={`block h-1.5 rounded-full transition-all duration-300 ${
+                    active
+                      ? "w-6 bg-[color:var(--brand-cyan)]"
+                      : "w-1.5 bg-[color:var(--ink-muted)]/40 hover:bg-[color:var(--ink-muted)]/60"
+                  }`}
+                />
+              </button>
             );
           })}
         </div>

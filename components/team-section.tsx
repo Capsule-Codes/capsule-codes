@@ -60,7 +60,7 @@ function MemberCard({ name, role, description, avatarUrl }: { name: string; role
           {avatarUrl && <img src={avatarUrl} alt={name} className="w-full h-full object-cover" />}
         </div>
         <div>
-          <h5 className="text-[15px] font-semibold leading-tight">{name}</h5>
+          <h3 className="text-[15px] font-semibold leading-tight">{name}</h3>
           <span className="font-mono text-[10px] text-[color:var(--brand-cyan)] tracking-[0.04em]">{role}</span>
         </div>
       </div>
