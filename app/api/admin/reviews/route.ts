@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { supabaseAdmin } from "@/lib/server/supabase-admin";
+import { revalidating } from "@/lib/server/revalidate";
 
 export async function GET() {
   try {
@@ -27,7 +28,7 @@ export async function GET() {
   }
 }
 
-export async function POST(request: Request) {
+async function handlePOST(request: Request) {
   try {
     if (!supabaseAdmin) {
       return NextResponse.json(
@@ -66,3 +67,5 @@ export async function POST(request: Request) {
     );
   }
 }
+
+export const POST = revalidating(["reviews"], handlePOST);

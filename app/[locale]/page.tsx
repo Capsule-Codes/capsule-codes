@@ -21,8 +21,8 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   return isLocale(locale) ? buildPageMetadata(locale, "home") : {};
 }
 
-export const dynamic = "force-dynamic";
-export const revalidate = 0;
+// Cached (ISR). Admin writes revalidate on demand; this is the safety net.
+export const revalidate = 300;
 
 export default async function HomePage() {
   const { projects, technologies, reviews, contactInfo, teamMembers } =

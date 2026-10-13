@@ -1,8 +1,21 @@
 import "server-only";
+import { unstable_cache } from "next/cache";
 import { supabaseAdmin } from "./supabase-admin";
 import type { Project, Technology, Review, TeamMember } from "@/lib/data-context";
 import { isProjectPublished } from "@/lib/project-pages";
 import type { ContactInfo } from "@/lib/types/contact";
+import { CACHE_TAGS } from "@/lib/cache-tags";
+
+/**
+ * Public reads go through the Next Data Cache, tagged per resource: pages are
+ * served from the ISR cache and the admin write routes invalidate the tags
+ * (`revalidateContent`). `REVALIDATE_SECONDS` is the safety net for edits made
+ * outside the admin panel.
+ *
+ * Reads throw on database errors on purpose: a failed regeneration keeps
+ * serving the last good page/data instead of caching an empty result.
+ */
+export const REVALIDATE_SECONDS = 300;
 
 /**
  * Map a raw `projects` row (snake_case columns) to the camelCase `Project`
@@ -38,129 +51,85 @@ export function mapProjectRow(row: Record<string, unknown>): Project {
   };
 }
 
-/**
- * Fetch all projects from the database
- */
-export async function getProjects(): Promise<Project[]> {
-  if (!supabaseAdmin) {
-    console.error("Supabase admin client not configured");
-    return [];
-  }
+/** Runs `read` through the Data Cache under `tag`; `keyParts` identify the entry. */
+function cached<T>(keyParts: string[], tag: string, read: () => Promise<T>): Promise<T> {
+  return unstable_cache(read, keyParts, { tags: [tag], revalidate: REVALIDATE_SECONDS })();
+}
 
-  try {
+/** Fetch all projects from the database */
+export async function getProjects(): Promise<Project[]> {
+  return cached(["projects"], CACHE_TAGS.projects, async () => {
+    if (!supabaseAdmin) {
+      console.error("Supabase admin client not configured");
+      return [];
+    }
     const { data, error } = await supabaseAdmin
       .from("projects")
       .select("*")
       .order("created_at", { ascending: false });
-
-    if (error) {
-      console.error("Error fetching projects:", error);
-      return [];
-    }
-
+    if (error) throw new Error(`Error fetching projects: ${error.message}`);
     return (data || []).map(mapProjectRow);
-  } catch (error) {
-    console.error("Error fetching projects:", error);
-    return [];
-  }
+  });
 }
 
-/**
- * Fetch a single project by ID from the database
- */
+/** Fetch a single project by ID from the database */
 export async function getProject(id: string): Promise<Project | null> {
-  if (!supabaseAdmin) {
-    console.error("Supabase admin client not configured");
-    return null;
-  }
-
-  try {
+  return cached(["project", id], CACHE_TAGS.projects, async () => {
+    if (!supabaseAdmin) {
+      console.error("Supabase admin client not configured");
+      return null;
+    }
     const { data, error } = await supabaseAdmin
       .from("projects")
       .select("*")
       .eq("id", id)
       .single();
-
-    if (error) {
-      // If record doesn't exist, return null
-      if (error.code === "PGRST116") {
-        return null;
-      }
-      console.error("Error fetching project:", error);
-      return null;
-    }
-
+    // PGRST116: no such record. Unknown ids are cached as "not found" too.
+    if (error?.code === "PGRST116") return null;
+    if (error) throw new Error(`Error fetching project: ${error.message}`);
     return mapProjectRow(data);
-  } catch (error) {
-    console.error("Error fetching project:", error);
-    return null;
-  }
+  });
 }
 
-/**
- * Fetch all technologies from the database
- */
+/** Fetch all technologies from the database */
 export async function getTechnologies(): Promise<Technology[]> {
-  if (!supabaseAdmin) {
-    console.error("Supabase admin client not configured");
-    return [];
-  }
-
-  try {
+  return cached(["technologies"], CACHE_TAGS.technologies, async () => {
+    if (!supabaseAdmin) {
+      console.error("Supabase admin client not configured");
+      return [];
+    }
     const { data, error } = await supabaseAdmin
       .from("technologies")
       .select("*")
       .order("created_at", { ascending: false });
-
-    if (error) {
-      console.error("Error fetching technologies:", error);
-      return [];
-    }
-
+    if (error) throw new Error(`Error fetching technologies: ${error.message}`);
     return data || [];
-  } catch (error) {
-    console.error("Error fetching technologies:", error);
-    return [];
-  }
+  });
 }
 
-/**
- * Fetch all reviews from the database
- */
+/** Fetch all reviews from the database */
 export async function getReviews(): Promise<Review[]> {
-  if (!supabaseAdmin) {
-    console.error("Supabase admin client not configured");
-    return [];
-  }
-
-  try {
+  return cached(["reviews"], CACHE_TAGS.reviews, async () => {
+    if (!supabaseAdmin) {
+      console.error("Supabase admin client not configured");
+      return [];
+    }
     const { data, error } = await supabaseAdmin
       .from("reviews")
       .select("*")
       .order("created_at", { ascending: false });
-
-    if (error) {
-      console.error("Error fetching reviews:", error);
-      return [];
-    }
-
+    if (error) throw new Error(`Error fetching reviews: ${error.message}`);
     return data || [];
-  } catch (error) {
-    console.error("Error fetching reviews:", error);
-    return [];
-  }
+  });
 }
 
-/**
- * Fetch all team members from the database
- */
+/** Fetch published team members from the database */
 export async function getTeamMembers(): Promise<TeamMember[]> {
-  if (!supabaseAdmin) {
-    console.error("Supabase admin client not configured");
-    return [];
-  }
-
-  try {
+  return cached(["team-members"], CACHE_TAGS.team, async () => {
+    if (!supabaseAdmin) {
+      console.error("Supabase admin client not configured");
+      return [];
+    }
     const { data, error } = await supabaseAdmin
       .from("team_members")
       .select("*")
@@ -168,55 +137,30 @@ export async function getTeamMembers(): Promise<TeamMember[]> {
       .order("category", { ascending: true })
       .order("order", { ascending: true })
       .order("created_at", { ascending: true });
-
-    if (error) {
-      console.error("Error fetching team members:", error);
-      return [];
-    }
-
+    if (error) throw new Error(`Error fetching team members: ${error.message}`);
     return data || [];
-  } catch (error) {
-    console.error("Error fetching team members:", error);
-    return [];
-  }
+  });
 }
 
-/**
- * Fetch contact info from the database
- */
+/** Fetch contact info (the single row of `contact_info`) from the database */
 export async function getContactInfo(): Promise<ContactInfo | null> {
-  if (!supabaseAdmin) {
-    console.error("Supabase admin client not configured");
-    return null;
-  }
-
-  try {
-    // Get the first (and only) row from contact_info table
+  return cached(["contact-info"], CACHE_TAGS.contactInfo, async () => {
+    if (!supabaseAdmin) {
+      console.error("Supabase admin client not configured");
+      return null;
+    }
     const { data, error } = await supabaseAdmin
       .from("contact_info")
       .select("*")
       .limit(1)
       .single();
-
-    if (error) {
-      // If record doesn't exist, return null
-      if (error.code === "PGRST116") {
-        return null;
-      }
-      console.error("Error fetching contact info:", error);
-      return null;
-    }
-
+    if (error?.code === "PGRST116") return null;
+    if (error) throw new Error(`Error fetching contact info: ${error.message}`);
     return data;
-  } catch (error) {
-    console.error("Error fetching contact info:", error);
-    return null;
-  }
+  });
 }
 
-/**
- * Fetch all data needed for the homepage
- */
+/** Fetch all data needed for the homepage */
 export async function getHomePageData() {
   const [projects, technologies, reviews, contactInfo, teamMembers] = await Promise.all([
     getProjects(),
@@ -226,13 +170,7 @@ export async function getHomePageData() {
     getTeamMembers(),
   ]);
 
-  return {
-    projects,
-    technologies,
-    reviews,
-    contactInfo,
-    teamMembers,
-  };
+  return { projects, technologies, reviews, contactInfo, teamMembers };
 }
 
 /**
