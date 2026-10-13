@@ -1,5 +1,6 @@
 import type React from "react";
 import type { Metadata } from "next";
+import { headers } from "next/headers";
 import { Inter, JetBrains_Mono } from "next/font/google";
 import { Analytics } from "@vercel/analytics/next";
 import { LinkedInInsightTag } from "@/components/linkedin-insight-tag";
@@ -7,7 +8,9 @@ import { LanguageProvider } from "@/hooks/use-language";
 import { ThemeProvider } from "@/components/theme-provider";
 import { Toaster } from "@/components/ui/sonner";
 import { AmbientCursorGlow } from "@/components/motion/ambient-cursor-glow";
-import { SITE_URL, absoluteUrl } from "@/lib/site";
+import { LOCALE_HEADER, resolveRequestLocale } from "@/lib/locale";
+import { buildPageMetadata } from "@/lib/page-metadata";
+import { SITE_URL } from "@/lib/site";
 import "./globals.css";
 
 const inter = Inter({
@@ -24,81 +27,68 @@ const jetbrainsMono = JetBrains_Mono({
   display: "swap",
 });
 
-export const metadata: Metadata = {
-  title: "Capsule Codes - Web & App Development",
-  description:
-    "React Native & Next.js development agency. We build production-ready mobile apps and web platforms for startups. 8+ projects across 6 countries. Direct access to senior developers.",
-  keywords: [
-    "React Native development",
-    "Next.js development",
-    "mobile app development",
-    "web platform development",
-    "startup development",
-    "TypeScript",
-    "Node.js",
-    "Supabase",
-    "full-stack development",
-    "mobile app agency",
-    "fintech development",
-    "edtech development",
-  ],
-  authors: [{ name: "Capsule Codes" }],
-  creator: "Capsule Codes",
-  publisher: "Capsule Codes",
-  icons: {
-    icon: "/logo.svg",
-    apple: "/logo.svg",
-  },
-  metadataBase: new URL(SITE_URL),
-  openGraph: {
-    type: "website",
-    locale: "en_US",
-    alternateLocale: ["es_ES", "it_IT"],
-    url: SITE_URL,
-    siteName: "Capsule Codes",
-    title: "Capsule Codes - Web & App Development",
-    description:
-      "React Native & Next.js development agency. We build production-ready mobile apps and web platforms for startups. 8+ projects across 6 countries. Direct access to senior developers.",
-    images: [
-      {
-        url: absoluteUrl("/og-image.png"),
-        width: 1200,
-        height: 630,
-        alt: "Capsule Codes — Mobile & Web Development for Startups",
-      },
+/** The middleware tells the layout which language the request is served in. */
+function requestLocale() {
+  return resolveRequestLocale(headers().get(LOCALE_HEADER));
+}
+
+export function generateMetadata(): Metadata {
+  // Site-wide defaults. Pages override title, description, alternates and cards.
+  const home = buildPageMetadata(requestLocale(), "home");
+  return {
+    title: home.title,
+    description: home.description,
+    keywords: [
+      "React Native development",
+      "Next.js development",
+      "mobile app development",
+      "web platform development",
+      "startup development",
+      "TypeScript",
+      "Node.js",
+      "Supabase",
+      "full-stack development",
+      "mobile app agency",
+      "fintech development",
+      "edtech development",
     ],
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: "Capsule Codes - Web & App Development",
-    description:
-      "React Native & Next.js development agency. We build production-ready mobile apps and web platforms for startups. 8+ projects across 6 countries. Direct access to senior developers.",
-    images: [absoluteUrl("/og-image.png")],
-  },
-  robots: {
-    index: true,
-    follow: true,
-    googleBot: {
+    authors: [{ name: "Capsule Codes" }],
+    creator: "Capsule Codes",
+    publisher: "Capsule Codes",
+    icons: {
+      icon: "/logo.svg",
+      apple: "/logo.svg",
+    },
+    metadataBase: new URL(SITE_URL),
+    openGraph: home.openGraph,
+    twitter: home.twitter,
+    robots: {
       index: true,
       follow: true,
-      "max-video-preview": -1,
-      "max-image-preview": "large",
-      "max-snippet": -1,
+      googleBot: {
+        index: true,
+        follow: true,
+        "max-video-preview": -1,
+        "max-image-preview": "large",
+        "max-snippet": -1,
+      },
     },
-  },
-  verification: {
-    google: "your-google-verification-code",
-  },
-};
+    verification: {
+      google: "your-google-verification-code",
+    },
+  };
+}
 
 export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const locale = requestLocale();
+
   return (
     <html
-      lang="en"
+      lang={locale}
       className={`${inter.variable} ${jetbrainsMono.variable}`}
       suppressHydrationWarning
     >
@@ -110,7 +100,7 @@ export default function RootLayout({
           disableTransitionOnChange
         >
           <AmbientCursorGlow />
-          <LanguageProvider>{children}</LanguageProvider>
+          <LanguageProvider locale={locale}>{children}</LanguageProvider>
           <Toaster richColors position="bottom-right" />
         </ThemeProvider>
         <Analytics />

@@ -1,10 +1,12 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
+import { useState } from "react";
+import { usePathname } from "next/navigation";
 import { Globe } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import { useLanguage } from "@/hooks/use-language";
 import type { Language } from "@/lib/i18n";
-import { useState } from "react";
+import { twinPath } from "@/lib/locale";
 
 const languages = [
   { code: "en" as Language, name: "English", flag: "🇺🇸" },
@@ -18,23 +20,16 @@ const LABELS: Record<Language, string> = {
   it: "Cambia lingua",
 };
 
+/**
+ * Each option is a plain link to the same page in that language, so crawlers
+ * and no-JS visitors can follow it and the server renders the target locale.
+ */
 export function SimpleLanguageSwitcher() {
-  const { language, setLanguage } = useLanguage();
+  const { language } = useLanguage();
+  const pathname = usePathname();
   const [isOpen, setIsOpen] = useState(false);
 
   const currentLanguage = languages.find((lang) => lang.code === language);
-
-  const handleLanguageChange = (langCode: Language) => {
-    setLanguage(langCode);
-    setIsOpen(false);
-
-    // Dispatch custom event to notify other components
-    window.dispatchEvent(
-      new CustomEvent("languageChanged", {
-        detail: { language: langCode },
-      })
-    );
-  };
 
   return (
     <div className="relative">
@@ -54,16 +49,19 @@ export function SimpleLanguageSwitcher() {
       {isOpen && (
         <div className="absolute top-full right-0 mt-1 bg-background border border-border rounded-md shadow-lg z-[9999] min-w-[120px]">
           {languages.map((lang) => (
-            <button
+            <a
               key={lang.code}
-              onClick={() => handleLanguageChange(lang.code)}
-              className={`w-full text-left px-3 py-2 hover:bg-muted first:rounded-t-md last:rounded-b-md ${
+              href={twinPath(pathname, lang.code)}
+              hrefLang={lang.code}
+              lang={lang.code}
+              aria-current={language === lang.code ? "true" : undefined}
+              className={`block w-full text-left px-3 py-2 hover:bg-muted first:rounded-t-md last:rounded-b-md ${
                 language === lang.code ? "bg-muted" : ""
               }`}
             >
               <span className="mr-2">{lang.flag}</span>
               {lang.name}
-            </button>
+            </a>
           ))}
         </div>
       )}

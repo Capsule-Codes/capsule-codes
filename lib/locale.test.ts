@@ -4,7 +4,9 @@ import {
   DEFAULT_LOCALE,
   LOCALES,
   alternateUrls,
+  isHomePath,
   isLocale,
+  resolveRequestLocale,
   localePath,
   resolveLocaleRoute,
   splitLocale,
@@ -69,34 +71,47 @@ test("alternateUrls builds absolute hreflang urls with x-default on english", ()
 });
 
 test("resolveLocaleRoute rewrites unprefixed public paths to the internal en segment", () => {
-  assert.deepEqual(resolveLocaleRoute("/"), { action: "rewrite", to: "/en" });
-  assert.deepEqual(resolveLocaleRoute("/projects"), { action: "rewrite", to: "/en/projects" });
-  assert.deepEqual(resolveLocaleRoute("/projects/a"), { action: "rewrite", to: "/en/projects/a" });
-  assert.deepEqual(resolveLocaleRoute("/privacy"), { action: "rewrite", to: "/en/privacy" });
+  assert.deepEqual(resolveLocaleRoute("/"), { action: "rewrite", to: "/en", locale: "en" });
+  assert.deepEqual(resolveLocaleRoute("/projects"), { action: "rewrite", to: "/en/projects", locale: "en" });
+  assert.deepEqual(resolveLocaleRoute("/projects/a"), { action: "rewrite", to: "/en/projects/a", locale: "en" });
+  assert.deepEqual(resolveLocaleRoute("/privacy"), { action: "rewrite", to: "/en/privacy", locale: "en" });
 });
 
 test("resolveLocaleRoute lets es/it through", () => {
-  assert.deepEqual(resolveLocaleRoute("/es"), { action: "next" });
-  assert.deepEqual(resolveLocaleRoute("/it/projects/a"), { action: "next" });
+  assert.deepEqual(resolveLocaleRoute("/es"), { action: "next", locale: "es" });
+  assert.deepEqual(resolveLocaleRoute("/it/projects/a"), { action: "next", locale: "it" });
 });
 
 test("resolveLocaleRoute redirects the internal en prefix to the canonical path", () => {
-  assert.deepEqual(resolveLocaleRoute("/en"), { action: "redirect", to: "/" });
-  assert.deepEqual(resolveLocaleRoute("/en/"), { action: "redirect", to: "/" });
-  assert.deepEqual(resolveLocaleRoute("/en/projects/a"), { action: "redirect", to: "/projects/a" });
+  assert.deepEqual(resolveLocaleRoute("/en"), { action: "redirect", to: "/", locale: "en" });
+  assert.deepEqual(resolveLocaleRoute("/en/"), { action: "redirect", to: "/", locale: "en" });
+  assert.deepEqual(resolveLocaleRoute("/en/projects/a"), { action: "redirect", to: "/projects/a", locale: "en" });
 });
 
 test("resolveLocaleRoute never touches admin, api, next internals or files", () => {
   for (const p of ["/admin", "/admin/projects", "/api/contact", "/api/admin/session", "/_next/static/x.js", "/logo.svg", "/sitemap.xml", "/robots.txt"]) {
-    assert.deepEqual(resolveLocaleRoute(p), { action: "next" }, p);
+    assert.deepEqual(resolveLocaleRoute(p), { action: "next", locale: "en" }, p);
   }
 });
 
 test("resolveLocaleRoute only exempts admin/api as whole segments", () => {
-  assert.deepEqual(resolveLocaleRoute("/administrators"), { action: "rewrite", to: "/en/administrators" });
-  assert.deepEqual(resolveLocaleRoute("/apiary"), { action: "rewrite", to: "/en/apiary" });
+  assert.deepEqual(resolveLocaleRoute("/administrators"), { action: "rewrite", to: "/en/administrators", locale: "en" });
+  assert.deepEqual(resolveLocaleRoute("/apiary"), { action: "rewrite", to: "/en/apiary", locale: "en" });
 });
 
 test("an unknown prefix is rewritten under en, where no route matches (404)", () => {
-  assert.deepEqual(resolveLocaleRoute("/xx/projects"), { action: "rewrite", to: "/en/xx/projects" });
+  assert.deepEqual(resolveLocaleRoute("/xx/projects"), { action: "rewrite", to: "/en/xx/projects", locale: "en" });
+});
+
+test("isHomePath is true for the home of every locale", () => {
+  for (const p of ["/", "/es", "/es/", "/it", "/en"]) assert.equal(isHomePath(p), true, p);
+  for (const p of ["/projects", "/es/projects", "/it/privacy"]) assert.equal(isHomePath(p), false, p);
+});
+
+test("resolveRequestLocale trusts only known locales and defaults to english", () => {
+  assert.equal(resolveRequestLocale("es"), "es");
+  assert.equal(resolveRequestLocale("it"), "it");
+  assert.equal(resolveRequestLocale("xx"), "en");
+  assert.equal(resolveRequestLocale(null), "en");
+  assert.equal(resolveRequestLocale(undefined), "en");
 });
