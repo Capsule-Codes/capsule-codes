@@ -1,5 +1,6 @@
 "use client"
 
+import { useConsent } from "@/hooks/use-consent";
 import { useLanguage, useLocalePath } from "@/hooks/use-language";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft } from "lucide-react";
@@ -8,6 +9,7 @@ import Link from "next/link";
 export function PrivacyPolicyClient() {
   const { t } = useLanguage();
   const localePath = useLocalePath();
+  const { openSettings } = useConsent();
   const content = t.legal.privacyPolicy;
 
   return (
@@ -63,11 +65,20 @@ export function PrivacyPolicyClient() {
           </p>
         </section>
 
-        <section>
+        <section id="cookies" className="scroll-mt-28">
           <h2 className="text-2xl font-semibold mb-4">5. {content.headings[4]}</h2>
           <p className="text-muted-foreground leading-relaxed">
             {content.sections.cookies}
           </p>
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            className="mt-4"
+            onClick={openSettings}
+          >
+            {t.consent.settings}
+          </Button>
         </section>
 
         <section>

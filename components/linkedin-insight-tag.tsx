@@ -1,13 +1,24 @@
+"use client";
+
 import Script from "next/script";
 
+import { useConsent } from "@/hooks/use-consent";
 import { PARTNER_ID } from "@/lib/analytics/linkedin";
 
 /**
- * LinkedIn Insight Tag. Renders only in production so local and test traffic
- * stays out of the Campaign Manager reports.
+ * LinkedIn Insight Tag. Renders only in production (so local and test traffic
+ * stays out of the Campaign Manager reports) and only after the visitor has
+ * accepted cookies: nothing is requested from LinkedIn before that, and never
+ * after a rejection.
+ *
+ * There is deliberately no `<noscript>` pixel: without JavaScript nobody can
+ * give consent, so that fallback would track visitors who never agreed.
  */
 export function LinkedInInsightTag() {
+  const { choice } = useConsent();
+
   if (process.env.NODE_ENV !== "production") return null;
+  if (choice !== "accepted") return null;
 
   return (
     <>
@@ -26,17 +37,6 @@ export function LinkedInInsightTag() {
         id="linkedin-insight"
         strategy="afterInteractive"
         src="https://snap.licdn.com/li.lms-analytics/insight.min.js"
-      />
-      {/*
-        Written as raw HTML on purpose. Rendered as a React <img>, Next hoists a
-        <link rel="preload" as="image"> for it into <head>, and the browser then
-        fetches the no-JS fallback for every visitor — including the ones the JS
-        tag already counted. One install, two page views per load.
-      */}
-      <noscript
-        dangerouslySetInnerHTML={{
-          __html: `<img height="1" width="1" style="display:none" alt="" src="https://px.ads.linkedin.com/collect/?pid=${PARTNER_ID}&fmt=gif" />`,
-        }}
       />
     </>
   );

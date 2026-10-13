@@ -16,10 +16,10 @@ No tracking cookies before consent. The LinkedIn Insight Tag loads only after th
 - Banner: Accept and Reject are the same component, size and weight (no dark pattern), short text, link to the privacy cookies section, localized. Footer "Cookie settings" reopens it; the privacy page cookies section has the same control.
 
 ## Tasks
-- [ ] K1 `lib/consent.ts` + tests (RED/GREEN)
-- [ ] K2 Consent copy (en/es/it) and privacy cookies text naming the Insight Tag, purpose, how to change consent
-- [ ] K3 `ConsentProvider`, banner, gated `LinkedInInsightTag`, footer link, privacy control
-- [ ] K4 Verify with Playwright (no request/cookie before consent, reject persists, accept loads, footer reopen + reject) and screenshots (mobile 390, desktop)
+- [x] K1 `lib/consent.ts` + tests (RED/GREEN)
+- [x] K2 Consent copy (en/es/it) and privacy cookies text naming the Insight Tag, purpose, how to change consent
+- [x] K3 `ConsentProvider`, banner, gated `LinkedInInsightTag`, footer link, privacy control
+- [x] K4 Verify with Playwright (no request/cookie before consent, reject persists, accept loads, footer reopen + reject) and screenshots (mobile 390, desktop)
 
 ## Acceptance
 Fresh context: no request to `snap.licdn.com`/`px.ads.linkedin.com`, no `li_*` cookies. After Reject: still none after reload. After Accept: tag loads. Reopen via footer and Reject: next load has none.
@@ -31,4 +31,8 @@ Fresh context: no request to `snap.licdn.com`/`px.ads.linkedin.com`, no `li_*` c
 Single writer, inline. TDD on, runner `node --test`.
 
 ## Progress
-(see below)
+- K1 RED: `lib/consent.test.ts` failed (module missing); GREEN with `lib/consent.ts` (9 tests, added to the `test` script).
+- K2: `consent` copy and the privacy cookies section (en/es/it) name the LinkedIn Insight Tag, its purpose, what it sends, that it loads only after Accept, how to change consent (footer link / button on the page), that Vercel Analytics is cookieless and that the choice lives in `cc_consent` for six months. Privacy "last updated" bumped to October 2026.
+- K3: `hooks/use-consent.tsx`, `components/cookie-banner.tsx`, gated `components/linkedin-insight-tag.tsx` (noscript pixel removed), footer "Cookie settings", privacy section `#cookies` with the same control. Buttons needed explicit `dark:` classes: the outline variant's `dark:bg-input/30` made both look invisible on the dark surface.
+- K4 (Playwright on `next start -p 3100`, LinkedIn URLs aborted at the network layer so no real hit): fresh load 0 LinkedIn requests and no cookies except none; Reject -> `cc_consent` only, reload and `/it/projects` 0 requests; footer reopen + Accept -> `insight.min.js` requested, again after reload; footer reopen + Reject -> reload, next load 0 requests; `cc_consent` expires in 182 days.
+- Not verified: LinkedIn's own cookies on linkedin.com (the tag was blocked, so none were ever set); light theme banner; screen reader behavior; real production behavior behind Vercel (secure cookie flag is set from `location.protocol`).
