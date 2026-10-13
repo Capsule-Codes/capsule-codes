@@ -219,6 +219,16 @@ export interface Translations {
     termsOfService: string;
     quote: string;
   };
+  // Cookie consent banner and footer link
+  consent: {
+    regionLabel: string;
+    title: string;
+    body: string;
+    privacyLink: string;
+    accept: string;
+    reject: string;
+    settings: string;
+  };
   // Not-found and error pages
   notFound: {
     badge: string;
@@ -631,6 +641,15 @@ export const translations: Record<Language, Translations> = {
       termsOfService: "Terms of Service",
       quote: "Building digital products that scale.",
     },
+    consent: {
+      regionLabel: "Cookie consent",
+      title: "Cookies",
+      body: "We use the LinkedIn Insight Tag to measure our advertising, only if you agree. Nothing is loaded before you choose.",
+      privacyLink: "Read our Privacy Policy",
+      accept: "Accept",
+      reject: "Reject",
+      settings: "Cookie settings",
+    },
     notFound: {
       badge: "404 · Page not found",
       heading: "Oops! This page doesn't exist.",
@@ -646,7 +665,7 @@ export const translations: Record<Language, Translations> = {
     legal: {
       privacyPolicy: {
         title: "Privacy Policy",
-        lastUpdated: "Last updated: January 2024",
+        lastUpdated: "Last updated: October 2026",
         headings: ["Introduction", "Data Collection", "How We Use Your Data", "Data Protection", "Cookies", "Third-Party Services", "Your Rights", "Changes to This Policy", "Contact Us"],
         sections: {
           introduction:
@@ -658,7 +677,7 @@ export const translations: Record<Language, Translations> = {
           dataProtection:
             "We implement appropriate technical and organizational measures to protect your personal information against unauthorized access, alteration, disclosure, or destruction.",
           cookies:
-            "Our website uses cookies to enhance your browsing experience. You can choose to disable cookies through your browser settings, though this may affect website functionality.",
+            "Our website uses a small number of cookies. Strictly necessary storage, such as your theme preference and the sign-in cookie used only by our administrators, does not require consent. We also use the LinkedIn Insight Tag, provided by LinkedIn, to measure the results of our LinkedIn advertising and to understand how visitors coming from LinkedIn use our website. The tag sets cookies and sends information such as your IP address, browser and the pages you visit to LinkedIn. We load it only if you choose \"Accept\" in the cookie banner: it is never loaded before that, and never if you choose \"Reject\". You can change or withdraw your choice at any time with the \"Cookie settings\" link in the footer or the button below. Withdrawing stops the tag from loading and removes the LinkedIn cookies stored on our own domain; cookies that LinkedIn sets on its own domain can be deleted from your browser settings. Vercel Analytics, which we use for aggregate traffic statistics, does not use cookies. Your choice is saved in a first-party cookie (cc_consent) for six months.",
           thirdParty:
             "We do not sell, trade, or rent your personal information to third parties. We may share information with trusted service providers who assist us in operating our website and conducting our business.",
           rights:
@@ -1055,6 +1074,15 @@ export const translations: Record<Language, Translations> = {
       termsOfService: "Términos de Servicio",
       quote: "Construyendo productos digitales que escalan.",
     },
+    consent: {
+      regionLabel: "Consentimiento de cookies",
+      title: "Cookies",
+      body: "Usamos la etiqueta LinkedIn Insight Tag para medir nuestra publicidad, solo si lo aceptas. No se carga nada hasta que elijas.",
+      privacyLink: "Lee nuestra Política de Privacidad",
+      accept: "Aceptar",
+      reject: "Rechazar",
+      settings: "Configuración de cookies",
+    },
     notFound: {
       badge: "404 · Página no encontrada",
       heading: "¡Ups! Esta página no existe.",
@@ -1070,7 +1098,7 @@ export const translations: Record<Language, Translations> = {
     legal: {
       privacyPolicy: {
         title: "Política de Privacidad",
-        lastUpdated: "Última actualización: Enero 2024",
+        lastUpdated: "Última actualización: Octubre 2026",
         headings: ["Introducción", "Recopilación de datos", "Cómo usamos tus datos", "Protección de datos", "Cookies", "Servicios de terceros", "Tus derechos", "Cambios en esta política", "Contacto"],
         sections: {
           introduction:
@@ -1082,7 +1110,7 @@ export const translations: Record<Language, Translations> = {
           dataProtection:
             "Implementamos medidas técnicas y organizativas apropiadas para proteger su información personal contra acceso no autorizado, alteración, divulgación o destrucción.",
           cookies:
-            "Nuestro sitio web utiliza cookies para mejorar su experiencia de navegación. Puede elegir deshabilitar las cookies a través de la configuración de su navegador, aunque esto puede afectar la funcionalidad del sitio web.",
+            "Nuestro sitio web utiliza un número reducido de cookies. El almacenamiento estrictamente necesario, como tu preferencia de tema y la cookie de inicio de sesión que solo usan nuestros administradores, no requiere consentimiento. También usamos la etiqueta LinkedIn Insight Tag, proporcionada por LinkedIn, para medir los resultados de nuestra publicidad en LinkedIn y entender cómo usan nuestro sitio los visitantes que llegan desde LinkedIn. La etiqueta instala cookies y envía a LinkedIn información como tu dirección IP, tu navegador y las páginas que visitas. Solo la cargamos si eliges \"Aceptar\" en el banner de cookies: nunca se carga antes, y nunca si eliges \"Rechazar\". Puedes cambiar o retirar tu elección en cualquier momento con el enlace \"Configuración de cookies\" del pie de página o con el botón de abajo. Al retirarla, la etiqueta deja de cargarse y se eliminan las cookies de LinkedIn guardadas en nuestro propio dominio; las cookies que LinkedIn establece en su propio dominio puedes borrarlas desde la configuración de tu navegador. Vercel Analytics, que usamos para estadísticas agregadas de tráfico, no utiliza cookies. Tu elección se guarda en una cookie propia (cc_consent) durante seis meses.",
           thirdParty:
             "No vendemos, intercambiamos ni alquilamos su información personal a terceros. Podemos compartir información con proveedores de servicios de confianza que nos ayudan a operar nuestro sitio web y realizar nuestro negocio.",
           rights:
@@ -1478,6 +1506,15 @@ export const translations: Record<Language, Translations> = {
       termsOfService: "Termini di Servizio",
       quote: "Costruendo prodotti digitali che scalano.",
     },
+    consent: {
+      regionLabel: "Consenso ai cookie",
+      title: "Cookie",
+      body: "Usiamo il LinkedIn Insight Tag per misurare la nostra pubblicità, solo se acconsenti. Non viene caricato nulla finché non scegli.",
+      privacyLink: "Leggi la nostra Informativa sulla Privacy",
+      accept: "Accetta",
+      reject: "Rifiuta",
+      settings: "Impostazioni cookie",
+    },
     notFound: {
       badge: "404 · Pagina non trovata",
       heading: "Ops! Questa pagina non esiste.",
@@ -1493,7 +1530,7 @@ export const translations: Record<Language, Translations> = {
     legal: {
       privacyPolicy: {
         title: "Informativa sulla Privacy",
-        lastUpdated: "Ultimo aggiornamento: Gennaio 2024",
+        lastUpdated: "Ultimo aggiornamento: Ottobre 2026",
         headings: ["Introduzione", "Raccolta dei dati", "Come utilizziamo i tuoi dati", "Protezione dei dati", "Cookie", "Servizi di terze parti", "I tuoi diritti", "Modifiche a questa informativa", "Contatti"],
         sections: {
           introduction:
@@ -1505,7 +1542,7 @@ export const translations: Record<Language, Translations> = {
           dataProtection:
             "Implementiamo misure tecniche e organizzative appropriate per proteggere le tue informazioni personali da accesso non autorizzato, alterazione, divulgazione o distruzione.",
           cookies:
-            "Il nostro sito web utilizza cookie per migliorare la tua esperienza di navigazione. Puoi scegliere di disabilitare i cookie attraverso le impostazioni del tuo browser, sebbene ciò possa influenzare la funzionalità del sito web.",
+            "Il nostro sito utilizza un numero ridotto di cookie. L'archiviazione strettamente necessaria, come la preferenza del tema e il cookie di accesso usato solo dai nostri amministratori, non richiede il consenso. Utilizziamo inoltre il LinkedIn Insight Tag, fornito da LinkedIn, per misurare i risultati della nostra pubblicità su LinkedIn e capire come usano il sito i visitatori provenienti da LinkedIn. Il tag imposta cookie e invia a LinkedIn informazioni come il tuo indirizzo IP, il browser e le pagine che visiti. Lo carichiamo solo se scegli \"Accetta\" nel banner dei cookie: non viene mai caricato prima e mai se scegli \"Rifiuta\". Puoi modificare o revocare la tua scelta in qualsiasi momento con il link \"Impostazioni cookie\" nel footer o con il pulsante qui sotto. La revoca interrompe il caricamento del tag e rimuove i cookie di LinkedIn memorizzati sul nostro dominio; i cookie che LinkedIn imposta sul proprio dominio possono essere eliminati dalle impostazioni del browser. Vercel Analytics, che usiamo per statistiche aggregate sul traffico, non utilizza cookie. La tua scelta viene salvata in un cookie proprio (cc_consent) per sei mesi.",
           thirdParty:
             "Non vendiamo, scambiamo o affittiamo le tue informazioni personali a terze parti. Potremmo condividere informazioni con fornitori di servizi fidati che ci assistono nell'operare il nostro sito web e condurre la nostra attività.",
           rights:

@@ -3,12 +3,14 @@
 import { useCallback } from "react";
 import Image from "next/image";
 import { Linkedin, Github } from "lucide-react";
+import { useConsent } from "@/hooks/use-consent";
 import { useLanguage, useLocalePath } from "@/hooks/use-language";
 import { isHomePath } from "@/lib/locale";
 
 export function Footer() {
   const { t } = useLanguage();
   const localePath = useLocalePath();
+  const { openSettings } = useConsent();
   const currentYear = new Date().getFullYear();
 
   const quickLinks = [
@@ -80,6 +82,13 @@ export function Footer() {
             >
               {t.footer.termsOfService}
             </a>
+            <button
+              type="button"
+              onClick={openSettings}
+              className="block cursor-pointer py-1 text-left text-[13px] text-[color:var(--ink-muted)] transition hover:text-foreground"
+            >
+              {t.consent.settings}
+            </button>
           </div>
 
           {/* Column 4: Follow */}

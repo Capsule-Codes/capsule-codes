@@ -4,6 +4,8 @@ import { headers } from "next/headers";
 import { Inter, JetBrains_Mono } from "next/font/google";
 import { Analytics } from "@vercel/analytics/next";
 import { LinkedInInsightTag } from "@/components/linkedin-insight-tag";
+import { CookieBanner } from "@/components/cookie-banner";
+import { ConsentProvider } from "@/hooks/use-consent";
 import { LanguageProvider } from "@/hooks/use-language";
 import { ThemeProvider } from "@/components/theme-provider";
 import { Toaster } from "@/components/ui/sonner";
@@ -100,11 +102,17 @@ export default function RootLayout({
           disableTransitionOnChange
         >
           <AmbientCursorGlow />
-          <LanguageProvider locale={locale}>{children}</LanguageProvider>
+          <LanguageProvider locale={locale}>
+            <ConsentProvider>
+              {children}
+              <CookieBanner />
+              <LinkedInInsightTag />
+            </ConsentProvider>
+          </LanguageProvider>
           <Toaster richColors position="bottom-right" />
         </ThemeProvider>
+        {/* Vercel Analytics is cookieless: no consent needed. */}
         <Analytics />
-        <LinkedInInsightTag />
       </body>
     </html>
   );
