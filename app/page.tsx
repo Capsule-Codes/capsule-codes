@@ -9,6 +9,7 @@ import { ProjectsShowcaseSection } from "@/components/projects-showcase/projects
 import { ReviewsSection } from "@/components/reviews-section";
 import { ContactSection } from "@/components/contact-section";
 import { Footer } from "@/components/footer";
+import { getPublishedProjects } from "@/lib/project-pages";
 import { getHomePageData } from "@/lib/server/data";
 
 export const metadata: Metadata = {
@@ -25,7 +26,7 @@ export default async function HomePage() {
   return (
     <main className="min-h-screen">
       <Header />
-      <HeroSection />
+      <HeroSection projectCount={getPublishedProjects(projects).length} />
       <AboutSection />
       <ServicesSection />
       <TechnologiesSection technologies={technologies} />

@@ -380,7 +380,7 @@ export const translations: Record<Language, Translations> = {
       stats: {
         projects: "Completed Projects",
         countries: "Countries Served",
-        apps: "Apps in Stores",
+        apps: "Apps Published",
       },
       cta: {
         viewProjects: "View Our Projects",
@@ -790,7 +790,7 @@ export const translations: Record<Language, Translations> = {
       stats: {
         projects: "Proyectos Completados",
         countries: "Países Servidos",
-        apps: "Apps en las Tiendas",
+        apps: "Apps Publicadas",
       },
       cta: {
         viewProjects: "Ver Nuestros Proyectos",
@@ -1200,7 +1200,7 @@ export const translations: Record<Language, Translations> = {
       stats: {
         projects: "Progetti Completati",
         countries: "Paesi Serviti",
-        apps: "App nei Store",
+        apps: "App Pubblicate",
       },
       cta: {
         viewProjects: "Vedi i Nostri Progetti",

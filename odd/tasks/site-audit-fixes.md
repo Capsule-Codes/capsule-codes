@@ -22,6 +22,7 @@ Fix the findings of the live audit of 2026-10-12 on capsulecodes.com (SEO, i18n 
 - [x] C9 Detail-page subtitle consistency
 - [x] C10 Heading order; carousel dot target size
 - [x] C11 Festival PRO gallery sortOrder (DB)
+- [x] C12 Stats: projects = live published count (HeroSection prop), countries 6, apps published 3; meta description "8+ projects"
 
 ## Acceptance
 Each item matches the audit description; no regressions in en.

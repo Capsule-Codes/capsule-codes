@@ -27,7 +27,7 @@ const jetbrainsMono = JetBrains_Mono({
 export const metadata: Metadata = {
   title: "Capsule Codes - Web & App Development",
   description:
-    "React Native & Next.js development agency. We build production-ready mobile apps and web platforms for startups. 6+ projects across 6 countries. Direct access to senior developers.",
+    "React Native & Next.js development agency. We build production-ready mobile apps and web platforms for startups. 8+ projects across 6 countries. Direct access to senior developers.",
   keywords: [
     "React Native development",
     "Next.js development",
@@ -58,7 +58,7 @@ export const metadata: Metadata = {
     siteName: "Capsule Codes",
     title: "Capsule Codes - Web & App Development",
     description:
-      "React Native & Next.js development agency. We build production-ready mobile apps and web platforms for startups. 6+ projects across 6 countries. Direct access to senior developers.",
+      "React Native & Next.js development agency. We build production-ready mobile apps and web platforms for startups. 8+ projects across 6 countries. Direct access to senior developers.",
     images: [
       {
         url: absoluteUrl("/og-image.png"),
@@ -72,7 +72,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "Capsule Codes - Web & App Development",
     description:
-      "React Native & Next.js development agency. We build production-ready mobile apps and web platforms for startups. 6+ projects across 6 countries. Direct access to senior developers.",
+      "React Native & Next.js development agency. We build production-ready mobile apps and web platforms for startups. 8+ projects across 6 countries. Direct access to senior developers.",
     images: [absoluteUrl("/og-image.png")],
   },
   robots: {
