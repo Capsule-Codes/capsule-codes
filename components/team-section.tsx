@@ -24,7 +24,7 @@ export function TeamSection({ teamMembers }: TeamSectionProps) {
   return (
     <section id="team" className="py-[90px] px-4 lg:px-12 border-t border-[color:var(--ink-line)]">
       <SectionHeader
-        eyebrow="— 04 / Team"
+        eyebrow={`— 04 / ${t.nav.team}`}
         title={<>{t.team.title.firstPart} <em className="not-italic text-brand-grad">{t.team.title.secondPart}</em></>}
         lead={t.team.subtitle}
       />
@@ -60,7 +60,7 @@ function MemberCard({ name, role, description, avatarUrl }: { name: string; role
           {avatarUrl && <img src={avatarUrl} alt={name} className="w-full h-full object-cover" />}
         </div>
         <div>
-          <h5 className="text-[15px] font-semibold leading-tight">{name}</h5>
+          <h3 className="text-[15px] font-semibold leading-tight">{name}</h3>
           <span className="font-mono text-[10px] text-[color:var(--brand-cyan)] tracking-[0.04em]">{role}</span>
         </div>
       </div>

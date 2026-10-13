@@ -15,6 +15,7 @@ export interface Translations {
   // Hero Section
   hero: {
     badge: string;
+    chips: { webPlatforms: string; mobileApps: string };
     title: {
       firstCommonText: string;
       secondCommonText: string;
@@ -364,6 +365,7 @@ export const translations: Record<Language, Translations> = {
       contact: "Contact",
     },
     hero: {
+      chips: { webPlatforms: "web platforms", mobileApps: "mobile apps" },
       badge: "Next-Generation Software Development",
       title: {
         firstCommonText: "Development of",
@@ -378,7 +380,7 @@ export const translations: Record<Language, Translations> = {
       stats: {
         projects: "Completed Projects",
         countries: "Countries Served",
-        apps: "Apps in Stores",
+        apps: "Apps Published",
       },
       cta: {
         viewProjects: "View Our Projects",
@@ -773,6 +775,7 @@ export const translations: Record<Language, Translations> = {
       contact: "Contacto",
     },
     hero: {
+      chips: { webPlatforms: "plataformas web", mobileApps: "apps móviles" },
       badge: "Desarrollo de Software de Próxima Generación",
       title: {
         firstCommonText: "Desarrollo de",
@@ -787,7 +790,7 @@ export const translations: Record<Language, Translations> = {
       stats: {
         projects: "Proyectos Completados",
         countries: "Países Servidos",
-        apps: "Apps en las Tiendas",
+        apps: "Apps Publicadas",
       },
       cta: {
         viewProjects: "Ver Nuestros Proyectos",
@@ -821,7 +824,7 @@ export const translations: Record<Language, Translations> = {
         speed: {
           title: "Código listo para producción",
           description:
-            "Typescript para type safety. Testing completo. Arquitectura limpia. Documentación. Construimos software que es mantenible mucho despúes del lanzamiento.",
+            "Typescript para type safety. Testing completo. Arquitectura limpia. Documentación. Construimos software que es mantenible mucho después del lanzamiento.",
         },
         collaboration: {
           title: "Experiencia Full-Stack",
@@ -887,7 +890,7 @@ export const translations: Record<Language, Translations> = {
       },
       categories: {
         webApp: "Web App",
-        mobileApp: "Mobile App",
+        mobileApp: "App móvil",
         webPlatform: "Plataforma Web",
         enterprise: "Empresarial",
       },
@@ -1182,6 +1185,7 @@ export const translations: Record<Language, Translations> = {
       contact: "Contatti",
     },
     hero: {
+      chips: { webPlatforms: "piattaforme web", mobileApps: "app mobile" },
       badge: "Sviluppo Software di Nuova Generazione",
       title: {
         firstCommonText: "Sviluppo di",
@@ -1196,7 +1200,7 @@ export const translations: Record<Language, Translations> = {
       stats: {
         projects: "Progetti Completati",
         countries: "Paesi Serviti",
-        apps: "App nei Store",
+        apps: "App Pubblicate",
       },
       cta: {
         viewProjects: "Vedi i Nostri Progetti",
@@ -1296,7 +1300,7 @@ export const translations: Record<Language, Translations> = {
       },
       categories: {
         webApp: "Web App",
-        mobileApp: "Mobile App",
+        mobileApp: "App mobile",
         webPlatform: "Piattaforma Web",
         enterprise: "Enterprise",
       },

@@ -13,6 +13,7 @@ import {
   getProjectScreenshots,
   isPortraitImage,
 } from "@/lib/project-media"
+import { getCategoryLabel, getProjectContent } from "@/components/projects-carousel"
 import { ProjectLightbox } from "@/components/project-lightbox"
 
 interface ProjectDetailClientProps {
@@ -23,15 +24,7 @@ export function ProjectDetailClient({ project }: ProjectDetailClientProps) {
   const { t, language } = useLanguage()
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null)
 
-  // Helper function to get project content in current language
-  const getProjectContent = (project: Project) => {
-    if (project.translations && project.translations[language as keyof typeof project.translations]) {
-      return project.translations[language as keyof typeof project.translations];
-    }
-    return { title: project.title, subtitle: "", description: project.description };
-  };
-
-  const content = getProjectContent(project);
+  const content = getProjectContent(project, language);
   
   // Screenshots only (sorted by sortOrder, cover excluded). The marketing cover
   // (`project.image`) is rendered as a hero banner and never joins the gallery.
@@ -76,7 +69,7 @@ export function ProjectDetailClient({ project }: ProjectDetailClientProps) {
       {/* Header Section - Título y Subtítulo */}
       <div className="mb-12">
         <div className="flex gap-2 mb-4">
-          <Badge className="capitalize">{project.category}</Badge>
+          <Badge>{getCategoryLabel(project.category, t)}</Badge>
         </div>
         <h1 className="text-3xl md:text-4xl font-bold mb-4">
           {content.title.split(" ")[0]}{" "}

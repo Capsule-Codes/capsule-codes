@@ -16,6 +16,7 @@ export function mapProjectRow(row: Record<string, unknown>): Project {
     id: row.id as string,
     title: row.title as string,
     description: row.description as string,
+    subtitle: (row.subtitle as string) || undefined,
     translations: row.translations as Project["translations"],
     image: row.image as string,
     images: (row.images as Project["images"]) ?? undefined,
@@ -33,6 +34,7 @@ export function mapProjectRow(row: Record<string, unknown>): Project {
     featured: (row.featured as boolean) ?? undefined,
     showOnHome: (row.show_on_home as boolean) ?? undefined,
     published: (row.published as boolean) ?? undefined,
+    updatedAt: (row.updated_at as string) || undefined,
   };
 }
 

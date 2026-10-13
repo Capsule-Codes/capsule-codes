@@ -36,7 +36,7 @@ export function AboutSection() {
       className="py-[90px] px-4 lg:px-12 border-t border-[color:var(--ink-line)]"
     >
       <SectionHeader
-        eyebrow="— 01 / About"
+        eyebrow={`— 01 / ${t.nav.about}`}
         title={
           <>
             {leadingWords}

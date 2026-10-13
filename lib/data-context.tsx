@@ -26,6 +26,8 @@ export interface Project {
   id: string;
   title: string; // Fallback para compatibilidad
   description: string; // Fallback para compatibilidad
+  /** Top-level DB subtitle; fallback when a locale has no translated subtitle. */
+  subtitle?: string;
   translations: {
     en: ProjectTranslations;
     es: ProjectTranslations;
@@ -51,6 +53,8 @@ export interface Project {
   /** Whether the project appears in the home projects grid (default true). */
   showOnHome?: boolean;
   published?: boolean;
+  /** ISO timestamp of the last DB update (server-mapped; used for sitemap lastmod). */
+  updatedAt?: string;
 }
 
 // Technology interfaces

@@ -12,6 +12,12 @@ const languages = [
   { code: "it" as Language, name: "Italiano", flag: "🇮🇹" },
 ];
 
+const LABELS: Record<Language, string> = {
+  en: "Change language",
+  es: "Cambiar idioma",
+  it: "Cambia lingua",
+};
+
 export function SimpleLanguageSwitcher() {
   const { language, setLanguage } = useLanguage();
   const [isOpen, setIsOpen] = useState(false);
@@ -37,6 +43,9 @@ export function SimpleLanguageSwitcher() {
         size="sm"
         className="h-9 px-3 gap-2 rounded-full"
         onClick={() => setIsOpen(!isOpen)}
+        aria-label={`${LABELS[language]}: ${currentLanguage?.name ?? ""}`}
+        aria-haspopup="true"
+        aria-expanded={isOpen}
       >
         <Globe className="h-4 w-4" />
         <span className="hidden sm:inline">{currentLanguage?.flag}</span>

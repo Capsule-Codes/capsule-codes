@@ -5,7 +5,7 @@ import { Magnetic } from "@/components/motion/magnetic";
 import { useLanguage } from "@/hooks/use-language";
 import { Zap, ArrowRight } from "lucide-react";
 
-export function HeroSection() {
+export function HeroSection({ projectCount }: { projectCount: number }) {
   const { t } = useLanguage();
   const scroll = (id: string) =>
     document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
@@ -25,14 +25,14 @@ export function HeroSection() {
           size="sm"
           className="absolute top-[85%] lg:top-[18%] left-[6%] lg:left-[8%] rotate-[-6deg] animate-capsule-drift opacity-100 dark:opacity-90"
         >
-          web platforms
+          {t.hero.chips.webPlatforms}
         </Capsule>
         <Capsule
           size="sm"
           className="absolute top-[90%] lg:top-[14%] right-[6%] lg:right-[12%] rotate-[5deg] animate-capsule-drift opacity-100 dark:opacity-90"
           style={{ animationDelay: "1s" }}
         >
-          mobile apps
+          {t.hero.chips.mobileApps}
         </Capsule>
         {/* the remaining 4 are hidden below lg */}
         <Capsule
@@ -96,7 +96,7 @@ export function HeroSection() {
           <div className="inline-flex items-stretch gap-2 mb-10 p-2 bg-white/[0.03] border border-[color:var(--ink-line)] rounded-full backdrop-blur-md">
             <div className="inline-flex items-center gap-2 px-4 py-1.5 text-xs text-[color:var(--ink-muted)]">
               <span className="font-mono font-semibold text-[color:var(--ink-fg)]">
-                6+
+                {projectCount}
               </span>{" "}
               {t.hero.stats.projects}
             </div>
@@ -110,7 +110,7 @@ export function HeroSection() {
             <div className="w-px self-center h-4 bg-[color:var(--ink-line)]" />
             <div className="inline-flex items-center gap-2 px-4 py-1.5 text-xs text-[color:var(--ink-muted)]">
               <span className="font-mono font-semibold text-[color:var(--ink-fg)]">
-                2
+                3
               </span>{" "}
               {t.hero.stats.apps}
             </div>

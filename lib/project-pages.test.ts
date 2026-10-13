@@ -5,6 +5,7 @@ import {
   findPublishedProject,
   getPublishedProjects,
   isProjectPublished,
+  resolveProjectSubtitle,
 } from "./project-pages.ts";
 
 const tr = (title: string, description = "d") => ({ title, subtitle: "s", description });
@@ -50,7 +51,7 @@ test("buildProjectMetadata uses english copy and the cover as OG image", () => {
   assert.equal(m.title, "EN-a");
   assert.equal(m.description, "English description");
   assert.deepEqual(m.openGraph?.images, [{ url: "https://cdn.test/a.webp", alt: "EN-a" }]);
-  assert.equal(m.alternates?.canonical, "/projects/a");
+  assert.equal(m.alternates?.canonical, "https://www.capsulecodes.com/projects/a");
 });
 
 test("buildProjectMetadata falls back to base fields and omits images without cover", () => {
@@ -66,4 +67,16 @@ test("buildProjectMetadata truncates long descriptions", () => {
   const m = buildProjectMetadata(project("a", { translations: undefined, description: "x".repeat(400) }));
   assert.ok((m.description as string).length <= 200);
   assert.ok((m.description as string).endsWith("…"));
+});
+
+test("resolveProjectSubtitle prefers the localized subtitle, then the DB column", () => {
+  const p = project("a", { subtitle: "Column subtitle" });
+  assert.equal(resolveProjectSubtitle(p, "es"), "s");
+  const noTr = project("b", {
+    subtitle: "Column subtitle",
+    translations: { en: tr("E"), es: { title: "x", subtitle: "", description: "d" }, it: tr("I") },
+  });
+  assert.equal(resolveProjectSubtitle(noTr, "es"), "Column subtitle");
+  assert.equal(resolveProjectSubtitle(project("c", { translations: undefined }), "en"), undefined);
+  assert.equal(resolveProjectSubtitle(project("d", { subtitle: "  " , translations: { en: { title: "t", description: "d" } } }), "en"), undefined);
 });

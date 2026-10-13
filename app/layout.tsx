@@ -7,6 +7,7 @@ import { LanguageProvider } from "@/hooks/use-language";
 import { ThemeProvider } from "@/components/theme-provider";
 import { Toaster } from "@/components/ui/sonner";
 import { AmbientCursorGlow } from "@/components/motion/ambient-cursor-glow";
+import { SITE_URL, absoluteUrl } from "@/lib/site";
 import "./globals.css";
 
 const inter = Inter({
@@ -26,8 +27,7 @@ const jetbrainsMono = JetBrains_Mono({
 export const metadata: Metadata = {
   title: "Capsule Codes - Web & App Development",
   description:
-    "React Native & Next.js development agency. We build production-ready mobile apps and web platforms for startups. 6+ projects across 6 countries. Direct access to senior developers.",
-  generator: "v0.app",
+    "React Native & Next.js development agency. We build production-ready mobile apps and web platforms for startups. 8+ projects across 6 countries. Direct access to senior developers.",
   keywords: [
     "React Native development",
     "Next.js development",
@@ -49,19 +49,19 @@ export const metadata: Metadata = {
     icon: "/logo.svg",
     apple: "/logo.svg",
   },
-  metadataBase: new URL("https://capsulecodes.com"),
+  metadataBase: new URL(SITE_URL),
   openGraph: {
     type: "website",
     locale: "en_US",
     alternateLocale: ["es_ES", "it_IT"],
-    url: "https://capsulecodes.com",
+    url: SITE_URL,
     siteName: "Capsule Codes",
     title: "Capsule Codes - Web & App Development",
     description:
-      "React Native & Next.js development agency. We build production-ready mobile apps and web platforms for startups. 6+ projects across 6 countries. Direct access to senior developers.",
+      "React Native & Next.js development agency. We build production-ready mobile apps and web platforms for startups. 8+ projects across 6 countries. Direct access to senior developers.",
     images: [
       {
-        url: "https://capsulecodes.com/og-image.png",
+        url: absoluteUrl("/og-image.png"),
         width: 1200,
         height: 630,
         alt: "Capsule Codes — Mobile & Web Development for Startups",
@@ -72,8 +72,8 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "Capsule Codes - Web & App Development",
     description:
-      "React Native & Next.js development agency. We build production-ready mobile apps and web platforms for startups. 6+ projects across 6 countries. Direct access to senior developers.",
-    images: ["https://capsulecodes.com/og-image.png"],
+      "React Native & Next.js development agency. We build production-ready mobile apps and web platforms for startups. 8+ projects across 6 countries. Direct access to senior developers.",
+    images: [absoluteUrl("/og-image.png")],
   },
   robots: {
     index: true,

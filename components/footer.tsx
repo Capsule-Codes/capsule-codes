@@ -33,10 +33,10 @@ export function Footer() {
           {/* Column 1: Brand + tagline */}
           <div>
             <Image
-              src="/images/capsule-codes-logo-transparent-cropped.png"
+              src="/images/capsule-codes-logo-360.webp"
               alt="Capsule Codes"
-              width={795}
-              height={908}
+              width={360}
+              height={411}
               className="mx-auto h-auto w-[180px] sm:w-[170px] md:mx-0 md:w-[160px]"
             />
             <p className="text-[12.5px] text-[color:var(--ink-muted)] leading-[1.5] mt-3 max-w-xs">
@@ -46,9 +46,9 @@ export function Footer() {
 
           {/* Column 2: Quick Links */}
           <div>
-            <h6 className="font-mono text-[11px] uppercase tracking-[0.08em] text-[color:var(--brand-cyan)] mb-3">
+            <h3 className="font-mono text-[11px] uppercase tracking-[0.08em] text-[color:var(--brand-cyan)] mb-3">
               — {t.footer.quickLinks}
-            </h6>
+            </h3>
             {quickLinks.map((link) => (
               <button
                 type="button"
@@ -63,9 +63,9 @@ export function Footer() {
 
           {/* Column 3: Legal */}
           <div>
-            <h6 className="font-mono text-[11px] uppercase tracking-[0.08em] text-[color:var(--brand-cyan)] mb-3">
+            <h3 className="font-mono text-[11px] uppercase tracking-[0.08em] text-[color:var(--brand-cyan)] mb-3">
               — Legal
-            </h6>
+            </h3>
             <a
               href="/privacy"
               className="block text-[13px] text-[color:var(--ink-muted)] py-1 hover:text-foreground transition"
@@ -82,9 +82,9 @@ export function Footer() {
 
           {/* Column 4: Follow */}
           <div>
-            <h6 className="font-mono text-[11px] uppercase tracking-[0.08em] text-[color:var(--brand-cyan)] mb-3">
+            <h3 className="font-mono text-[11px] uppercase tracking-[0.08em] text-[color:var(--brand-cyan)] mb-3">
               — {t.footer.followUs}
-            </h6>
+            </h3>
             <a
               href="https://www.linkedin.com/company/capsulecodes"
               target="_blank"

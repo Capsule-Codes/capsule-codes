@@ -31,7 +31,7 @@ export function TechnologiesSection({
       className="py-[90px] px-4 lg:px-12 border-t border-[color:var(--ink-line)]"
     >
       <SectionHeader
-        eyebrow="— 03 / Technologies"
+        eyebrow={`— 03 / ${t.nav.technologies}`}
         title={
           <>
             {leadingWords}

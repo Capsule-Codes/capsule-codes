@@ -13,6 +13,7 @@ export const metadata: Metadata = {
   description:
     "Selected web platforms and mobile apps built by Capsule Codes for startups and companies.",
   alternates: { canonical: "/projects" },
+  openGraph: { type: "website", title: "Projects | Capsule Codes", url: "/projects" },
 };
 
 export default async function ProjectsPage() {

@@ -8,23 +8,17 @@ import type { Project } from "@/lib/data-context";
 import type { Language } from "@/lib/i18n";
 import { resolveProjectGradient } from "@/lib/gradient-presets";
 import { getProjectThumb } from "@/lib/project-media";
+import { resolveProjectSubtitle } from "@/lib/project-pages";
 
 interface ProjectsCarouselProps {
   projects: Project[];
 }
 
 export function getProjectContent(project: Project, language: Language) {
-  if (
-    project.translations &&
-    project.translations[language as keyof typeof project.translations]
-  ) {
-    return project.translations[language as keyof typeof project.translations];
-  }
-  return {
-    title: project.title,
-    subtitle: undefined as string | undefined,
-    description: project.description,
-  };
+  const subtitle = resolveProjectSubtitle(project, language);
+  const localized = project.translations?.[language];
+  if (localized) return { ...localized, subtitle };
+  return { title: project.title, subtitle, description: project.description };
 }
 
 export function getCategoryLabel(

@@ -1,5 +1,6 @@
 import type { Project } from "./data-context.tsx";
 import { getProjectCover } from "./project-media.ts";
+import { absoluteUrl } from "./site.ts";
 
 const MAX_DESCRIPTION = 200;
 
@@ -25,6 +26,19 @@ function truncate(text: string, max: number): string {
   return clean.length <= max ? clean : `${clean.slice(0, max - 1).trimEnd()}…`;
 }
 
+/**
+ * Subtitle for a locale: the localized value, else the project's top-level
+ * `subtitle` column (some projects only fill that one), else undefined.
+ */
+export function resolveProjectSubtitle(
+  project: Partial<Pick<Project, "translations" | "subtitle">>,
+  language: "en" | "es" | "it",
+): string | undefined {
+  const localized = project.translations?.[language]?.subtitle?.trim();
+  if (localized) return localized;
+  return project.subtitle?.trim() || undefined;
+}
+
 export interface ProjectPageMetadata {
   title: string;
   description: string;
@@ -48,7 +62,7 @@ export function buildProjectMetadata(
   const title = en?.title || project.title;
   const description = truncate(en?.description || project.description || "", MAX_DESCRIPTION);
   const cover = getProjectCover(project);
-  const path = `/projects/${project.id}`;
+  const path = absoluteUrl(`/projects/${project.id}`);
   return {
     title,
     description,

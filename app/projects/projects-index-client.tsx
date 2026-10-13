@@ -26,7 +26,8 @@ export function ProjectsIndexClient({ projects }: { projects: Project[] }) {
       </div>
 
       <SectionHeader
-        eyebrow="— Projects"
+        as="h1"
+        eyebrow={`— ${t.nav.projects}`}
         title={
           <>
             {leadingWords}

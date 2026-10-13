@@ -52,7 +52,7 @@ export function ProjectsShowcaseSection({
 
   const header = (
     <SectionHeader
-      eyebrow="— 05 / Projects"
+      eyebrow={`— 05 / ${t.nav.projects}`}
       title={
         <>
           {leadingWords}
