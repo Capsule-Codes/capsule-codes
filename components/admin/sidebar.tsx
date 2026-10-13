@@ -43,10 +43,10 @@ export function Sidebar() {
       <div className="mb-3 flex justify-center border-b border-[color:var(--ink-line)] pb-5">
         <Link href="/admin" className="inline-flex">
           <Image
-            src="/images/capsule-codes-logo-transparent-cropped.png"
+            src="/images/capsule-codes-logo-360.webp"
             alt="Capsule Codes Admin"
-            width={795}
-            height={908}
+            width={360}
+            height={411}
             priority
             className="h-12 w-auto object-contain"
           />

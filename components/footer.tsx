@@ -33,10 +33,10 @@ export function Footer() {
           {/* Column 1: Brand + tagline */}
           <div>
             <Image
-              src="/images/capsule-codes-logo-transparent-cropped.png"
+              src="/images/capsule-codes-logo-360.webp"
               alt="Capsule Codes"
-              width={795}
-              height={908}
+              width={360}
+              height={411}
               className="mx-auto h-auto w-[180px] sm:w-[170px] md:mx-0 md:w-[160px]"
             />
             <p className="text-[12.5px] text-[color:var(--ink-muted)] leading-[1.5] mt-3 max-w-xs">

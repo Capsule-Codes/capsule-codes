@@ -120,10 +120,10 @@ export function Header() {
             aria-label="Go to home"
           >
             <Image
-              src="/images/capsule-codes-logo-transparent-cropped.png"
+              src="/images/capsule-codes-logo-360.webp"
               alt="Capsule Codes"
-              width={795}
-              height={908}
+              width={360}
+              height={411}
               className="h-12 w-auto object-contain sm:h-14"
               priority
             />
