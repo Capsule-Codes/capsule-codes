@@ -7,8 +7,7 @@ import { isLocale } from "@/lib/locale";
 import { buildPageMetadata } from "@/lib/page-metadata";
 import { ProjectsIndexClient } from "./projects-index-client";
 
-export const dynamic = "force-dynamic";
-export const revalidate = 0;
+export const revalidate = 300;
 
 type PageProps = { params: Promise<{ locale: string }> };
 

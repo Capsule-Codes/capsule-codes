@@ -4,7 +4,7 @@ import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Globe, ArrowLeft } from "lucide-react"
-import Image from "next/image"
+import { SiteImage } from "@/components/site-image"
 import Link from "next/link"
 import { useLanguage, useLocalePath } from "@/hooks/use-language"
 import type { Project } from "@/lib/data-context"
@@ -15,6 +15,9 @@ import {
 } from "@/lib/project-media"
 import { getCategoryLabel, getProjectContent } from "@/components/projects-carousel"
 import { ProjectLightbox } from "@/components/project-lightbox"
+
+/** First gallery image: full width on small screens, half the 1024px container from lg. */
+const FIRST_IMAGE_SIZES = "(min-width: 1024px) 512px, 100vw"
 
 interface ProjectDetailClientProps {
   project: Project
@@ -88,7 +91,7 @@ export function ProjectDetailClient({ project }: ProjectDetailClientProps) {
       {/* Marketing cover (16:10) */}
       {cover && (
         <div className="relative mb-12 w-full aspect-[16/10] rounded-xl overflow-hidden border border-border animate-in fade-in slide-in-from-bottom-4 duration-700">
-          <Image
+          <SiteImage
             src={cover}
             alt={content.title}
             fill
@@ -120,12 +123,13 @@ export function ProjectDetailClient({ project }: ProjectDetailClientProps) {
                 className="cursor-zoom-in animate-in fade-in slide-in-from-bottom-4 duration-700 rounded-[1.5rem] focus:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                 style={{ animationDelay: `${index * 100}ms` }}
               >
-                <Image
+                <SiteImage
                   src={img.blobKey}
                   alt={`${content.title} - ${index + 1}`}
                   width={img.width}
                   height={img.height}
-                  priority={index === 0}
+                  sizes="(min-width: 768px) 300px, 220px"
+                  priority={!cover && index === 0}
                   className="h-[55vh] md:h-[70vh] max-h-[640px] w-auto max-w-full rounded-[1.5rem] border border-border transition-transform duration-300 hover:scale-[1.02]"
                 />
               </button>
@@ -143,12 +147,13 @@ export function ProjectDetailClient({ project }: ProjectDetailClientProps) {
                 aria-label={language === "es" ? "Ampliar imagen" : language === "it" ? "Ingrandisci immagine" : "Open image"}
                 className="relative w-full aspect-video rounded-lg overflow-hidden border border-border cursor-zoom-in animate-in fade-in slide-in-from-bottom-4 duration-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-ring"
               >
-                <Image
+                <SiteImage
                   src={images[0]}
                   alt={content.title}
                   fill
+                  sizes={FIRST_IMAGE_SIZES}
                   className="object-contain bg-muted/50 transition-transform duration-300 hover:scale-105"
-                  priority
+                  priority={!cover}
                 />
               </button>
               {/* Description */}
@@ -169,12 +174,13 @@ export function ProjectDetailClient({ project }: ProjectDetailClientProps) {
                   aria-label={`${language === "es" ? "Ampliar imagen" : language === "it" ? "Ingrandisci immagine" : "Open image"} 1`}
                   className="relative w-full aspect-video rounded-lg overflow-hidden border border-border cursor-zoom-in animate-in fade-in slide-in-from-bottom-4 duration-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                 >
-                  <Image
+                  <SiteImage
                     src={images[0]}
                     alt={`${content.title} - 1`}
                     fill
+                    sizes={FIRST_IMAGE_SIZES}
                     className="object-contain bg-muted/50 transition-transform duration-300 hover:scale-105"
-                    priority
+                    priority={!cover}
                   />
                 </button>
                 {/* Description */}
@@ -196,10 +202,11 @@ export function ProjectDetailClient({ project }: ProjectDetailClientProps) {
                       className="relative w-full aspect-video rounded-lg overflow-hidden border border-border cursor-zoom-in animate-in fade-in slide-in-from-bottom-4 duration-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                       style={{ animationDelay: `${(index + 2) * 100}ms` }}
                     >
-                      <Image
+                      <SiteImage
                         src={img}
                         alt={`${content.title} - ${index + 2}`}
                         fill
+                        sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
                         className="object-cover bg-muted/50 hover:scale-105 transition-transform duration-300"
                       />
                     </button>

@@ -4,6 +4,7 @@ import {
   deleteImageFromStorage,
 } from "@/lib/server/media";
 import { supabaseAdmin } from "@/lib/server/supabase-admin";
+import { revalidating } from "@/lib/server/revalidate";
 
 const ALLOWED_MIME = new Set([
   "image/jpeg",
@@ -13,7 +14,7 @@ const ALLOWED_MIME = new Set([
   "image/gif",
 ]);
 
-export async function POST(
+async function handlePOST(
   req: Request,
   { params }: { params: Promise<{ id: string }> }
 ) {
@@ -84,7 +85,7 @@ export async function POST(
   }
 }
 
-export async function DELETE(
+async function handleDELETE(
   req: Request,
   { params }: { params: Promise<{ id: string }> }
 ) {
@@ -134,3 +135,6 @@ export async function DELETE(
     );
   }
 }
+
+export const POST = revalidating(["team"], handlePOST);
+export const DELETE = revalidating(["team"], handleDELETE);

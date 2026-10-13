@@ -10,14 +10,6 @@ export function isLocale(value: unknown): value is Locale {
   return typeof value === "string" && (LOCALES as readonly string[]).includes(value);
 }
 
-/** Request header the middleware uses to tell the root layout the page language. */
-export const LOCALE_HEADER = "x-locale";
-
-/** Header value to locale; anything unrecognised (admin, api, 404 pass) is English. */
-export function resolveRequestLocale(value: string | null | undefined): Locale {
-  return isLocale(value) ? value : DEFAULT_LOCALE;
-}
-
 /** Splits "/path?query#hash" into the path and the untouched suffix. */
 function splitSuffix(input: string): [path: string, suffix: string] {
   const i = input.search(/[?#]/);
@@ -54,7 +46,7 @@ export function alternateUrls(path: string): Record<Locale | "x-default", string
   return { en: url("en"), es: url("es"), it: url("it"), "x-default": url("en") };
 }
 
-/** `locale` is the language the request is served in (sent to the layout as a header). */
+/** `locale` is the language the request is served in. */
 export type LocaleRoute =
   | { action: "next"; locale: Locale }
   | { action: "rewrite"; to: string; locale: Locale }

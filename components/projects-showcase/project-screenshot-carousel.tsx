@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
-import Image from "next/image";
+import { SiteImage } from "@/components/site-image"
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import {
   Carousel,
@@ -94,13 +94,12 @@ export function ProjectScreenshotCarousel({
                 )}
               >
                 <Frame>
-                  <Image
+                  <SiteImage
                     src={image.src}
                     alt={image.alt}
                     fill
                     sizes={isPhone ? "200px" : "(min-width: 640px) 70vw, 88vw"}
                     className={cn(isPhone ? "object-cover" : "object-contain")}
-                    priority={index === 0}
                   />
                 </Frame>
               </button>

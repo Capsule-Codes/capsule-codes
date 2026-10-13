@@ -6,7 +6,6 @@ import {
   alternateUrls,
   isHomePath,
   isLocale,
-  resolveRequestLocale,
   localePath,
   resolveLocaleRoute,
   splitLocale,
@@ -108,10 +107,3 @@ test("isHomePath is true for the home of every locale", () => {
   for (const p of ["/projects", "/es/projects", "/it/privacy"]) assert.equal(isHomePath(p), false, p);
 });
 
-test("resolveRequestLocale trusts only known locales and defaults to english", () => {
-  assert.equal(resolveRequestLocale("es"), "es");
-  assert.equal(resolveRequestLocale("it"), "it");
-  assert.equal(resolveRequestLocale("xx"), "en");
-  assert.equal(resolveRequestLocale(null), "en");
-  assert.equal(resolveRequestLocale(undefined), "en");
-});

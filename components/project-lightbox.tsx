@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useState } from "react"
 import useEmblaCarousel from "embla-carousel-react"
 import { ChevronLeft, ChevronRight } from "lucide-react"
-import Image from "next/image"
+import { SiteImage } from "@/components/site-image"
 
 import { Dialog, DialogClose, DialogContent, DialogTitle } from "@/components/ui/dialog"
 import { cn } from "@/lib/utils"
@@ -114,7 +114,7 @@ export function ProjectLightbox({
                   key={i}
                   className="relative flex h-full min-w-0 flex-[0_0_100%] items-center justify-center p-4 md:p-12"
                 >
-                  <Image
+                  <SiteImage
                     src={image.src}
                     alt={image.alt}
                     fill

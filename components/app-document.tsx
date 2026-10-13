@@ -1,6 +1,4 @@
 import type React from "react";
-import type { Metadata } from "next";
-import { headers } from "next/headers";
 import { Inter, JetBrains_Mono } from "next/font/google";
 import { Analytics } from "@vercel/analytics/next";
 import { LinkedInInsightTag } from "@/components/linkedin-insight-tag";
@@ -10,10 +8,8 @@ import { LanguageProvider } from "@/hooks/use-language";
 import { ThemeProvider } from "@/components/theme-provider";
 import { Toaster } from "@/components/ui/sonner";
 import { AmbientCursorGlow } from "@/components/motion/ambient-cursor-glow";
-import { LOCALE_HEADER, resolveRequestLocale } from "@/lib/locale";
-import { buildPageMetadata } from "@/lib/page-metadata";
-import { SITE_URL } from "@/lib/site";
-import "./globals.css";
+import type { Locale } from "@/lib/locale";
+import "@/app/globals.css";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -29,65 +25,19 @@ const jetbrainsMono = JetBrains_Mono({
   display: "swap",
 });
 
-/** The middleware tells the layout which language the request is served in. */
-function requestLocale() {
-  return resolveRequestLocale(headers().get(LOCALE_HEADER));
-}
-
-export function generateMetadata(): Metadata {
-  // Site-wide defaults. Pages override title, description, alternates and cards.
-  const home = buildPageMetadata(requestLocale(), "home");
-  return {
-    title: home.title,
-    description: home.description,
-    keywords: [
-      "React Native development",
-      "Next.js development",
-      "mobile app development",
-      "web platform development",
-      "startup development",
-      "TypeScript",
-      "Node.js",
-      "Supabase",
-      "full-stack development",
-      "mobile app agency",
-      "fintech development",
-      "edtech development",
-    ],
-    authors: [{ name: "Capsule Codes" }],
-    creator: "Capsule Codes",
-    publisher: "Capsule Codes",
-    icons: {
-      icon: "/logo.svg",
-      apple: "/logo.svg",
-    },
-    metadataBase: new URL(SITE_URL),
-    openGraph: home.openGraph,
-    twitter: home.twitter,
-    robots: {
-      index: true,
-      follow: true,
-      googleBot: {
-        index: true,
-        follow: true,
-        "max-video-preview": -1,
-        "max-image-preview": "large",
-        "max-snippet": -1,
-      },
-    },
-    verification: {
-      google: "your-google-verification-code",
-    },
-  };
-}
-
-export default function RootLayout({
+/**
+ * The `<html>` document shared by every root layout (`app/[locale]` and
+ * `app/admin`): fonts, theme, language, consent and analytics. The language
+ * comes from the route, so the document never reads request headers and the
+ * public pages can be statically cached.
+ */
+export function AppDocument({
+  locale,
   children,
 }: Readonly<{
+  locale: Locale;
   children: React.ReactNode;
 }>) {
-  const locale = requestLocale();
-
   return (
     <html
       lang={locale}

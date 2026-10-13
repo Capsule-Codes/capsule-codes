@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { supabaseAdmin } from "@/lib/server/supabase-admin";
+import { revalidating } from "@/lib/server/revalidate";
 
 const VALID_CATEGORIES = ["cofounder", "developer"] as const;
 const REQUIRED_LOCALES = ["en", "es", "it"] as const;
@@ -35,7 +36,7 @@ export async function GET() {
   }
 }
 
-export async function POST(request: Request) {
+async function handlePOST(request: Request) {
   try {
     if (!supabaseAdmin) {
       return NextResponse.json(
@@ -109,3 +110,5 @@ export async function POST(request: Request) {
     );
   }
 }
+
+export const POST = revalidating(["team"], handlePOST);

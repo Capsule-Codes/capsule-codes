@@ -1,5 +1,6 @@
 "use client";
 import { useLanguage } from "@/hooks/use-language";
+import { SiteImage } from "@/components/site-image";
 import { ScrollReveal } from "@/components/motion/scroll-reveal";
 import { SectionHeader } from "@/components/ui/section-header";
 import { groupTeamMembers } from "@/lib/team-groups";
@@ -57,7 +58,7 @@ function MemberCard({ name, role, description, avatarUrl }: { name: string; role
     <div className="h-full bg-[color:var(--ink-bg-2)] border border-[color:var(--ink-line)] rounded-2xl p-6">
       <div className="flex items-center gap-3.5 mb-3.5">
         <div className="size-[52px] rounded-full shrink-0 bg-gradient-to-br from-[oklch(0.4_0.15_180)] to-[oklch(0.5_0.18_155)] shadow-[0_0_16px_oklch(0.5_0.15_180_/_0.3)] overflow-hidden">
-          {avatarUrl && <img src={avatarUrl} alt={name} className="w-full h-full object-cover" />}
+          {avatarUrl && <SiteImage src={avatarUrl} alt={name} width={52} height={52} sizes="52px" className="w-full h-full object-cover" />}
         </div>
         <div>
           <h3 className="text-[15px] font-semibold leading-tight">{name}</h3>

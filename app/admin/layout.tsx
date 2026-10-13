@@ -1,48 +1,19 @@
-"use client";
+import type React from "react";
+import type { Metadata } from "next";
+import { AppDocument } from "@/components/app-document";
+import { DEFAULT_LOCALE } from "@/lib/locale";
+import { AdminShell } from "./admin-shell";
 
-import { useAuth, AuthProvider } from "@/hooks/use-auth";
-import { SupabaseProvider } from "@/lib/supabase-context";
-import { Sidebar } from "@/components/admin/sidebar";
-import { LoginForm } from "@/components/admin/login-form";
-import { Loader2 } from "lucide-react";
+export const metadata: Metadata = {
+  title: "Admin | Capsule Codes",
+  robots: { index: false, follow: false },
+};
 
-function AdminShell({ children }: { children: React.ReactNode }) {
-  const { user, loading, isAdmin } = useAuth();
-
-  if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-background">
-        <Loader2 className="w-6 h-6 animate-spin text-[color:var(--brand-cyan)]" />
-      </div>
-    );
-  }
-
-  if (!user || !isAdmin) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-background p-6">
-        <LoginForm />
-      </div>
-    );
-  }
-
+/** Root layout of the admin panel: English only, never indexed. */
+export default function AdminLayout({ children }: { children: React.ReactNode }) {
   return (
-    <div className="min-h-screen grid grid-cols-[240px_1fr] bg-background">
-      <Sidebar />
-      <main className="overflow-x-auto">{children}</main>
-    </div>
-  );
-}
-
-export default function AdminLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
-  return (
-    <SupabaseProvider>
-      <AuthProvider>
-        <AdminShell>{children}</AdminShell>
-      </AuthProvider>
-    </SupabaseProvider>
+    <AppDocument locale={DEFAULT_LOCALE}>
+      <AdminShell>{children}</AdminShell>
+    </AppDocument>
   );
 }

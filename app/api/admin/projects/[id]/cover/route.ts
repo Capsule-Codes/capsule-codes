@@ -1,11 +1,12 @@
 import { NextResponse } from "next/server";
 import { processAndUploadCover } from "@/lib/server/media";
 import { validateCoverFile } from "@/lib/project-cover";
+import { revalidating } from "@/lib/server/revalidate";
 
 // Auth: /api/admin/* is guarded by middleware.ts (admin_session cookie).
 // Uploads the file only; the client then PATCHes `projects.image`. The
 // previous cover object is never deleted.
-export async function POST(
+async function handlePOST(
   req: Request,
   { params }: { params: Promise<{ id: string }> }
 ) {
@@ -33,3 +34,5 @@ export async function POST(
     );
   }
 }
+
+export const POST = revalidating(["projects"], handlePOST);

@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { supabaseAdmin } from "@/lib/server/supabase-admin";
 import type { ContactInfo } from "@/lib/types/contact";
+import { revalidating } from "@/lib/server/revalidate";
 
 // Disable caching for this route
 export const dynamic = 'force-dynamic';
@@ -40,7 +41,7 @@ export async function GET() {
   }
 }
 
-export async function PUT(request: Request) {
+async function handlePUT(request: Request) {
   try {
     if (!supabaseAdmin) {
       return NextResponse.json(
@@ -113,3 +114,5 @@ export async function PUT(request: Request) {
     );
   }
 }
+
+export const PUT = revalidating(["contactInfo"], handlePUT);

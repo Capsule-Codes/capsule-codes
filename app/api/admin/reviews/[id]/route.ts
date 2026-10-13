@@ -4,6 +4,7 @@ import {
   deleteImageFromStorage,
   deriveStoragePath,
 } from "@/lib/server/media";
+import { revalidating } from "@/lib/server/revalidate";
 
 // Placeholder avatar URL shipped with the app — NOT a Supabase Storage object.
 const PLACEHOLDER_AVATAR = "/placeholder-user.jpg";
@@ -40,7 +41,7 @@ export async function GET(
   }
 }
 
-export async function PUT(
+async function handlePUT(
   request: Request,
   { params }: { params: Promise<{ id: string }> }
 ) {
@@ -92,7 +93,7 @@ export async function PUT(
   }
 }
 
-export async function DELETE(
+async function handleDELETE(
   request: Request,
   { params }: { params: Promise<{ id: string }> }
 ) {
@@ -147,3 +148,6 @@ export async function DELETE(
     );
   }
 }
+
+export const PUT = revalidating(["reviews"], handlePUT);
+export const DELETE = revalidating(["reviews"], handleDELETE);
