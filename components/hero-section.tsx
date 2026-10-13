@@ -25,14 +25,14 @@ export function HeroSection() {
           size="sm"
           className="absolute top-[85%] lg:top-[18%] left-[6%] lg:left-[8%] rotate-[-6deg] animate-capsule-drift opacity-100 dark:opacity-90"
         >
-          web platforms
+          {t.hero.chips.webPlatforms}
         </Capsule>
         <Capsule
           size="sm"
           className="absolute top-[90%] lg:top-[14%] right-[6%] lg:right-[12%] rotate-[5deg] animate-capsule-drift opacity-100 dark:opacity-90"
           style={{ animationDelay: "1s" }}
         >
-          mobile apps
+          {t.hero.chips.mobileApps}
         </Capsule>
         {/* the remaining 4 are hidden below lg */}
         <Capsule

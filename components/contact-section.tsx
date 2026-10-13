@@ -93,7 +93,7 @@ export function ContactSection({ contactInfo }: ContactSectionProps) {
     >
       <div className="container mx-auto">
         <SectionHeader
-          eyebrow="— 07 / Contact"
+          eyebrow={`— 07 / ${t.nav.contact}`}
           align="center"
           title={
             <>

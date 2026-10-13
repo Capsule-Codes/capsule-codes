@@ -24,7 +24,7 @@ export function TeamSection({ teamMembers }: TeamSectionProps) {
   return (
     <section id="team" className="py-[90px] px-4 lg:px-12 border-t border-[color:var(--ink-line)]">
       <SectionHeader
-        eyebrow="— 04 / Team"
+        eyebrow={`— 04 / ${t.nav.team}`}
         title={<>{t.team.title.firstPart} <em className="not-italic text-brand-grad">{t.team.title.secondPart}</em></>}
         lead={t.team.subtitle}
       />

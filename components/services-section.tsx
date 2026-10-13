@@ -29,7 +29,7 @@ export function ServicesSection() {
       className="py-[90px] px-4 lg:px-12 border-t border-[color:var(--ink-line)]"
     >
       <SectionHeader
-        eyebrow="— 02 / Services"
+        eyebrow={`— 02 / ${t.nav.services}`}
         title={
           <>
             {leadingWords}
