@@ -6,8 +6,12 @@ import { Capsule } from "@/components/ui/capsule";
 import { useLanguage, useLocalePath } from "@/hooks/use-language";
 import type { Project } from "@/lib/data-context";
 import { resolveProjectGradient } from "@/lib/gradient-presets";
+import { SiteImage } from "@/components/site-image";
 import { getProjectThumb } from "@/lib/project-media";
 import { getCategoryLabel, getProjectContent } from "@/components/projects-carousel";
+
+/** Grid on the projects page: 1 column on phones, 2 from md, 3 from lg (max container 1280px). */
+const CARD_SIZES = "(min-width: 1280px) 400px, (min-width: 1024px) 33vw, (min-width: 768px) 50vw, 100vw";
 
 /** Card for a project: 16:10 marketing cover, title, summary and a link to the detail page. */
 export function ProjectCard({ project }: { project: Project }) {
@@ -33,18 +37,17 @@ export function ProjectCard({ project }: { project: Project }) {
         {thumb.url &&
           (thumb.portrait ? (
             <>
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src={thumb.url} alt="" aria-hidden className="absolute inset-0 h-full w-full scale-125 object-cover blur-2xl" />
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src={thumb.url} alt={content.title} className="absolute inset-0 h-full w-full object-contain" />
+              {/* Blurred backdrop: the blur hides detail, so a tiny size is enough. */}
+              <SiteImage src={thumb.url} alt="" aria-hidden fill sizes="96px" className="scale-125 object-cover blur-2xl" />
+              <SiteImage src={thumb.url} alt={content.title} fill sizes={CARD_SIZES} className="object-contain" />
             </>
           ) : (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img
+            <SiteImage
               src={thumb.url}
               alt={content.title}
-              loading="lazy"
-              className="absolute inset-0 h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.03]"
+              fill
+              sizes={CARD_SIZES}
+              className="object-cover transition-transform duration-500 group-hover:scale-[1.03]"
             />
           ))}
       </div>

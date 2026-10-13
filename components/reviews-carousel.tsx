@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useLanguage } from "@/hooks/use-language";
+import { SiteImage } from "@/components/site-image";
 import type { Review } from "@/lib/data-context";
 
 interface ReviewsCarouselProps {
@@ -183,9 +184,12 @@ export function ReviewsCarousel({ reviews }: ReviewsCarouselProps) {
         {/* Author block */}
         <div className="flex items-center justify-center gap-3">
           {currentReview.avatar ? (
-            <img
+            <SiteImage
               src={currentReview.avatar}
               alt={reviewContent.author}
+              width={44}
+              height={44}
+              sizes="44px"
               className="w-11 h-11 rounded-full object-cover border border-[color:var(--ink-line)]"
             />
           ) : (
