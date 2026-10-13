@@ -4,7 +4,7 @@ import { Footer } from "@/components/footer";
 import { TermsOfServiceClient } from "./terms-client";
 
 export const metadata: Metadata = {
-  title: "Terms of Service",
+  title: "Terms of Service | Capsule Codes",
   description:
     "The terms that govern your access to and use of the Capsule Codes website and services.",
   alternates: { canonical: "/terms" },

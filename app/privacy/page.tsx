@@ -4,7 +4,7 @@ import { Footer } from "@/components/footer";
 import { PrivacyPolicyClient } from "./privacy-client";
 
 export const metadata: Metadata = {
-  title: "Privacy Policy",
+  title: "Privacy Policy | Capsule Codes",
   description:
     "How Capsule Codes collects, uses and protects your personal information when you visit our website or use our services.",
   alternates: { canonical: "/privacy" },
