@@ -1,6 +1,7 @@
 import type { Project } from "./data-context.tsx";
 import { getProjectCover } from "./project-media.ts";
-import { absoluteUrl } from "./site.ts";
+import { buildLocalizedMetadata, type LocalizedMetadata } from "./page-metadata.ts";
+import type { Locale } from "./locale.ts";
 
 const MAX_DESCRIPTION = 200;
 
@@ -39,46 +40,27 @@ export function resolveProjectSubtitle(
   return project.subtitle?.trim() || undefined;
 }
 
-export interface ProjectPageMetadata {
-  title: string;
-  description: string;
-  alternates: { canonical: string };
-  openGraph: {
-    type: "website";
-    title: string;
-    description: string;
-    url: string;
-    images?: { url: string; alt: string }[];
-  };
-  twitter: { card: "summary_large_image"; title: string; description: string; images?: string[] };
-}
-
-/** Server-side metadata (English: the site has no locale routes). Cover = OG image. */
+/**
+ * Server-side metadata for a project page in a locale. The localized copy wins,
+ * then English, then the base columns. Cover = OG image.
+ */
 export function buildProjectMetadata(
   project: Pick<Project, "id" | "title" | "description" | "image"> &
     Partial<Pick<Project, "translations">>,
-): ProjectPageMetadata {
+  locale: Locale = "en",
+): LocalizedMetadata {
+  const localized = project.translations?.[locale];
   const en = project.translations?.en;
-  const title = en?.title || project.title;
-  const description = truncate(en?.description || project.description || "", MAX_DESCRIPTION);
-  const cover = getProjectCover(project);
-  const path = absoluteUrl(`/projects/${project.id}`);
-  return {
+  const title = localized?.title || en?.title || project.title;
+  const description = truncate(
+    localized?.description || en?.description || project.description || "",
+    MAX_DESCRIPTION,
+  );
+  return buildLocalizedMetadata({
+    locale,
+    path: `/projects/${project.id}`,
     title,
     description,
-    alternates: { canonical: path },
-    openGraph: {
-      type: "website",
-      title,
-      description,
-      url: path,
-      ...(cover ? { images: [{ url: cover, alt: title }] } : {}),
-    },
-    twitter: {
-      card: "summary_large_image",
-      title,
-      description,
-      ...(cover ? { images: [cover] } : {}),
-    },
-  };
+    image: getProjectCover(project) || undefined,
+  });
 }
