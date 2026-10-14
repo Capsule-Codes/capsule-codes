@@ -20,6 +20,7 @@ import type { Project, ProjectImage } from "@/lib/data-context";
 import { compressImages, validateImageFiles } from "@/lib/image-compression";
 import { GRADIENT_PRESETS, CUSTOM_GRADIENT_KEY } from "@/lib/gradient-presets";
 import { resolvePrimaryImage } from "@/lib/project-media";
+import { validateCaseStudyJson } from "@/lib/case-study";
 import {
   buildCoverPatch,
   validateCoverFile,
@@ -88,6 +89,35 @@ const EMPTY_FORM: ProjectForm = {
   showOnHome: true,
 };
 
+const CASE_STUDY_LOCALE_TEMPLATE = {
+  subtitle: "",
+  summary: "",
+  challenge: "",
+  solution: "",
+  highlights: [{ title: "", body: "" }],
+  results: "",
+};
+
+/** Skeleton for a new case study (markdown allowed in challenge/solution/results). */
+const CASE_STUDY_TEMPLATE = JSON.stringify(
+  {
+    meta: {
+      client: "",
+      industry: "",
+      year: new Date().getFullYear(),
+      countries: [],
+      platforms: ["iOS", "Android"],
+      role: "",
+      links: { web: "", appStore: "", googlePlay: "" },
+    },
+    en: CASE_STUDY_LOCALE_TEMPLATE,
+    es: CASE_STUDY_LOCALE_TEMPLATE,
+    it: CASE_STUDY_LOCALE_TEMPLATE,
+  },
+  null,
+  2,
+);
+
 const inputClass =
   "w-full bg-[color:var(--input-bg)] border border-[color:var(--ink-line)] rounded-[10px] px-3.5 py-3 text-sm text-foreground placeholder:text-[color:var(--ink-muted)] focus:outline-none focus:border-[color:var(--brand-cyan)]/50";
 
@@ -131,6 +161,12 @@ export default function AdminProjectsPage() {
   // Cover (projects.image) state
   const [coverBusy, setCoverBusy] = useState(false);
   const [coverError, setCoverError] = useState("");
+
+  // Case study (projects.case_study) editor. Only sent when changed, so other
+  // saves keep working before the `case_study` column exists.
+  const [caseStudyText, setCaseStudyText] = useState("");
+  const [caseStudyDirty, setCaseStudyDirty] = useState(false);
+  const caseStudyCheck = validateCaseStudyJson(caseStudyText);
 
   // ------------- helpers -------------
   const getProjectContent = (project: Project) => {
@@ -203,6 +239,8 @@ export default function AdminProjectsPage() {
     setProjectImages(project.images || []);
     setSelectedImages([]);
     setImageUploadError("");
+    setCaseStudyText(project.caseStudy ? JSON.stringify(project.caseStudy, null, 2) : "");
+    setCaseStudyDirty(false);
     setIsDialogOpen(true);
   };
 
@@ -212,6 +250,8 @@ export default function AdminProjectsPage() {
     setSelectedImages([]);
     setProjectImages([]);
     setImageUploadError("");
+    setCaseStudyText("");
+    setCaseStudyDirty(false);
     setIsDialogOpen(true);
   };
 
@@ -222,6 +262,8 @@ export default function AdminProjectsPage() {
     setSelectedImages([]);
     setProjectImages([]);
     setImageUploadError("");
+    setCaseStudyText("");
+    setCaseStudyDirty(false);
     setIsDialogOpen(false);
   };
 
@@ -242,6 +284,13 @@ export default function AdminProjectsPage() {
             ? "Il sottotitolo è obbligatorio in tutte le lingue"
             : "Subtitle is required in all languages",
         );
+        setUploadingImages(false);
+        return;
+      }
+
+      // Never save an invalid case study (checked before any write).
+      if (caseStudyDirty && !caseStudyCheck.ok) {
+        setImageUploadError(`Case study: ${caseStudyCheck.error}`);
         setUploadingImages(false);
         return;
       }
@@ -284,6 +333,15 @@ export default function AdminProjectsPage() {
       } else {
         const newProject = await addProject(projectData);
         projectId = newProject?.id || "";
+      }
+
+      const caseStudyChanged =
+        caseStudyDirty &&
+        caseStudyCheck.ok &&
+        JSON.stringify(caseStudyCheck.value) !==
+          JSON.stringify(editingProject?.caseStudy ?? null);
+      if (caseStudyChanged && caseStudyCheck.ok && projectId) {
+        await updateProject(projectId, { caseStudy: caseStudyCheck.value });
       }
 
       // Upload images if any selected
@@ -1096,6 +1154,71 @@ export default function AdminProjectsPage() {
                 )}
                 <p className="font-mono text-[10px] text-[color:var(--ink-muted)] mt-1.5">
                   Card background when no cover image · default is Cyan
+                </p>
+              </div>
+
+              {/* Case study */}
+              <div>
+                <div className="flex flex-wrap items-center justify-between gap-2 mb-1.5">
+                  <label className={`${labelClass} mb-0`} htmlFor="caseStudy">
+                    Case study (JSON · en/es/it)
+                  </label>
+                  <div className="flex gap-2">
+                    {!caseStudyText.trim() && (
+                      <button
+                        type="button"
+                        className={`${ghostBtn} px-3 py-1 text-xs`}
+                        onClick={() => {
+                          setCaseStudyText(CASE_STUDY_TEMPLATE);
+                          setCaseStudyDirty(true);
+                        }}
+                      >
+                        Insert template
+                      </button>
+                    )}
+                    {caseStudyCheck.ok && caseStudyCheck.value && (
+                      <button
+                        type="button"
+                        className={`${ghostBtn} px-3 py-1 text-xs`}
+                        onClick={() => {
+                          setCaseStudyText(JSON.stringify(JSON.parse(caseStudyText), null, 2));
+                          setCaseStudyDirty(true);
+                        }}
+                      >
+                        Format
+                      </button>
+                    )}
+                  </div>
+                </div>
+                <textarea
+                  id="caseStudy"
+                  value={caseStudyText}
+                  onChange={(e) => {
+                    setCaseStudyText(e.target.value);
+                    setCaseStudyDirty(true);
+                  }}
+                  spellCheck={false}
+                  rows={12}
+                  placeholder="Empty = no case study (the page uses the description)."
+                  aria-invalid={!caseStudyCheck.ok}
+                  aria-describedby="caseStudyStatus"
+                  className={`${inputClass} font-mono text-xs leading-relaxed resize-y min-h-[180px] ${
+                    caseStudyCheck.ok ? "" : "border-red-500/60 focus:border-red-500/80"
+                  }`}
+                />
+                <p
+                  id="caseStudyStatus"
+                  className={`font-mono text-[10px] mt-1.5 ${
+                    caseStudyCheck.ok ? "text-[color:var(--ink-muted)]" : "text-red-400"
+                  }`}
+                >
+                  {!caseStudyCheck.ok
+                    ? caseStudyCheck.error
+                    : caseStudyCheck.value
+                      ? `Valid · ${caseStudyCheck.value.en.highlights.length} highlights · missing es/it fall back to en${caseStudyDirty ? " · unsaved changes" : ""}`
+                      : caseStudyDirty
+                        ? "Empty · saving removes the case study"
+                        : "No case study · markdown allowed in challenge, solution and results"}
                 </p>
               </div>
 
