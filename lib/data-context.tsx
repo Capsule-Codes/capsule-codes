@@ -2,6 +2,7 @@
 
 import React, { createContext, useContext } from "react";
 import { useSupabase } from "./supabase-context";
+import type { CaseStudy } from "./case-study";
 
 // Project interfaces
 export interface ProjectTranslations {
@@ -55,6 +56,8 @@ export interface Project {
   published?: boolean;
   /** ISO timestamp of the last DB update (server-mapped; used for sitemap lastmod). */
   updatedAt?: string;
+  /** Validated `case_study` jsonb; null/undefined when absent or invalid. */
+  caseStudy?: CaseStudy | null;
 }
 
 // Technology interfaces

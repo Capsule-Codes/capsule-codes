@@ -2,6 +2,7 @@ import type { Project } from "./data-context.tsx";
 import { getProjectCover } from "./project-media.ts";
 import { buildLocalizedMetadata, type LocalizedMetadata } from "./page-metadata.ts";
 import type { Locale } from "./locale.ts";
+import { getCaseStudyLocale } from "./case-study.ts";
 
 const MAX_DESCRIPTION = 200;
 
@@ -28,32 +29,58 @@ function truncate(text: string, max: number): string {
 }
 
 /**
- * Subtitle for a locale: the localized value, else the project's top-level
- * `subtitle` column (some projects only fill that one), else undefined.
+ * Next published project after `id` in list order (the index order), wrapping
+ * around. Null when there is no other published project.
+ */
+export function getNextProject<T extends Pick<Project, "id" | "published">>(
+  projects: T[],
+  id: string,
+): T | null {
+  const published = getPublishedProjects(projects);
+  const others = published.filter((p) => p.id !== id);
+  if (others.length === 0) return null;
+  const index = published.findIndex((p) => p.id === id);
+  if (index === -1) return others[0];
+  return published[(index + 1) % published.length];
+}
+
+/**
+ * Subtitle for a locale: the case study subtitle, else the localized value,
+ * else the project's top-level `subtitle` column (English-only in practice),
+ * else undefined.
  */
 export function resolveProjectSubtitle(
-  project: Partial<Pick<Project, "translations" | "subtitle">>,
+  project: Partial<Pick<Project, "translations" | "subtitle" | "caseStudy">>,
   language: "en" | "es" | "it",
 ): string | undefined {
+  const fromCaseStudy = getCaseStudyLocale(project.caseStudy, language)?.subtitle;
+  if (fromCaseStudy) return fromCaseStudy;
   const localized = project.translations?.[language]?.subtitle?.trim();
   if (localized) return localized;
   return project.subtitle?.trim() || undefined;
 }
 
 /**
- * Server-side metadata for a project page in a locale. The localized copy wins,
- * then English, then the base columns. Cover = OG image.
+ * Server-side metadata for a project page in a locale. The case study (subtitle
+ * in the title, summary as description) wins, then the localized copy, then
+ * English, then the base columns. Cover = OG image.
  */
 export function buildProjectMetadata(
   project: Pick<Project, "id" | "title" | "description" | "image"> &
-    Partial<Pick<Project, "translations">>,
+    Partial<Pick<Project, "translations" | "caseStudy">>,
   locale: Locale = "en",
 ): LocalizedMetadata {
   const localized = project.translations?.[locale];
   const en = project.translations?.en;
-  const title = localized?.title || en?.title || project.title;
+  const caseStudy = getCaseStudyLocale(project.caseStudy, locale);
+  const name = localized?.title || en?.title || project.title;
+  const title = caseStudy ? `${name} — ${caseStudy.subtitle}` : name;
   const description = truncate(
-    localized?.description || en?.description || project.description || "",
+    caseStudy?.summary ||
+      localized?.description ||
+      en?.description ||
+      project.description ||
+      "",
     MAX_DESCRIPTION,
   );
   return buildLocalizedMetadata({

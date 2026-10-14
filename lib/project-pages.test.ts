@@ -3,6 +3,7 @@ import assert from "node:assert/strict";
 import {
   buildProjectMetadata,
   findPublishedProject,
+  getNextProject,
   getPublishedProjects,
   isProjectPublished,
   resolveProjectSubtitle,
@@ -98,4 +99,47 @@ test("buildProjectMetadata falls back from a missing locale to english then base
   assert.equal(es.description, "English description");
   const none = buildProjectMetadata(project("a", { translations: undefined }), "it");
   assert.equal(none.title, "T-a");
+});
+
+const csLocale = (tag: string) => ({
+  subtitle: `${tag} case subtitle`,
+  summary: `${tag} case summary.`,
+  challenge: "c",
+  solution: "s",
+  highlights: [],
+  results: "r",
+});
+const caseStudy = {
+  meta: { client: "C", industry: "I", year: 2025, countries: [], platforms: [], role: "R" },
+  en: csLocale("en"),
+  es: csLocale("es"),
+  it: csLocale("it"),
+};
+
+test("buildProjectMetadata uses the case study subtitle and summary per locale", () => {
+  const p = project("a", { caseStudy });
+  const es = buildProjectMetadata(p, "es");
+  assert.equal(es.title, "ES-a — es case subtitle");
+  assert.equal(es.description, "es case summary.");
+  assert.equal(es.alternates.canonical, "https://www.capsulecodes.com/es/projects/a");
+  assert.equal(buildProjectMetadata(p, "en").description, "en case summary.");
+  assert.equal(buildProjectMetadata(project("b", { caseStudy: null }), "es").title, "ES-b");
+});
+
+test("resolveProjectSubtitle prefers the localized case study subtitle", () => {
+  const p = project("a", { subtitle: "English column", caseStudy });
+  assert.equal(resolveProjectSubtitle(p, "es"), "es case subtitle");
+});
+
+test("getNextProject returns the next published project in list order and wraps", () => {
+  const list = [project("a"), project("b", { published: false }), project("c"), project("d")];
+  assert.equal(getNextProject(list, "a")?.id, "c");
+  assert.equal(getNextProject(list, "c")?.id, "d");
+  assert.equal(getNextProject(list, "d")?.id, "a");
+});
+
+test("getNextProject is null when there is no other published project", () => {
+  assert.equal(getNextProject([project("a")], "a"), null);
+  assert.equal(getNextProject([project("a"), project("b", { published: false })], "a"), null);
+  assert.equal(getNextProject([project("a")], "zzz")?.id, "a");
 });

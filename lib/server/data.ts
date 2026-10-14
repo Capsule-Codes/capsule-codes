@@ -5,6 +5,7 @@ import type { Project, Technology, Review, TeamMember } from "@/lib/data-context
 import { isProjectPublished } from "@/lib/project-pages";
 import type { ContactInfo } from "@/lib/types/contact";
 import { CACHE_TAGS } from "@/lib/cache-tags";
+import { parseCaseStudy } from "@/lib/case-study";
 
 /**
  * Public reads go through the Next Data Cache, tagged per resource: pages are
@@ -48,6 +49,8 @@ export function mapProjectRow(row: Record<string, unknown>): Project {
     showOnHome: (row.show_on_home as boolean) ?? undefined,
     published: (row.published as boolean) ?? undefined,
     updatedAt: (row.updated_at as string) || undefined,
+    // Absent until the `case_study` migration is applied; invalid JSON -> null.
+    caseStudy: parseCaseStudy(row.case_study),
   };
 }
 
