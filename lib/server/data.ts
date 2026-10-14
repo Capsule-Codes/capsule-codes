@@ -5,6 +5,8 @@ import type { Project, Technology, Review, TeamMember } from "@/lib/data-context
 import { isProjectPublished } from "@/lib/project-pages";
 import type { ContactInfo } from "@/lib/types/contact";
 import { CACHE_TAGS } from "@/lib/cache-tags";
+import { parseCaseStudy } from "@/lib/case-study";
+import { isUuid } from "../uuid.ts";
 
 /**
  * Public reads go through the Next Data Cache, tagged per resource: pages are
@@ -48,6 +50,8 @@ export function mapProjectRow(row: Record<string, unknown>): Project {
     showOnHome: (row.show_on_home as boolean) ?? undefined,
     published: (row.published as boolean) ?? undefined,
     updatedAt: (row.updated_at as string) || undefined,
+    // Absent until the `case_study` migration is applied; invalid JSON -> null.
+    caseStudy: parseCaseStudy(row.case_study),
   };
 }
 
@@ -74,6 +78,8 @@ export async function getProjects(): Promise<Project[]> {
 
 /** Fetch a single project by ID from the database */
 export async function getProject(id: string): Promise<Project | null> {
+  // Non-UUID ids would make Postgres throw (500); treat them as not found instead.
+  if (!isUuid(id)) return null;
   return cached(["project", id], CACHE_TAGS.projects, async () => {
     if (!supabaseAdmin) {
       console.error("Supabase admin client not configured");

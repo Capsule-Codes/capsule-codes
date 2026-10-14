@@ -7,7 +7,7 @@
     "dev": "next dev",
     "lint": "next lint",
     "start": "next start",
-    "test": "node --test lib/project-media.test.ts lib/project-pages.test.ts lib/team-groups.test.ts lib/project-cover.test.ts lib/site.test.ts lib/sitemap-entries.test.ts lib/locale.test.ts lib/page-metadata.test.ts lib/consent.test.ts lib/image-src.test.ts lib/cache-tags.test.ts lib/products.test.ts"
+    "test": "node --test lib/uuid.test.ts lib/project-media.test.ts lib/project-pages.test.ts lib/team-groups.test.ts lib/project-cover.test.ts lib/site.test.ts lib/sitemap-entries.test.ts lib/locale.test.ts lib/page-metadata.test.ts lib/consent.test.ts lib/image-src.test.ts lib/cache-tags.test.ts lib/products.test.ts lib/case-study.test.ts lib/markdown.test.ts"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.10.0",

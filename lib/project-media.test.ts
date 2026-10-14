@@ -94,3 +94,26 @@ test("resolvePrimaryImage re-points when the current image was a removed screens
   assert.equal(resolvePrimaryImage("s1", [], "s1"), "");
   assert.equal(resolvePrimaryImage(COVER, [img("b", "s2")], "s1"), COVER);
 });
+
+test("desktopGalleryLayout fills complete rows on a 6-column grid", async () => {
+  const { desktopGalleryLayout } = await import("./project-media.ts");
+  const span = { featured: 4, third: 2, half: 3, full: 6 } as const;
+  assert.deepEqual(desktopGalleryLayout(0), []);
+  assert.deepEqual(desktopGalleryLayout(1), ["full"]);
+  assert.deepEqual(desktopGalleryLayout(2), ["half", "half"]);
+  assert.deepEqual(desktopGalleryLayout(3), ["featured", "third", "third"]);
+  assert.deepEqual(desktopGalleryLayout(4), ["half", "half", "half", "half"]);
+  for (let n = 3; n <= 14; n++) {
+    const layout = desktopGalleryLayout(n);
+    assert.equal(layout.length, n);
+    // featured is 4 cols x 2 rows next to two stacked thirds; the rest flows.
+    const rest = layout.slice(layout[0] === "featured" ? 3 : 0);
+    let row = 0;
+    for (const kind of rest) {
+      row += span[kind];
+      if (row === 6) row = 0;
+      assert.ok(row < 6, `n=${n} overflows a row`);
+    }
+    assert.equal(row, 0, `n=${n} leaves an incomplete last row`);
+  }
+});

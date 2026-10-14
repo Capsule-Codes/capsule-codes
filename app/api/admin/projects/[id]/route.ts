@@ -6,6 +6,7 @@ import {
 } from "@/lib/server/media";
 import { mapProjectRow } from "@/lib/server/data";
 import { revalidating } from "@/lib/server/revalidate";
+import { parseCaseStudy } from "@/lib/case-study";
 
 export async function GET(
   request: Request,
@@ -54,6 +55,20 @@ async function handlePUT(
     const { id } = await params;
     const body = await request.json();
 
+    // `caseStudy`: null clears it; anything else must pass the validator.
+    // Only sent by the admin when the case study editor changed, so saves keep
+    // working before the `case_study` column exists.
+    let caseStudy: ReturnType<typeof parseCaseStudy> | undefined;
+    if (body.caseStudy !== undefined) {
+      caseStudy = body.caseStudy === null ? null : parseCaseStudy(body.caseStudy);
+      if (body.caseStudy !== null && caseStudy === null) {
+        return NextResponse.json(
+          { message: "Invalid case study" },
+          { status: 400 }
+        );
+      }
+    }
+
     const updateData: any = {
       updated_at: new Date().toISOString(),
     };
@@ -85,6 +100,7 @@ async function handlePUT(
     if (body.published !== undefined) updateData.published = body.published;
     if (body.showOnHome !== undefined) updateData.show_on_home = body.showOnHome;
     if (body.show_on_home !== undefined) updateData.show_on_home = body.show_on_home;
+    if (caseStudy !== undefined) updateData.case_study = caseStudy;
 
     const { data, error } = await supabaseAdmin
       .from("projects")
