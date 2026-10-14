@@ -12,7 +12,13 @@ import { ProjectLightbox } from "@/components/project-lightbox"
 import { getCategoryLabel, getProjectContent } from "@/components/projects-carousel"
 import { useLanguage, useLocalePath } from "@/hooks/use-language"
 import type { Project, ProjectImage } from "@/lib/data-context"
-import { getCaseStudyLocale } from "@/lib/case-study"
+import {
+  formatCaseStudyCountries,
+  formatCaseStudyYear,
+  getCaseStudyIndustry,
+  getCaseStudyLocale,
+  getCaseStudyRole,
+} from "@/lib/case-study"
 import {
   desktopGalleryLayout,
   getProjectCover,
@@ -178,13 +184,12 @@ export function ProjectDetailClient({ project, nextProject }: ProjectDetailClien
 
   const metaItems = meta
     ? [
-        { label: cs.client, value: meta.client },
-        { label: cs.industry, value: meta.industry },
-        { label: cs.year, value: String(meta.year) },
-        { label: cs.countries, value: meta.countries.join(", ") },
+        { label: cs.industry, value: getCaseStudyIndustry(project.caseStudy!, language) },
+        { label: cs.year, value: formatCaseStudyYear(meta, cs.present) },
+        { label: cs.countries, value: formatCaseStudyCountries(meta.countries, language) },
         { label: cs.platforms, value: meta.platforms.join(" · ") },
-        { label: cs.role, value: meta.role },
-      ].filter((item) => item.value)
+        { label: cs.role, value: getCaseStudyRole(project.caseStudy!, language) },
+      ].filter((item): item is { label: string; value: string } => !!item.value)
     : []
 
   return (

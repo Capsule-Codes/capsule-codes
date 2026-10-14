@@ -1,6 +1,14 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { parseCaseStudy, getCaseStudyLocale, validateCaseStudyJson } from "./case-study.ts";
+import {
+  formatCaseStudyCountries,
+  formatCaseStudyYear,
+  getCaseStudyIndustry,
+  getCaseStudyRole,
+  getCaseStudyLocale,
+  parseCaseStudy,
+  validateCaseStudyJson,
+} from "./case-study.ts";
 
 const loc = (tag: string) => ({
   subtitle: `${tag} subtitle`,
@@ -54,7 +62,7 @@ test("returns null without meta or without an English locale", () => {
 });
 
 test("returns null when meta is invalid", () => {
-  assert.equal(parseCaseStudy({ ...valid(), meta: { ...valid().meta, client: "" } }), null);
+  assert.equal(parseCaseStudy({ ...valid(), meta: { ...valid().meta, ongoing: "yes" } }), null);
   assert.equal(parseCaseStudy({ ...valid(), meta: { ...valid().meta, year: "2025" } }), null);
   assert.equal(parseCaseStudy({ ...valid(), meta: { ...valid().meta, platforms: "iOS" } }), null);
 });
@@ -98,4 +106,48 @@ test("validateCaseStudyJson: empty clears, invalid reports an error, valid parse
   const good = validateCaseStudyJson(JSON.stringify(valid()));
   assert.equal(good.ok, true);
   assert.equal(good.ok && good.value?.meta.client, "UR POV");
+});
+
+test("client, industry and role are optional in meta; empty values are dropped", () => {
+  const meta: Record<string, unknown> = { ...valid().meta, client: "" };
+  delete meta.industry;
+  delete meta.role;
+  const cs = parseCaseStudy({ ...valid(), meta })!;
+  assert.ok(cs);
+  assert.equal("client" in cs.meta, false);
+  assert.equal("industry" in cs.meta, false);
+  assert.equal("role" in cs.meta, false);
+});
+
+test("meta.ongoing is an optional boolean", () => {
+  assert.equal(parseCaseStudy({ ...valid(), meta: { ...valid().meta, ongoing: true } })!.meta.ongoing, true);
+  assert.equal("ongoing" in parseCaseStudy(valid())!.meta, false);
+});
+
+test("per-locale industry and role are optional and win over meta", () => {
+  const input = valid();
+  Object.assign(input.es, { industry: "Medios", role: "Diseño y desarrollo" });
+  const cs = parseCaseStudy(input)!;
+  assert.equal(getCaseStudyIndustry(cs, "es"), "Medios");
+  assert.equal(getCaseStudyRole(cs, "es"), "Diseño y desarrollo");
+  assert.equal(getCaseStudyIndustry(cs, "it"), "Media");
+  assert.equal(getCaseStudyRole(cs, "it"), "Design & full-stack development");
+  assert.equal("industry" in cs.en, false);
+  const bare = parseCaseStudy({ ...valid(), meta: { ...valid().meta, industry: undefined, role: undefined } })!;
+  assert.equal(getCaseStudyIndustry(bare, "en"), undefined);
+  assert.equal(getCaseStudyRole(bare, "en"), undefined);
+});
+
+test("formatCaseStudyYear shows a range when ongoing", () => {
+  assert.equal(formatCaseStudyYear({ year: 2024 }, "Presente"), "2024");
+  assert.equal(formatCaseStudyYear({ year: 2024, ongoing: false }, "Present"), "2024");
+  assert.equal(formatCaseStudyYear({ year: 2024, ongoing: true }, "Presente"), "2024 – Presente");
+});
+
+test("formatCaseStudyCountries localizes ISO codes and keeps unknown values", () => {
+  assert.equal(formatCaseStudyCountries(["ZA"], "es"), "Sudáfrica");
+  assert.equal(formatCaseStudyCountries(["US", "GB"], "en"), "United States, United Kingdom");
+  assert.equal(formatCaseStudyCountries(["za"], "it"), "Sudafrica");
+  assert.equal(formatCaseStudyCountries(["South Africa", "XX1"], "es"), "South Africa, XX1");
+  assert.equal(formatCaseStudyCountries([], "es"), "");
 });

@@ -133,7 +133,7 @@ export interface Translations {
   // Project case study page
   caseStudy: {
     overview: string;
-    client: string;
+    present: string;
     industry: string;
     year: string;
     countries: string;
@@ -554,7 +554,7 @@ export const translations: Record<Language, Translations> = {
     },
     caseStudy: {
       overview: "Overview",
-      client: "Client",
+      present: "Present",
       industry: "Industry",
       year: "Year",
       countries: "Countries",
@@ -1017,7 +1017,7 @@ export const translations: Record<Language, Translations> = {
     },
     caseStudy: {
       overview: "Resumen",
-      client: "Cliente",
+      present: "Presente",
       industry: "Industria",
       year: "Año",
       countries: "Países",
@@ -1480,7 +1480,7 @@ export const translations: Record<Language, Translations> = {
     },
     caseStudy: {
       overview: "Panoramica",
-      client: "Cliente",
+      present: "Presente",
       industry: "Settore",
       year: "Anno",
       countries: "Paesi",

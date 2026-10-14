@@ -91,6 +91,8 @@ const EMPTY_FORM: ProjectForm = {
 
 const CASE_STUDY_LOCALE_TEMPLATE = {
   subtitle: "",
+  industry: "",
+  role: "",
   summary: "",
   challenge: "",
   solution: "",
@@ -98,16 +100,18 @@ const CASE_STUDY_LOCALE_TEMPLATE = {
   results: "",
 };
 
-/** Skeleton for a new case study (markdown allowed in challenge/solution/results). */
+/**
+ * Skeleton for a new case study. Markdown is allowed in challenge/solution/results;
+ * countries are ISO 3166-1 alpha-2 codes; industry/role are per locale
+ * (meta.industry/meta.role remain as optional fallbacks).
+ */
 const CASE_STUDY_TEMPLATE = JSON.stringify(
   {
     meta: {
-      client: "",
-      industry: "",
       year: new Date().getFullYear(),
-      countries: [],
+      ongoing: false,
+      countries: ["US"],
       platforms: ["iOS", "Android"],
-      role: "",
       links: { web: "", appStore: "", googlePlay: "" },
     },
     en: CASE_STUDY_LOCALE_TEMPLATE,

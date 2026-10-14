@@ -20,11 +20,18 @@ type CaseStudyLocale = {
   solution: string;        // markdown, 1–3 paragraphs
   highlights: { title: string; body: string }[]; // 3–5 key decisions
   results: string;         // markdown, honest outcomes
+  industry?: string;       // localized; falls back to meta.industry
+  role?: string;           // localized; falls back to meta.role
 };
 type CaseStudy = {
   meta: {
-    client: string; industry: string; year: number; countries: string[];
-    platforms: string[]; role: string;
+    client?: string;       // record only, never rendered
+    industry?: string;     // fallback for the locale's industry
+    year: number;
+    ongoing?: boolean;     // renders "2024 – Present" (localized)
+    countries: string[];   // ISO 3166-1 alpha-2, e.g. ["ZA"]; names via Intl.DisplayNames
+    platforms: string[];
+    role?: string;         // fallback for the locale's role
     links?: { web?: string; appStore?: string; googlePlay?: string };
   };
   en: CaseStudyLocale; es: CaseStudyLocale; it: CaseStudyLocale;

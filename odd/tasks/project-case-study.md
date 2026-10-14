@@ -27,6 +27,7 @@ The detail page was a full-bleed cover, one sentence, a wall of screenshots and 
 - [x] T4 Data mapping, `Project.caseStudy`, admin PUT route, migration doc (route: inline, mechanical)
 - [x] T5 Page redesign + i18n strings (route: inline, single writer; parent is the executor)
 - [x] T6 Admin "Case study" JSON editor (route: inline)
+- [x] T8 Owner schema change: `meta.client` optional and never rendered; `meta.ongoing` ("2024 – Present"); `meta.countries` as ISO alpha-2 rendered with `Intl.DisplayNames`; per-locale `industry`/`role` with `meta.*` fallback (route: inline)
 - [x] T7 Verification: tests, tsc, build, screenshots at 1440/390 for UR POV (fixture) and HFlow (fallback), one design iteration
 
 ## Acceptance
@@ -45,6 +46,7 @@ The detail page was a full-bleed cover, one sentence, a wall of screenshots and 
 - Final: `npm test` 111/111, `npx tsc --noEmit` clean, `npm run build` OK with `/[locale]/projects/[id]` still `●` (ISR). No horizontal overflow at 390 (scrollWidth - innerWidth = 0) for UR POV (fixture) and HFlow (null fallback). Canonical/hreflang unchanged on `/es/projects/<id>`.
 - Local fixture: uncommitted stub in `lib/server/data.ts` reading a UR POV case study JSON from the scratchpad (en/es, it falls back to en); reverted before committing.
 - RDD: assess on the first two commits = medium (`slice_budget_reached`, executable change in the admin PUT route); review not started by the delegated worker because candidate consent is human-owned.
+- T8 RED: new exports missing in `lib/case-study.test.ts`; GREEN 15/15, `npm test` 116/116, tsc clean, build OK. `/es/projects/<UR POV>` at 1440 with the fixture (stub reverted) shows: Industria "Descubrimiento local / Social", Año "2024 – Presente", Países "Sudáfrica", Plataformas, Nuestro rol in Spanish; no Client row.
 - Found, not fixed (pre-existing): `/es/projects/<non-uuid>` returns 500 because `getProject` surfaces the Postgres uuid cast error instead of 404.
 
 ## Next step

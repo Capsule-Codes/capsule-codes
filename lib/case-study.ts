@@ -22,6 +22,10 @@ export interface CaseStudyLocale {
   highlights: CaseStudyHighlight[];
   /** Markdown, honest outcomes. */
   results: string;
+  /** Localized industry; falls back to `meta.industry`. */
+  industry?: string;
+  /** Localized role; falls back to `meta.role`. */
+  role?: string;
 }
 
 export interface CaseStudyLinks {
@@ -31,12 +35,18 @@ export interface CaseStudyLinks {
 }
 
 export interface CaseStudyMeta {
-  client: string;
-  industry: string;
+  /** Kept for the record only; never rendered. */
+  client?: string;
+  /** Fallback when the locale has no `industry`. */
+  industry?: string;
   year: number;
+  /** Still in progress: rendered as "2024 – Present". */
+  ongoing?: boolean;
+  /** ISO 3166-1 alpha-2 codes, e.g. ["ZA"]. */
   countries: string[];
   platforms: string[];
-  role: string;
+  /** Fallback when the locale has no `role`. */
+  role?: string;
   links?: CaseStudyLinks;
 }
 
@@ -68,7 +78,12 @@ function readStrings(v: unknown): string[] | null {
 function readMeta(v: unknown): Result<CaseStudyMeta> {
   if (!isRecord(v)) return { error: "meta: missing or not an object" };
   for (const key of ["client", "industry", "role"] as const) {
-    if (!isText(v[key])) return { error: `meta.${key}: required non-empty string` };
+    if (v[key] !== undefined && typeof v[key] !== "string") {
+      return { error: `meta.${key}: must be a string` };
+    }
+  }
+  if (v.ongoing !== undefined && typeof v.ongoing !== "boolean") {
+    return { error: "meta.ongoing: must be a boolean" };
   }
   if (typeof v.year !== "number" || !Number.isInteger(v.year)) {
     return { error: "meta.year: required integer" };
@@ -78,14 +93,11 @@ function readMeta(v: unknown): Result<CaseStudyMeta> {
   const platforms = readStrings(v.platforms);
   if (!platforms) return { error: "meta.platforms: required array of strings" };
 
-  const meta: CaseStudyMeta = {
-    client: (v.client as string).trim(),
-    industry: (v.industry as string).trim(),
-    year: v.year,
-    countries,
-    platforms,
-    role: (v.role as string).trim(),
-  };
+  const meta: CaseStudyMeta = { year: v.year, countries, platforms };
+  for (const key of ["client", "industry", "role"] as const) {
+    if (isText(v[key])) meta[key] = (v[key] as string).trim();
+  }
+  if (v.ongoing === true) meta.ongoing = true;
   if (isRecord(v.links)) {
     const links: CaseStudyLinks = {};
     for (const key of LINK_KEYS) {
@@ -106,16 +118,18 @@ function readLocale(v: unknown, lang: CaseStudyLang): Result<CaseStudyLocale> {
   const highlights = v.highlights
     .filter((h): h is Record<string, unknown> => isRecord(h) && isText(h.title) && isText(h.body))
     .map((h) => ({ title: (h.title as string).trim(), body: (h.body as string).trim() }));
-  return {
-    value: {
-      subtitle: (v.subtitle as string).trim(),
-      summary: (v.summary as string).trim(),
-      challenge: (v.challenge as string).trim(),
-      solution: (v.solution as string).trim(),
-      highlights,
-      results: (v.results as string).trim(),
-    },
+  const locale: CaseStudyLocale = {
+    subtitle: (v.subtitle as string).trim(),
+    summary: (v.summary as string).trim(),
+    challenge: (v.challenge as string).trim(),
+    solution: (v.solution as string).trim(),
+    highlights,
+    results: (v.results as string).trim(),
   };
+  for (const key of ["industry", "role"] as const) {
+    if (isText(v[key])) locale[key] = (v[key] as string).trim();
+  }
+  return { value: locale };
 }
 
 function readCaseStudy(input: unknown): Result<CaseStudy> {
@@ -148,6 +162,42 @@ export function getCaseStudyLocale(
   lang: CaseStudyLang,
 ): CaseStudyLocale | null {
   return caseStudy ? caseStudy[lang] : null;
+}
+
+export function getCaseStudyIndustry(cs: CaseStudy, lang: CaseStudyLang): string | undefined {
+  return cs[lang].industry ?? cs.meta.industry;
+}
+
+export function getCaseStudyRole(cs: CaseStudy, lang: CaseStudyLang): string | undefined {
+  return cs[lang].role ?? cs.meta.role;
+}
+
+/** "2024", or "2024 – Present" (localized label) when the project is ongoing. */
+export function formatCaseStudyYear(
+  meta: Pick<CaseStudyMeta, "year" | "ongoing">,
+  presentLabel: string,
+): string {
+  return meta.ongoing ? `${meta.year} – ${presentLabel}` : String(meta.year);
+}
+
+/** ISO alpha-2 codes as localized country names; unknown values pass through. */
+export function formatCaseStudyCountries(codes: string[], locale: string): string {
+  let names: Intl.DisplayNames | null = null;
+  try {
+    names = new Intl.DisplayNames([locale], { type: "region" });
+  } catch {
+    names = null;
+  }
+  return codes
+    .map((code) => {
+      if (!names || !/^[a-z]{2}$/i.test(code)) return code;
+      try {
+        return names.of(code.toUpperCase()) ?? code;
+      } catch {
+        return code;
+      }
+    })
+    .join(", ");
 }
 
 /** Admin editor validation: blank text clears the case study (null). */
