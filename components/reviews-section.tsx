@@ -22,7 +22,7 @@ export function ReviewsSection({ reviews }: ReviewsSectionProps) {
     >
       <div className="container mx-auto">
         <SectionHeader
-          eyebrow={`— 06 / ${t.nav.reviews}`}
+          eyebrow={`— 07 / ${t.nav.reviews}`}
           align="center"
           title={
             <>

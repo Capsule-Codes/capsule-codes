@@ -9,6 +9,7 @@ export interface Translations {
     technologies: string;
     team: string;
     projects: string;
+    products: string;
     reviews: string;
     contact: string;
   };
@@ -120,6 +121,14 @@ export interface Translations {
       webPlatform: string;
       enterprise: string;
     };
+  };
+  // Our products Section
+  products: {
+    title: string;
+    subtitle: string;
+    visit: string;
+    statusLive: string;
+    statusWebsiteLive: string;
   };
   // Reviews Section
   reviews: {
@@ -388,6 +397,7 @@ export const translations: Record<Language, Translations> = {
       technologies: "Technologies",
       team: "Team",
       projects: "Projects",
+      products: "Products",
       reviews: "Reviews",
       contact: "Contact",
     },
@@ -511,6 +521,13 @@ export const translations: Record<Language, Translations> = {
         webPlatform: "Web Platform",
         enterprise: "Enterprise",
       },
+    },
+    products: {
+      title: "Our products",
+      subtitle: "Products we design, build and run ourselves, not just for clients.",
+      visit: "Visit",
+      statusLive: "Live",
+      statusWebsiteLive: "Website live",
     },
     reviews: {
       title: "What Our Clients Say",
@@ -821,6 +838,7 @@ export const translations: Record<Language, Translations> = {
       technologies: "Tecnologías",
       team: "Equipo",
       projects: "Proyectos",
+      products: "Productos",
       reviews: "Reseñas",
       contact: "Contacto",
     },
@@ -944,6 +962,13 @@ export const translations: Record<Language, Translations> = {
         webPlatform: "Plataforma Web",
         enterprise: "Empresarial",
       },
+    },
+    products: {
+      title: "Nuestros productos",
+      subtitle: "Productos que diseñamos, construimos y operamos nosotros, no solo para clientes.",
+      visit: "Visitar",
+      statusLive: "En vivo",
+      statusWebsiteLive: "Sitio web activo",
     },
     reviews: {
       title: "Lo Que Dicen Nuestros Clientes",
@@ -1254,6 +1279,7 @@ export const translations: Record<Language, Translations> = {
       technologies: "Tecnologie",
       team: "Team",
       projects: "Progetti",
+      products: "Prodotti",
       reviews: "Recensioni",
       contact: "Contatti",
     },
@@ -1377,6 +1403,13 @@ export const translations: Record<Language, Translations> = {
         webPlatform: "Piattaforma Web",
         enterprise: "Enterprise",
       },
+    },
+    products: {
+      title: "I nostri prodotti",
+      subtitle: "Prodotti che progettiamo, costruiamo e gestiamo noi, non solo per i clienti.",
+      visit: "Visita",
+      statusLive: "Live",
+      statusWebsiteLive: "Sito web attivo",
     },
     reviews: {
       title: "Cosa Dicono I Nostri Clienti",
