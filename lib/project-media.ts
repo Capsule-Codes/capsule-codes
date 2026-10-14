@@ -71,3 +71,23 @@ export function resolvePrimaryImage(
   if (currentImage && !stale) return currentImage;
   return screenshots[0]?.blobKey ?? "";
 }
+
+export type GalleryTile = "featured" | "third" | "half" | "full";
+
+/**
+ * Desktop/landscape gallery tiles on a 6-column grid, chosen so every row is
+ * complete: one shot is full width; 2 and 4 are halves; from 3 the first shot
+ * is featured (4 cols x 2 rows) beside two thirds, then thirds, with the last
+ * 2 or 4 shots as halves when the thirds would leave an orphan.
+ */
+export function desktopGalleryLayout(count: number): GalleryTile[] {
+  if (count <= 0) return [];
+  if (count === 1) return ["full"];
+  if (count === 2 || count === 4) return Array<GalleryTile>(count).fill("half");
+  const tiles: GalleryTile[] = ["featured", "third", "third"];
+  const rest = count - 3;
+  const halves = rest % 3 === 1 ? 4 : rest % 3 === 2 ? 2 : 0;
+  for (let i = 0; i < rest - halves; i++) tiles.push("third");
+  for (let i = 0; i < halves; i++) tiles.push("half");
+  return tiles;
+}

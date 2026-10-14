@@ -3,10 +3,15 @@ import { notFound } from "next/navigation";
 import { Header } from "@/components/header";
 import { Footer } from "@/components/footer";
 import { getProjects, getPublishedProject } from "@/lib/server/data";
-import { getPublishedProjects } from "@/lib/project-pages";
-import { buildProjectMetadata } from "@/lib/project-pages";
-import { LOCALES, isLocale } from "@/lib/locale";
-import { ProjectDetailClient } from "./project-detail-client";
+import {
+  buildProjectMetadata,
+  getNextProject,
+  getPublishedProjects,
+  resolveProjectSubtitle,
+} from "@/lib/project-pages";
+import { getProjectCover } from "@/lib/project-media";
+import { DEFAULT_LOCALE, LOCALES, isLocale } from "@/lib/locale";
+import { ProjectDetailClient, type NextProjectSummary } from "./project-detail-client";
 
 // Cached (ISR). Admin writes revalidate on demand; this is the safety net.
 export const revalidate = 300;
@@ -30,20 +35,30 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 }
 
 export default async function ProjectDetailPage({ params }: PageProps) {
-  const { id } = await params;
+  const { locale: rawLocale, id } = await params;
+  const locale = isLocale(rawLocale) ? rawLocale : DEFAULT_LOCALE;
   const project = await getPublishedProject(id);
 
   if (!project) {
     notFound();
   }
 
+  // Only the fields the "Next project" card needs, already localized.
+  const next = getNextProject(await getProjects(), project.id);
+  const nextProject: NextProjectSummary | null = next
+    ? {
+        id: next.id,
+        title: next.translations?.[locale]?.title || next.translations?.en?.title || next.title,
+        subtitle: resolveProjectSubtitle(next, locale) ?? null,
+        image: getProjectCover(next),
+      }
+    : null;
+
   return (
     <div className="min-h-screen bg-background">
       <Header />
-      <main className="pt-24 pb-16">
-        <div className="container mx-auto px-4">
-          <ProjectDetailClient project={project} />
-        </div>
+      <main className="px-4 pb-20 pt-28 lg:px-12">
+        <ProjectDetailClient project={project} nextProject={nextProject} />
       </main>
       <Footer />
     </div>

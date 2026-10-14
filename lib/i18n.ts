@@ -130,6 +130,29 @@ export interface Translations {
     statusLive: string;
     statusWebsiteLive: string;
   };
+  // Project case study page
+  caseStudy: {
+    overview: string;
+    client: string;
+    industry: string;
+    year: string;
+    countries: string;
+    platforms: string;
+    role: string;
+    website: string;
+    challenge: string;
+    solution: string;
+    decisions: string;
+    results: string;
+    gallery: string;
+    stack: string;
+    openImage: string;
+    ctaEyebrow: string;
+    ctaTitle: string;
+    ctaBody: string;
+    ctaButton: string;
+    nextProject: string;
+  };
   // Reviews Section
   reviews: {
     title: string;
@@ -528,6 +551,28 @@ export const translations: Record<Language, Translations> = {
       visit: "Visit",
       statusLive: "Live",
       statusWebsiteLive: "Website live",
+    },
+    caseStudy: {
+      overview: "Overview",
+      client: "Client",
+      industry: "Industry",
+      year: "Year",
+      countries: "Countries",
+      platforms: "Platforms",
+      role: "Our role",
+      website: "Website",
+      challenge: "The challenge",
+      solution: "What we built",
+      decisions: "Key decisions",
+      results: "Results",
+      gallery: "Screens",
+      stack: "Stack",
+      openImage: "Open image",
+      ctaEyebrow: "Next step",
+      ctaTitle: "Have a similar project?",
+      ctaBody: "Tell us what you are building. You talk directly with the senior developers who would build it.",
+      ctaButton: "Let's talk",
+      nextProject: "Next project",
     },
     reviews: {
       title: "What Our Clients Say",
@@ -970,6 +1015,28 @@ export const translations: Record<Language, Translations> = {
       statusLive: "En vivo",
       statusWebsiteLive: "Sitio web activo",
     },
+    caseStudy: {
+      overview: "Resumen",
+      client: "Cliente",
+      industry: "Industria",
+      year: "Año",
+      countries: "Países",
+      platforms: "Plataformas",
+      role: "Nuestro rol",
+      website: "Sitio web",
+      challenge: "El desafío",
+      solution: "Qué construimos",
+      decisions: "Decisiones clave",
+      results: "Resultados",
+      gallery: "Pantallas",
+      stack: "Stack",
+      openImage: "Ampliar imagen",
+      ctaEyebrow: "Siguiente paso",
+      ctaTitle: "¿Tienes un proyecto parecido?",
+      ctaBody: "Cuéntanos qué estás construyendo. Hablas directamente con los desarrolladores senior que lo van a construir.",
+      ctaButton: "Hablemos",
+      nextProject: "Siguiente proyecto",
+    },
     reviews: {
       title: "Lo Que Dicen Nuestros Clientes",
       subtitle:
@@ -1410,6 +1477,28 @@ export const translations: Record<Language, Translations> = {
       visit: "Visita",
       statusLive: "Live",
       statusWebsiteLive: "Sito web attivo",
+    },
+    caseStudy: {
+      overview: "Panoramica",
+      client: "Cliente",
+      industry: "Settore",
+      year: "Anno",
+      countries: "Paesi",
+      platforms: "Piattaforme",
+      role: "Il nostro ruolo",
+      website: "Sito web",
+      challenge: "La sfida",
+      solution: "Cosa abbiamo costruito",
+      decisions: "Decisioni chiave",
+      results: "Risultati",
+      gallery: "Schermate",
+      stack: "Stack",
+      openImage: "Ingrandisci immagine",
+      ctaEyebrow: "Prossimo passo",
+      ctaTitle: "Hai un progetto simile?",
+      ctaBody: "Raccontaci cosa stai costruendo. Parli direttamente con gli sviluppatori senior che lo realizzeranno.",
+      ctaButton: "Parliamone",
+      nextProject: "Progetto successivo",
     },
     reviews: {
       title: "Cosa Dicono I Nostri Clienti",
