@@ -21,13 +21,13 @@ The detail page was a full-bleed cover, one sentence, a wall of screenshots and 
 - Delivery strategy: `ask-on-risk`; forecast ~900 authored lines, single branch, no push (owner decides PR shape).
 
 ## Tasks
-- [ ] T1 RED/GREEN `lib/case-study.ts` + tests (route: inline)
-- [ ] T2 RED/GREEN `lib/markdown.ts` + tests (route: inline)
-- [ ] T3 RED/GREEN `getNextProject` + case-study-aware `buildProjectMetadata` in `lib/project-pages.ts` (route: inline)
-- [ ] T4 Data mapping, `Project.caseStudy`, admin PUT route, migration doc (route: inline, mechanical)
-- [ ] T5 Page redesign + i18n strings (route: inline, single writer; parent is the executor)
-- [ ] T6 Admin "Case study" JSON editor (route: inline)
-- [ ] T7 Verification: tests, tsc, build, screenshots at 1440/390 for UR POV (fixture) and HFlow (fallback), one design iteration
+- [x] T1 RED/GREEN `lib/case-study.ts` + tests (route: inline)
+- [x] T2 RED/GREEN `lib/markdown.ts` + tests (route: inline)
+- [x] T3 RED/GREEN `getNextProject` + case-study-aware `buildProjectMetadata` in `lib/project-pages.ts` (route: inline)
+- [x] T4 Data mapping, `Project.caseStudy`, admin PUT route, migration doc (route: inline, mechanical)
+- [x] T5 Page redesign + i18n strings (route: inline, single writer; parent is the executor)
+- [x] T6 Admin "Case study" JSON editor (route: inline)
+- [x] T7 Verification: tests, tsc, build, screenshots at 1440/390 for UR POV (fixture) and HFlow (fallback), one design iteration
 
 ## Acceptance
 - Case study renders hero (meta + links + cover), challenge, what we built, key decisions grid, results, gallery, stack, CTA, next project, all localized.
@@ -38,4 +38,14 @@ The detail page was a full-bleed cover, one sentence, a wall of screenshots and 
 `npm test`, `npx tsc --noEmit`, `npm run build` with public env, local `next start` + Playwright screenshots.
 
 ## Progress / evidence
-(pending)
+- T1 RED: `lib/case-study.test.ts` module not found; GREEN 10/10.
+- T2 RED: `lib/markdown.test.ts` module not found; GREEN 10/10.
+- T3 RED: `getNextProject` export missing; GREEN project-pages 13/13.
+- T5 design iteration: v1 screenshots showed the HFlow 10-shot wall (stacked on mobile), a 5+3 phone row and a 3+1 decisions row. v2: mobile snap strips for all shots, balanced phone columns (8 -> 4+4) capped at ~220px, 4 decisions in one row at xl. v3: `desktopGalleryLayout` (RED: export missing; GREEN 13/13) fills every row on a 6-col grid (featured 4x2 + thirds/halves).
+- Final: `npm test` 111/111, `npx tsc --noEmit` clean, `npm run build` OK with `/[locale]/projects/[id]` still `●` (ISR). No horizontal overflow at 390 (scrollWidth - innerWidth = 0) for UR POV (fixture) and HFlow (null fallback). Canonical/hreflang unchanged on `/es/projects/<id>`.
+- Local fixture: uncommitted stub in `lib/server/data.ts` reading a UR POV case study JSON from the scratchpad (en/es, it falls back to en); reverted before committing.
+- RDD: assess on the first two commits = medium (`slice_budget_reached`, executable change in the admin PUT route); review not started by the delegated worker because candidate consent is human-owned.
+- Found, not fixed (pre-existing): `/es/projects/<non-uuid>` returns 500 because `getProject` surfaces the Postgres uuid cast error instead of 404.
+
+## Next step
+Owner applies `docs/migrations/2026-10-14-project-case-study.md`, then content is loaded per project (admin JSON editor or SQL).
