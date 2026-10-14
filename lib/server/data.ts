@@ -6,6 +6,7 @@ import { isProjectPublished } from "@/lib/project-pages";
 import type { ContactInfo } from "@/lib/types/contact";
 import { CACHE_TAGS } from "@/lib/cache-tags";
 import { parseCaseStudy } from "@/lib/case-study";
+import { isUuid } from "../uuid.ts";
 
 /**
  * Public reads go through the Next Data Cache, tagged per resource: pages are
@@ -77,6 +78,8 @@ export async function getProjects(): Promise<Project[]> {
 
 /** Fetch a single project by ID from the database */
 export async function getProject(id: string): Promise<Project | null> {
+  // Non-UUID ids would make Postgres throw (500); treat them as not found instead.
+  if (!isUuid(id)) return null;
   return cached(["project", id], CACHE_TAGS.projects, async () => {
     if (!supabaseAdmin) {
       console.error("Supabase admin client not configured");
