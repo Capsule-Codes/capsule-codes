@@ -6,6 +6,7 @@ import { ServicesSection } from "@/components/services-section";
 import { TechnologiesSection } from "@/components/technologies-section";
 import { TeamSection } from "@/components/team-section";
 import { ProjectsShowcaseSection } from "@/components/projects-showcase/projects-showcase-section";
+import { ProductsSection } from "@/components/products-section";
 import { ReviewsSection } from "@/components/reviews-section";
 import { ContactSection } from "@/components/contact-section";
 import { Footer } from "@/components/footer";
@@ -37,6 +38,7 @@ export default async function HomePage() {
       <TechnologiesSection technologies={technologies} />
       <TeamSection teamMembers={teamMembers} />
       <ProjectsShowcaseSection projects={projects} />
+      <ProductsSection />
       <ReviewsSection reviews={reviews} />
       <ContactSection contactInfo={contactInfo} />
       <Footer />

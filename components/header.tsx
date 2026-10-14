@@ -28,6 +28,7 @@ export function Header() {
     { href: "#technologies", label: t.nav.technologies, id: "technologies" },
     { href: "#team", label: t.nav.team, id: "team" },
     { href: "#projects", label: t.nav.projects, id: "projects" },
+    { href: "#products", label: t.nav.products, id: "products" },
     { href: "#reviews", label: t.nav.reviews, id: "reviews" },
   ];
 
