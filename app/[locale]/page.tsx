@@ -37,8 +37,8 @@ export default async function HomePage() {
       <ServicesSection />
       <TechnologiesSection technologies={technologies} />
       <TeamSection teamMembers={teamMembers} />
-      <ProjectsShowcaseSection projects={projects} />
       <ProductsSection />
+      <ProjectsShowcaseSection projects={projects} />
       <ReviewsSection reviews={reviews} />
       <ContactSection contactInfo={contactInfo} />
       <Footer />

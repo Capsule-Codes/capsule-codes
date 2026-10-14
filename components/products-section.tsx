@@ -22,7 +22,7 @@ export function ProductsSection() {
       className="border-t border-[color:var(--ink-line)] px-4 py-[90px] lg:px-12"
     >
       <SectionHeader
-        eyebrow={`— 06 / ${t.nav.products}`}
+        eyebrow={`— 05 / ${t.nav.products}`}
         title={
           <>
             {leading} <em className="not-italic text-brand-grad">{lastWord}</em>
