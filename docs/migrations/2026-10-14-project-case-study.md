@@ -32,7 +32,7 @@ type CaseStudy = {
     countries: string[];   // ISO 3166-1 alpha-2, e.g. ["ZA"]; names via Intl.DisplayNames
     platforms: string[];
     role?: string;         // fallback for the locale's role
-    links?: { web?: string; appStore?: string; googlePlay?: string };
+    links?: { web?: string; appStore?: string; googlePlay?: string; huawei?: string };
   };
   en: CaseStudyLocale; es: CaseStudyLocale; it: CaseStudyLocale;
 };

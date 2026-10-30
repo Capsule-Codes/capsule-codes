@@ -112,7 +112,7 @@ const CASE_STUDY_TEMPLATE = JSON.stringify(
       ongoing: false,
       countries: ["US"],
       platforms: ["iOS", "Android"],
-      links: { web: "", appStore: "", googlePlay: "" },
+      links: { web: "", appStore: "", googlePlay: "", huawei: "" },
     },
     en: CASE_STUDY_LOCALE_TEMPLATE,
     es: CASE_STUDY_LOCALE_TEMPLATE,

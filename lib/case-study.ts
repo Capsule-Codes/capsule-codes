@@ -32,6 +32,8 @@ export interface CaseStudyLinks {
   web?: string;
   appStore?: string;
   googlePlay?: string;
+  /** Huawei AppGallery listing. */
+  huawei?: string;
 }
 
 export interface CaseStudyMeta {
@@ -64,7 +66,7 @@ const isRecord = (v: unknown): v is Record<string, unknown> =>
 
 const isText = (v: unknown): v is string => typeof v === "string" && v.trim().length > 0;
 
-const LINK_KEYS = ["web", "appStore", "googlePlay"] as const;
+const LINK_KEYS = ["web", "appStore", "googlePlay", "huawei"] as const;
 
 function isSafeUrl(v: unknown): v is string {
   return typeof v === "string" && /^https?:\/\/\S+$/i.test(v.trim());

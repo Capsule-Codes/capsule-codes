@@ -2,7 +2,7 @@
 
 import { useState, type CSSProperties, type ReactNode } from "react"
 import Link from "next/link"
-import { ArrowLeft, ArrowRight, ArrowUpRight, Globe } from "lucide-react"
+import { ArrowLeft, ArrowRight, ArrowUpRight, Globe, ShoppingBag } from "lucide-react"
 import { SiteImage } from "@/components/site-image"
 import { Capsule } from "@/components/ui/capsule"
 import { ScrollReveal } from "@/components/motion/scroll-reveal"
@@ -175,6 +175,7 @@ export function ProjectDetailClient({ project, nextProject }: ProjectDetailClien
     web: meta?.links?.web ?? project.liveUrl,
     appStore: meta?.links?.appStore ?? project.appStoreUrl,
     googlePlay: meta?.links?.googlePlay ?? project.playStoreUrl,
+    huawei: meta?.links?.huawei,
   }
   const summary = story?.summary ?? content.description
 
@@ -229,7 +230,7 @@ export function ProjectDetailClient({ project, nextProject }: ProjectDetailClien
             </dl>
           )}
 
-          {(links.web || links.appStore || links.googlePlay) && (
+          {(links.web || links.appStore || links.googlePlay || links.huawei) && (
             <div className="mt-8 flex flex-wrap gap-3">
               {links.web && (
                 <a href={links.web} target="_blank" rel="noopener noreferrer" className={pillPrimary}>
@@ -248,6 +249,12 @@ export function ProjectDetailClient({ project, nextProject }: ProjectDetailClien
                 <a href={links.googlePlay} target="_blank" rel="noopener noreferrer" className={pillGhost}>
                   <PlayIcon />
                   Google Play
+                </a>
+              )}
+              {links.huawei && (
+                <a href={links.huawei} target="_blank" rel="noopener noreferrer" className={pillGhost}>
+                  <ShoppingBag className="size-4" aria-hidden="true" />
+                  AppGallery
                 </a>
               )}
             </div>

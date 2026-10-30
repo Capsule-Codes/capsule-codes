@@ -85,6 +85,19 @@ test("drops invalid highlights and unsafe or empty links", () => {
   assert.deepEqual(cs.meta.links, { googlePlay: "https://play.google.com/x" });
 });
 
+test("keeps a valid Huawei AppGallery link alongside the other stores", () => {
+  const input = valid();
+  input.meta.links = {
+    googlePlay: "https://play.google.com/x",
+    huawei: "https://appgallery.huawei.com/app/C1",
+  } as never;
+  const cs = parseCaseStudy(input)!;
+  assert.deepEqual(cs.meta.links, {
+    googlePlay: "https://play.google.com/x",
+    huawei: "https://appgallery.huawei.com/app/C1",
+  });
+});
+
 test("omits links entirely when none are valid", () => {
   const input = valid();
   input.meta.links = { web: "ftp://x" } as never;
