@@ -8,7 +8,7 @@ export interface ProductCopy {
 }
 
 export interface Product {
-  id: "stagionaly" | "orbys" | "elevate";
+  id: "stagionaly" | "elevate";
   name: string;
   href: string;
   /** Static cover (1600x1000) served by next/image from /public. */
@@ -51,36 +51,6 @@ export const PRODUCTS: Product[] = [
         tagline: "La bacheca di lavoro per l'ospitalità stagionale italiana",
         description:
           "Mette in contatto hotel, ristoranti e beach club con lavoratori stagionali in Italia. Sviluppato insieme a Miguel, cofondatore con anni di esperienza nel settore alberghiero.",
-      },
-    },
-  },
-  {
-    id: "orbys",
-    name: "Orbys",
-    href: "https://www.getorbys.com",
-    image: "/images/products/orbys.webp",
-    imageAlt: {
-      en: "Orbys, the agency management suite",
-      es: "Orbys, la suite de gestión para agencias",
-      it: "Orbys, la suite di gestione per agenzie",
-    },
-    status: "live",
-    tags: ["Next.js", "Supabase", "MCP"],
-    copy: {
-      en: {
-        tagline: "An agency management suite that your AI assistant can operate",
-        description:
-          "Multi-tenant SaaS for agencies: clients, projects, time tracking with approvals, billing and partner splits, with a remote MCP server built in. Capsule Codes runs on it.",
-      },
-      es: {
-        tagline: "Una suite de gestión para agencias que tu asistente de IA puede operar",
-        description:
-          "SaaS multi-tenant para agencias: clientes, proyectos, control de horas con aprobaciones, facturación y reparto entre socios, con un servidor MCP remoto integrado. Capsule Codes funciona sobre él.",
-      },
-      it: {
-        tagline: "Una suite di gestione per agenzie che il tuo assistente IA può usare",
-        description:
-          "SaaS multi-tenant per agenzie: clienti, progetti, rilevazione delle ore con approvazioni, fatturazione e ripartizione tra soci, con un server MCP remoto integrato. Capsule Codes lavora con Orbys.",
       },
     },
   },

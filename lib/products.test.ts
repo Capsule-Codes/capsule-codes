@@ -5,15 +5,22 @@ import { PRODUCTS, getProductCopy } from "./products.ts";
 
 const LOCALES = ["en", "es", "it"] as const;
 
-test("lists the three owned products in order with their links", () => {
+test("lists the owned products in order with their links", () => {
   assert.deepEqual(
     PRODUCTS.map((p) => [p.id, p.href]),
     [
       ["stagionaly", "https://stagionaly.com"],
-      ["orbys", "https://www.getorbys.com"],
       ["elevate", "https://byelevate.app"],
     ],
   );
+});
+
+test("Orbys is not listed because the product was shut down", () => {
+  for (const p of PRODUCTS) {
+    for (const l of LOCALES) {
+      assert.ok(!/orbys/i.test(JSON.stringify([p, getProductCopy(p, l)])), `${p.id}/${l}`);
+    }
+  }
 });
 
 test("every product has non-empty copy in every locale", () => {
